@@ -16,13 +16,26 @@
  */
 package hitoridenshicigs_GUI;
 
+import hitoridenshicigs_simulation.CalculationConditions;
+import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
+
 /**
  *
  * @author Alban Lafuente
  */
 public class HitoriDenshiCIGS_GUI 
 {
-
+    /**
+     * Elements to inclus in the GUI:
+     *  - Field to enter the list of bias voltage
+     *  - Field to enter the list of notch position
+     *  - Field to enter the list of starting positions
+     *  - Field to select the folder containing the electric field files
+     *  - Field for the number of particle
+     *  - Switch electron/holes
+     *  - Switch to select if the position 0 is at the front or back
+     */
+    
     /**
      * @param args the command line arguments
      */
@@ -31,7 +44,11 @@ public class HitoriDenshiCIGS_GUI
         System.out.println("Starting...");
         
         String folder = "/home/audreyazura/Documents/Work/Simulation/ChargeInEfield/Extract/Notch/Einternal/Light";
-        hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation.startSimulation(folder);
+        
+        CalculationConditions conditions = new CalculationConditions(true, "0.8", "1800", "1500");
+        
+        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
+        simu.startSimulation(folder, conditions);
     }
     
 }

@@ -16,9 +16,11 @@
  */
 package hitoridenshicigs_simulation;
 
+import com.sun.jdi.InternalException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -26,11 +28,70 @@ import java.util.List;
  */
 class Field
 {
-    final List<Integer> m_absisse = new ArrayList<>();
-    final List<Integer> m_fieldValue = new ArrayList<>();
+    private final List<Double> m_absisse = new ArrayList<>();
+    private final List<Double> m_fieldValues = new ArrayList<>();
     
     public Field(File p_fileField)
     {
         
+    }
+    
+    public boolean hasExited(double position)
+    {
+        return position <= m_absisse.get(0) && position >= m_absisse.get(m_absisse.size()-1);
+    }
+    
+    public double getFieldValue(double position)
+    {
+        int positionIndex;
+        double fieldValue;
+        
+        if (!hasExited(position))
+        {
+            if ((positionIndex = m_absisse.indexOf(position)) == -1)
+            {
+                int lowPositionIndex = 0;                
+                while (m_absisse.get(lowPositionIndex) < position)
+                {
+                    lowPositionIndex += 1;
+                }
+                
+                double interpolationSlope = (m_fieldValues.get(lowPositionIndex+1) - m_fieldValues.get(lowPositionIndex)) / (m_absisse.get(lowPositionIndex+1) - m_absisse.get(lowPositionIndex));
+                double interpolationOffset = m_fieldValues.get(lowPositionIndex) - interpolationSlope*m_absisse.get(lowPositionIndex);
+                
+                fieldValue = interpolationSlope*position + interpolationOffset;
+            }
+            else
+            {
+                fieldValue = m_fieldValues.get(positionIndex);
+            }
+        }
+        else
+        {
+            throw new NoSuchElementException("No field value for position:" + String.valueOf(position));
+        }
+
+        return fieldValue;
+    }
+    
+    public boolean hasExitedAtFront(double position, boolean zeroAtFront)
+    {
+        boolean result;
+        
+        if (hasExited(position))
+            if(zeroAtFront)
+            {
+                result = Math.abs(m_absisse.get(0) - position) < Math.abs(position - m_absisse.get(m_absisse.size()-1));
+            }
+            else
+            {
+                result = Math.abs(m_absisse.get(0) - position) > Math.abs(position - m_absisse.get(m_absisse.size()-1));
+            }
+        else
+        {
+            throw new InternalException("The particle has not yet exited.");
+        }
+        
+        return result;
     }
 }

@@ -16,6 +16,10 @@
  */
 package hitoridenshicigs_simulation;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Alban Lafuente
@@ -23,9 +27,37 @@ package hitoridenshicigs_simulation;
 public class HitoriDenshiCIGS_Simulation 
 {
     
-    public static void startSimulation(String p_folderElectricField)
+    public void startSimulation(String p_folderElectricField, CalculationConditions p_conditions)
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricField);
+        
+        double charge, mass;
+        if (p_conditions.m_isElectron)
+        {
+            charge = -1.60217733e-19;
+            mass = 0.089*9.10938188e-31;
+        }
+        else
+        {
+            charge = 1.60217733e-19;
+            mass = 0.693*9.10938188e-31;
+        }
+        
+        for (double bias: p_conditions.m_biasVoltages)
+        {
+            for (double notch: p_conditions.m_notchPositions)
+            {
+                for (double initialPosition: p_conditions.m_startingPositons)
+                {
+                    for (double velocity: p_conditions.m_velocityList)
+                    {
+                        Particle currentIndividual = new Particle(charge, mass, initialPosition, velocity);
+                        
+                        File inputFiles = new File("");
+                    }
+                }
+            }
+        }
     } 
     
 }

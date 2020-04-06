@@ -25,16 +25,20 @@ import java.util.List;
  */
 public class Particle 
 {
-    private final int m_charge;
-    private final int m_masse;
-    private int m_position;
-    List<Integer> m_trajectory = new ArrayList<>();
+    private final double m_charge;
+    private final double m_masse;
+    private double m_position;
+    private double m_velocity;
+    List<Double> m_trajectory = new ArrayList<>();
+    List<Double> m_velocities = new ArrayList<>();
+    List<Double> m_accelerations = new ArrayList<>();
     
-    public Particle(int p_charge, int p_masse, int p_position)
+    public Particle(double p_charge, double p_masse, double p_position, double p_velocity)
     {
         m_charge = p_charge;
         m_masse = p_masse;
         m_position = p_position;
+        m_velocity = p_velocity;
     }
     
     public void applyElectricField(Field p_electricField)

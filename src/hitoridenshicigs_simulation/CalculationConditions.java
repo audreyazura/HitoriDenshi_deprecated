@@ -25,8 +25,17 @@ import java.util.List;
  */
 public class CalculationConditions
 {
-    static List<Integer> generationPositions = new ArrayList<>();
-    static List<Field> electricFields = new ArrayList<>();
+    final boolean m_isElectron;
+    final List<Double> m_biasVoltages = new ArrayList<>();
+    final List<Double> m_notchPositions = new ArrayList<>();
+    final List<Double> m_startingPositons = new ArrayList<>();
+    final List<Double> m_velocityList = new ArrayList<>();
     
+    public CalculationConditions (boolean p_isElectron, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    {
+        m_isElectron = p_isElectron;
+        //transform strings to ArrayLists
+        //generate velocities using Maxwell-Botzman
+    }
     
 }

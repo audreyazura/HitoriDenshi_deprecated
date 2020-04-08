@@ -41,7 +41,7 @@ public class Particle
         m_velocity = p_velocity;
     }
     
-    public void applyElectricField(Field p_electricField)
+    public void applyElectricField(GraphedValues p_electricField)
     {
         
     }

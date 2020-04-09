@@ -30,7 +30,7 @@ public class Absorber
     private final double m_frontPosition;
     private final double m_backPosition;
     
-    public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentSizeOfAbscissaAndValuesTableException
+    public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentArraySizeException
     {
         m_electricField = new ContinuousFunction(p_electricField);
         m_zeroAtFront = p_zeroAtFront;

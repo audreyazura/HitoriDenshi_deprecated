@@ -33,7 +33,7 @@ class ContinuousFunction
     private final TreeSet<Double> m_abscissa;
     private final HashMap<Double, Double> m_values;
     
-    public ContinuousFunction (File p_fileValues) throws DifferentSizeOfAbscissaAndValuesTableException
+    public ContinuousFunction (File p_fileValues) throws DifferentArraySizeException
     {
         List<Double> extractedAbscissa = new ArrayList<>();
         List<Double> extractedValues = new ArrayList<>();
@@ -54,7 +54,7 @@ class ContinuousFunction
         }
         else
         {
-            throw new DifferentSizeOfAbscissaAndValuesTableException("The absissa and value table are of different sizes.", extractedAbscissa.size(), extractedValues.size());
+            throw new DifferentArraySizeException("The absissa and value table are of different sizes.", extractedAbscissa.size(), extractedValues.size());
         }
     }
     

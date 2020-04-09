@@ -26,7 +26,7 @@ import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
 public class HitoriDenshiCIGS_GUI 
 {
     /**
-     * Elements to inclus in the GUI:
+     * Elements to include in the GUI:
      *  - Field to enter the list of bias voltage
      *  - Field to enter the list of notch position
      *  - Field to enter the list of starting positions
@@ -34,6 +34,9 @@ public class HitoriDenshiCIGS_GUI
      *  - Field for the number of particle
      *  - Switch electron/holes
      *  - Switch to select if the position 0 is at the front or back
+     *  - Field to enter the size of the buffer and window
+     *  - Field to enter the size of the absorber
+     *  - Field to enter the number of particle to simulate at each iteration
      */
     
     /**
@@ -44,8 +47,16 @@ public class HitoriDenshiCIGS_GUI
         System.out.println("Starting...");
         
         String folder = "/home/audreyazura/Documents/Work/Simulation/ChargeInEfield/Extract/Notch/Einternal/Light";
+        boolean isElectron = true;
+        boolean zeroAtFront = true;
+        double bufferWindow = 500.0;
+        double absorberSize = 2500.0;
+        int numberOfParticle = 10000;
+        String simulatedBiases = "0.8";
+        String notchPositions = "1800";
+        String generationPositions = "1500";
         
-        CalculationConditions conditions = new CalculationConditions(true, "0.8", "1800", "1500");
+        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, bufferWindow, absorberSize, numberOfParticle, simulatedBiases, notchPositions, generationPositions);
         
         HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
         simu.startSimulation(folder, conditions);

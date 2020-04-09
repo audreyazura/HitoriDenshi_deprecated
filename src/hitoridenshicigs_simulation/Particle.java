@@ -29,9 +29,11 @@ public class Particle
     private final double m_masse;
     private double m_position;
     private double m_velocity;
-    List<Double> m_trajectory = new ArrayList<>();
-    List<Double> m_velocities = new ArrayList<>();
-    List<Double> m_accelerations = new ArrayList<>();
+    private List<Double> m_trajectory = new ArrayList<>();
+    private List<Double> m_velocities = new ArrayList<>();
+    private List<Double> m_accelerations = new ArrayList<>();
+    
+    CollectionPossibility collectionState = CollectionPossibility.NOTCOLLECTED;
     
     public Particle(double p_charge, double p_masse, double p_position, double p_velocity)
     {
@@ -39,10 +41,23 @@ public class Particle
         m_masse = p_masse;
         m_position = p_position;
         m_velocity = p_velocity;
+        
+        m_trajectory.add(m_position);
+        m_velocities.add(m_velocity);
     }
     
-    public void applyElectricField(GraphedValues p_electricField)
+    public void applyElectricField(ContinuousFunction p_electricField)
     {
         
+    }
+    
+    public double getCurrentPosition()
+    {
+        return m_position;
+    }
+    
+    public enum CollectionPossibility
+    {
+        BACK, FRONT, NOTCOLLECTED
     }
 }

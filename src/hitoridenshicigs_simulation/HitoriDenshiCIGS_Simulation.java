@@ -17,8 +17,8 @@
 package hitoridenshicigs_simulation;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,34 +27,57 @@ import java.util.List;
 public class HitoriDenshiCIGS_Simulation 
 {
     
-    public void startSimulation(String p_folderElectricField, CalculationConditions p_conditions)
+    public void startSimulation(String p_folderElectricFields, CalculationConditions p_conditions)
     {
-        System.out.println("Starting simulation!\nFolder: " + p_folderElectricField);
+        System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
         
         double charge, mass;
+        int maxSteps;
         if (p_conditions.m_isElectron)
         {
             charge = -1.60217733e-19;
             mass = 0.089*9.10938188e-31;
+            maxSteps = 100000;
         }
         else
         {
             charge = 1.60217733e-19;
             mass = 0.693*9.10938188e-31;
+            maxSteps = 50000;
         }
         
-        for (double bias: p_conditions.m_biasVoltages)
+        for (String bias: p_conditions.m_biasVoltages)
         {
-            for (double notch: p_conditions.m_notchPositions)
+            for (String notch: p_conditions.m_notchPositions)
             {
-                for (double initialPosition: p_conditions.m_startingPositons)
+                try
                 {
-                    for (double velocity: p_conditions.m_velocityList)
+                    File electricFieldFile = new File(p_folderElectricFields+"E"+bias+"V/E"+bias+"_Notch"+notch+"nm.sim");
+                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_absorberSize);
+                    
+                    for (double initialPosition: p_conditions.m_startingPositons)
                     {
-                        Particle currentIndividual = new Particle(charge, mass, initialPosition, velocity);
+                        SimulationTracker currentTracker = new SimulationTracker();
+                                
+                        for (double velocity: p_conditions.m_velocityList)
+                        {
+                            Particle currentIndividual = new Particle(charge, mass, initialPosition, velocity);
+                            
+                            int numberOfSteps = 0;
+                            while (!currentAbsorber.hasExited(currentIndividual) && numberOfSteps < maxSteps)
+                            {
+                                currentIndividual.applyElectricField(currentAbsorber.getElectricField());
+                            }
+                            
+                            currentTracker.logParticle(currentIndividual);
+                        }
                         
-                        File inputFiles = new File("");
+                        currentTracker.saveToFile(notch, initialPosition, bias);
                     }
+                }
+                catch (DifferentArraySizeException ex)
+                {
+                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

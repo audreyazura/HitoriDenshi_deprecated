@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class HitoriDenshiCIGS_Simulation 
 {
     
-    public void startSimulation(String p_folderElectricFields, CalculationConditions p_conditions)
+    public void startSimulation(String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
         
@@ -52,7 +52,7 @@ public class HitoriDenshiCIGS_Simulation
             {
                 try
                 {
-                    File electricFieldFile = new File(p_folderElectricFields+"E"+bias+"V/E"+bias+"_Notch"+notch+"nm.sim");
+                    File electricFieldFile = new File(p_folderElectricFields+"E"+bias+"V/E"+bias+"_N"+notch+"nm.gen");
                     final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_sampleSize);
                     
                     for (double initialPosition: p_conditions.m_startingPositons)

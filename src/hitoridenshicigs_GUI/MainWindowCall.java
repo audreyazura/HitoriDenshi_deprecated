@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Alban Lafuente
+ * Copyright (C) 2020 audreyazura
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,13 @@
  */
 package hitoridenshicigs_GUI;
 
+import javafx.stage.Stage;
+
 /**
  *
- * @author Alban Lafuente
+ * @author audreyazura
  */
-public class Launcher {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        HitoriDenshiCIGS_GUI guiLaunch = new HitoriDenshiCIGS_GUI();
-        guiLaunch.startHitoriGUI(args);
-    }
-    
+public interface MainWindowCall
+{
+    Stage getMainStage();
 }

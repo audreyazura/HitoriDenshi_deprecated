@@ -16,50 +16,80 @@
  */
 package hitoridenshicigs_GUI;
 
-import hitoridenshicigs_simulation.CalculationConditions;
-import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Alban Lafuente
  */
-public class HitoriDenshiCIGS_GUI 
+public class HitoriDenshiCIGS_GUI extends Application implements MainWindowCall
 {
+    private Stage m_mainStage;
+    
     /**
      * Elements to include in the GUI:
      *  - Field to enter the list of bias voltage
      *  - Field to enter the list of notch position
      *  - Field to enter the list of starting positions
-     *  - Field to select the folder containing the electric field files
+     *  - Field to select the folder with the files in (tell the name formalism)
      *  - Field for the number of particle
      *  - Switch electron/holes
      *  - Switch to select if the position 0 is at the front or back
      *  - Field to enter the size of the buffer and window
-     *  - Field to enter the size of the absorber
+     *  - Field to enter the size of tExtractVideos_GUIhe absorber
      *  - Field to enter the number of particle to simulate at each iteration
      */
     
     /**
      * @param args the command line arguments
      */
-    public static void startHitoriGUI(String[] args) 
+    public void startHitoriGUI(String[] args) 
     {
-        System.out.println("Starting...");
+        Font.loadFont(HitoriDenshiCIGS_GUI.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
+        launch(args);
+    }
+    
+    @Override
+    public void start(Stage stage)
+    {
+        m_mainStage = stage;
+        launchParametersWindow();
+    }
+    
+    @Override
+    public Stage getMainStage()
+    {
+        return m_mainStage;
+    }
+    
+    private void launchParametersWindow()
+    {
         
-        String folder = "/home/audreyazura/Documents/Work/Simulation/ChargeInEfield/Extract/Notch/Einternal/Light";
-        boolean isElectron = true;
-        boolean zeroAtFront = true;
-        double bufferWindow = 500.0;
-        double absorberSize = 2500.0;
-        int numberOfParticle = 10000;
-        String simulatedBiases = "0.8";
-        String notchPositions = "1800";
-        String generationPositions = "1500";
+        FXMLLoader parameterWindowLoader = new FXMLLoader(HitoriDenshiCIGS_GUI.class.getResource("FXMLParametersWindow.fxml"));
         
-        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, bufferWindow, absorberSize, numberOfParticle, simulatedBiases, notchPositions, generationPositions);
+        try
+        {
+            Parent windowFxml = parameterWindowLoader.load();
+	    FXMLParametersWindowController controller = parameterWindowLoader.getController();
+	    controller.setMainWindow(this);
+            m_mainStage.setScene(new Scene(windowFxml, 800, 800));
+	    m_mainStage.show();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(HitoriDenshiCIGS_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
-        simu.startSimulation(folder, conditions);
+//        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
+//        simu.startSimulation(folder, conditions);
     }
     
 }

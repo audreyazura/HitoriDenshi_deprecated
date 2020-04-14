@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Button?>
+
+<VBox fx:controller="hitoridenshicigs_GUI.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
+      styleClass="vbox" fx:id="parameterbox">
+    
+    <stylesheets>
+        <URL value="@WindowStyle.css" />
+    </stylesheets>
+    
+    <fx:define>
+        <ToggleGroup fx:id="particleselectrion"/>
+        <ToggleGroup fx:id="zeroselection"/>
+    </fx:define>  
+    
+    <HBox styleClass="hbox">
+        <Label styleClass="windowtext" text="Bias voltages (V, separated by ;): "/>
+        <TextField styleClass="inputfield" fx:id="biasvoltages" text="0.8" prefWidth="300"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Notch positions (nm, separated by ';'): "/>
+        <TextField styleClass="inputfield" fx:id="notches" text="1800" prefWidth="300"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Generation positions (nm, separated by ';'): "/>
+        <TextField styleClass="inputfield" fx:id="generationpositions" text="1000" prefWidth="300"/>
+    </HBox>
+    
+    <VBox>
+        <Label styleClass="windowtext" text="Chose the simulated particle:"/>
+        <HBox styleClass="hbox" prefWidth="500">
+            <RadioButton toggleGroup="$particleselectrion" text="Electrons" fx:id="electronselection" />
+            <RadioButton toggleGroup="$particleselectrion" text="Holes" />
+        </HBox>
+    </VBox>
+    
+    <VBox>
+        <Label styleClass="windowtext" text="Chose position of x = 0 nm:"/>
+        <HBox styleClass="hbox" prefWidth="500">
+            <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="zeroatfront" />
+            <RadioButton toggleGroup="$zeroselection" text="Back" />
+        </HBox>
+    </VBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Sample width (nm): "/>
+        <TextField styleClass="inputfield" fx:id="samplewidth" text="2500"/>
+        <Label styleClass="windowtext" text="Buffer+window width (nm): "/>
+        <TextField styleClass="inputfield" fx:id="bufferwindowwidth" text="500"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Number of simulated particle: "/>
+        <TextField styleClass="inputfield" fx:id="numbersimulated" text="10000"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Folder with the SCAPS gen file: "/>
+        <TextField styleClass="inputfield" fx:id="inputFolder"/>
+        <Button text="Browse" alignment="center" onAction="#BrowsingInput"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Output folder: "/>
+        <TextField styleClass="inputfield" fx:id="outputFolder"/>
+        <Button text="Browse" alignment="center" onAction="#BrowsingOutput"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox">
+        <Button text="Start simulation" alignment="center" onAction="#StartSimulation"/>
+    </HBox>
+    
+</VBox>

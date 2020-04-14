@@ -53,7 +53,7 @@ public class HitoriDenshiCIGS_Simulation
                 try
                 {
                     File electricFieldFile = new File(p_folderElectricFields+"E"+bias+"V/E"+bias+"_Notch"+notch+"nm.sim");
-                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_absorberSize);
+                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_sampleSize);
                     
                     for (double initialPosition: p_conditions.m_startingPositons)
                     {

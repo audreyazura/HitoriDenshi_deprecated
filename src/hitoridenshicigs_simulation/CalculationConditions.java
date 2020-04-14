@@ -28,18 +28,18 @@ public class CalculationConditions
     final boolean m_isElectron;
     final boolean m_isZeroAtFront;
     final double m_bufferWindowSize;
-    final double m_absorberSize;
+    final double m_sampleSize;
     final List<String> m_biasVoltages = new ArrayList<>();
     final List<String> m_notchPositions = new ArrayList<>();
     final List<Double> m_startingPositons = new ArrayList<>();
     final List<Double> m_velocityList = new ArrayList<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, double p_bufferWindowSize, double p_absorberSize, int p_numberSimulatedParticules, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, double p_bufferWindowSize, double p_sampleSize, int p_numberSimulatedParticules, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
     {
         m_isElectron = p_isElectron;
         m_isZeroAtFront = p_isZeroAtFront;
         m_bufferWindowSize = p_bufferWindowSize;
-        m_absorberSize = p_absorberSize;
+        m_sampleSize = p_sampleSize;
         //transform strings to ArrayLists
         //generate velocities using Maxwell-Botzman
     }

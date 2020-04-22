@@ -67,7 +67,7 @@
     
     <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Folder with the SCAPS gen file: "/>
-        <TextField styleClass="inputfield" fx:id="inputFolder"/>
+        <TextField styleClass="inputfield" fx:id="inputFolder" text="/home/audreyazura/Documents/Work/Simulation/SCAPSData"/>
         <Button text="Browse" alignment="center" onAction="#BrowsingInput"/>
     </HBox>
     

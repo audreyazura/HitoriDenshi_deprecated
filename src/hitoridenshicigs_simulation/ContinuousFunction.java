@@ -16,12 +16,17 @@
  */
 package hitoridenshicigs_simulation;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
+import java.util.zip.DataFormatException;
 
 /**
  *
@@ -33,23 +38,40 @@ class ContinuousFunction
     private final TreeSet<Double> m_abscissa;
     private final HashMap<Double, Double> m_values;
     
-    public ContinuousFunction (File p_fileValues) throws DifferentArraySizeException
+    public ContinuousFunction (File p_fileValues) throws DifferentArraySizeException, FileNotFoundException, DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
+        String[] nameSplit = p_fileValues.getName().split(".");
+        
+        if (nameSplit[nameSplit.length-1].equals("gen"))
+        {
+            throw new DataFormatException();
+        }
+        
         List<Double> extractedAbscissa = new ArrayList<>();
         List<Double> extractedValues = new ArrayList<>();
         
-        extractedAbscissa.add(0.0);
-        extractedValues.add(0.0);
+        BufferedReader fieldFile = new BufferedReader(new FileReader(p_fileValues));
+	
+	String line;
+	while (((line = fieldFile.readLine()) != null))
+	{	    
+	    String[] cutSplit = line.strip().split("\t");
+	    
+	    if(cutSplit.length == 23)
+	    {
+		
+	    }
+        }
         
         if (extractedAbscissa.size() == extractedValues.size())
         {            
             m_abscissa = new TreeSet<>();
             m_values = new HashMap<>();
             
-            for (int i = 0 ; i < extractedAbscissa.size() ; i+=1)
+            for (double currentAbscissa: extractedAbscissa)
             {
-                m_abscissa.add(extractedAbscissa.get(i));
-                m_values.put(extractedAbscissa.get(i), extractedValues.get(i));
+                m_abscissa.add(currentAbscissa);
+                m_values.put(currentAbscissa, extractedValues.get(extractedAbscissa.indexOf(currentAbscissa)));
             }
         }
         else

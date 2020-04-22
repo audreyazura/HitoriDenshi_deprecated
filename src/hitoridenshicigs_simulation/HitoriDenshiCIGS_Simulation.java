@@ -17,8 +17,10 @@
 package hitoridenshicigs_simulation;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
 /**
  *
@@ -76,6 +78,14 @@ public class HitoriDenshiCIGS_Simulation
                     }
                 }
                 catch (DifferentArraySizeException ex)
+                {
+                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (DataFormatException ex)
+                {
+                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (IOException ex)
                 {
                     Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
                 }

@@ -17,6 +17,8 @@
 package hitoridenshicigs_simulation;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 /**
  * To store the data about the solar cell, especially the abscissa (one for the eb file, one for the gen file), and tell if a particle has been or not, as well as the collection side. Also store backAbscissa and frontAbscissa.
@@ -30,7 +32,7 @@ public class Absorber
     private final double m_frontPosition;
     private final double m_backPosition;
     
-    public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentArraySizeException
+    public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentArraySizeException, DataFormatException, IOException
     {
         m_electricField = new ContinuousFunction(p_electricField);
         m_zeroAtFront = p_zeroAtFront;

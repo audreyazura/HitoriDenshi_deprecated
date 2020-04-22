@@ -18,6 +18,7 @@ package hitoridenshicigs_simulation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -54,7 +55,7 @@ public class HitoriDenshiCIGS_Simulation
             {
                 try
                 {
-                    File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"_N"+notch+"nm.gen");
+                    File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notch+"nm.eb");
                     final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_sampleSize);
                     
                     for (double initialPosition: p_conditions.m_startingPositons)

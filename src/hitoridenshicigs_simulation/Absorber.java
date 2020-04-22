@@ -34,7 +34,7 @@ public class Absorber
     
     public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentArraySizeException, DataFormatException, IOException
     {
-        m_electricField = new ContinuousFunction(p_electricField);
+        m_electricField = ContinuousFunction.createElectricField(p_electricField);
         m_zeroAtFront = p_zeroAtFront;
         if(m_zeroAtFront)
         {

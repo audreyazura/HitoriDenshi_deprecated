@@ -49,9 +49,9 @@ class ContinuousFunction
         m_abscissa = new TreeSet<>();
         m_values = new HashMap<>();
         
-        String[] nameSplit = p_fileValues.getName().split(".");
+        String[] nameSplit = p_fileValues.getPath().split("\\.");
         
-        if (nameSplit[nameSplit.length-1].equals(p_expectedExtension))
+        if (!nameSplit[nameSplit.length-1].equals(p_expectedExtension))
         {
             throw new DataFormatException();
         }

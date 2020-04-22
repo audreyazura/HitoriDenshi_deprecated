@@ -17,6 +17,7 @@
 package hitoridenshicigs_simulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,8 +30,8 @@ public class CalculationConditions
     final boolean m_isZeroAtFront;
     final double m_bufferWindowSize;
     final double m_sampleSize;
-    final List<String> m_biasVoltages = new ArrayList<>();
-    final List<String> m_notchPositions = new ArrayList<>();
+    final List<String> m_biasVoltages;
+    final List<String> m_notchPositions;
     final List<Double> m_startingPositons = new ArrayList<>();
     final List<Double> m_velocityList = new ArrayList<>();
     
@@ -40,6 +41,9 @@ public class CalculationConditions
         m_isZeroAtFront = p_isZeroAtFront;
         m_bufferWindowSize = p_bufferWindowSize;
         m_sampleSize = p_sampleSize;
+        
+        m_biasVoltages = Arrays.asList(p_biasVoltages.split(";"));
+        m_notchPositions = Arrays.asList(p_notchPositions.split(";"));
         //transform strings to ArrayLists
         //generate velocities using Maxwell-Botzman
     }

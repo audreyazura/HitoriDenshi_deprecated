@@ -53,10 +53,11 @@
             <RadioButton toggleGroup="$zeroselection" text="Back" selected="true" />
         </HBox>
     </VBox>
+    
     <VBox>
         <Label styleClass="windowtext" text="Abscissa unit:"/>
         <HBox styleClass="hbox" prefWidth="500">
-            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="zeroatfront" />
+            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="unitselec" />
             <RadioButton toggleGroup="$unit" text="nm" />
         </HBox>
     </VBox>

@@ -43,7 +43,7 @@ public class FXMLParametersWindowController
     @FXML private TextField outputFolder;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton zeroatfront;
-    @FXML private RadioButton unit;
+    @FXML private RadioButton unitselec;
     private MainWindowCall m_mainApp;
     
     void setMainWindow (HitoriDenshiCIGS_GUI p_mainGUI)
@@ -115,7 +115,7 @@ public class FXMLParametersWindowController
         
         boolean isElectron = electronselection.isSelected();
         boolean zeroFront = zeroatfront.isSelected();
-        boolean isMicrometer = unit.isSelected();
+        boolean isMicrometer = unitselec.isSelected();
         
         try
         {

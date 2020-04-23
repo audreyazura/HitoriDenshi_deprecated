@@ -40,7 +40,7 @@
     <VBox>
         <Label styleClass="windowtext" text="Chose the simulated particle:"/>
         <HBox styleClass="hbox" prefWidth="500">
-            <RadioButton toggleGroup="$particleselection" text="Electrons" fx:id="electronselection" />
+            <RadioButton toggleGroup="$particleselection" text="Electrons" selected="true" fx:id="electronselection" />
             <RadioButton toggleGroup="$particleselection" text="Holes" />
         </HBox>
     </VBox>
@@ -49,7 +49,7 @@
         <Label styleClass="windowtext" text="Chose position of x = 0 nm:"/>
         <HBox styleClass="hbox" prefWidth="500">
             <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="zeroatfront" />
-            <RadioButton toggleGroup="$zeroselection" text="Back" />
+            <RadioButton toggleGroup="$zeroselection" text="Back" selected="true" />
         </HBox>
     </VBox>
     

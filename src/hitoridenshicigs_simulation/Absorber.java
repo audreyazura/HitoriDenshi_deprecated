@@ -32,18 +32,34 @@ public class Absorber
     private final double m_frontPosition;
     private final double m_backPosition;
     
-    public Absorber(File p_electricField, boolean p_zeroAtFront, double p_bufferWindowSize, double p_absorberSize) throws DifferentArraySizeException, DataFormatException, IOException
+//    public Absorber(File p_electricField, double p_unitMultiplier, boolean p_zeroAtFront, double p_bufferWindowSize, double p_sampleSize) throws DifferentArraySizeException, DataFormatException, IOException
+//    {
+//        m_electricField = ContinuousFunction.createElectricField(p_electricField, p_unitMultiplier);
+//        m_zeroAtFront = p_zeroAtFront;
+//        if(m_zeroAtFront)
+//        {
+//            m_frontPosition = 0;
+//            m_backPosition = p_sampleSize-p_bufferWindowSize;
+//        }
+//        else
+//        {
+//            m_frontPosition = p_sampleSize-p_bufferWindowSize;
+//            m_backPosition = 0;
+//        }
+//    }
+    
+    public Absorber(File p_electricField, CalculationConditions p_conditions) throws DifferentArraySizeException, DataFormatException, IOException
     {
-        m_electricField = ContinuousFunction.createElectricField(p_electricField);
-        m_zeroAtFront = p_zeroAtFront;
+        m_electricField = ContinuousFunction.createElectricField(p_electricField, p_conditions.getAbscissaMultiplier());
+        m_zeroAtFront = p_conditions.isZeroAtFront();
         if(m_zeroAtFront)
         {
-            m_frontPosition = p_bufferWindowSize;
-            m_backPosition = m_frontPosition + p_absorberSize;
+            m_frontPosition = 0;
+            m_backPosition = p_conditions.getSolarCellSize() - p_conditions.getBufferAndWindowSize();
         }
         else
         {
-            m_frontPosition = p_absorberSize;
+            m_frontPosition = p_conditions.getSolarCellSize() - p_conditions.getBufferAndWindowSize();
             m_backPosition = 0;
         }
     }

@@ -121,13 +121,13 @@ public class FXMLParametersWindowController
             double bufferWindowSize = Double.parseDouble(bufferwindowwidth.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
         
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, bufferWindowSize, totalSampleWidth, numberSimulatedParticle, biasVoltagesList, notchesList, initialPositionsList);
+            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, numberSimulatedParticle, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
             HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
             simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
         }
         catch (NumberFormatException ex)
         {
-            System.err.println("Verifu you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
+            System.err.println("Verify you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
         }
     }
 }

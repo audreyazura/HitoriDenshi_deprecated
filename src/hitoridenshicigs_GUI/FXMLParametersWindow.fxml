@@ -20,6 +20,7 @@
     <fx:define>
         <ToggleGroup fx:id="particleselection"/>
         <ToggleGroup fx:id="zeroselection"/>
+        <ToggleGroup fx:id="unit"/>
     </fx:define>  
     
     <HBox styleClass="hbox">
@@ -50,6 +51,13 @@
         <HBox styleClass="hbox" prefWidth="500">
             <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="zeroatfront" />
             <RadioButton toggleGroup="$zeroselection" text="Back" selected="true" />
+        </HBox>
+    </VBox>
+    <VBox>
+        <Label styleClass="windowtext" text="Abscissa unit:"/>
+        <HBox styleClass="hbox" prefWidth="500">
+            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="zeroatfront" />
+            <RadioButton toggleGroup="$unit" text="nm" />
         </HBox>
     </VBox>
     

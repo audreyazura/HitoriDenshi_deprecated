@@ -41,6 +41,7 @@ public class FXMLParametersWindowController
     @FXML private TextField outputFolder;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton zeroatfront;
+    @FXML private RadioButton unit;
     private MainWindowCall m_mainApp;
     
     void setMainWindow (HitoriDenshiCIGS_GUI p_mainGUI)
@@ -112,6 +113,7 @@ public class FXMLParametersWindowController
         
         boolean isElectron = electronselection.isSelected();
         boolean zeroFront = zeroatfront.isSelected();
+        boolean isMicrometer = unit.isSelected();
         
         try
         {
@@ -119,7 +121,7 @@ public class FXMLParametersWindowController
             double bufferWindowSize = Double.parseDouble(bufferwindowwidth.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
         
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, bufferWindowSize, totalSampleWidth, numberSimulatedParticle, biasVoltagesList, notchesList, initialPositionsList);
+            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, bufferWindowSize, totalSampleWidth, numberSimulatedParticle, biasVoltagesList, notchesList, initialPositionsList);
             HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
             simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
         }

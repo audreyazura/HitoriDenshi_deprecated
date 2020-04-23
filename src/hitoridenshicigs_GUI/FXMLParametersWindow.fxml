@@ -18,7 +18,7 @@
     </stylesheets>
     
     <fx:define>
-        <ToggleGroup fx:id="particleselectrion"/>
+        <ToggleGroup fx:id="particleselection"/>
         <ToggleGroup fx:id="zeroselection"/>
     </fx:define>  
     
@@ -40,8 +40,8 @@
     <VBox>
         <Label styleClass="windowtext" text="Chose the simulated particle:"/>
         <HBox styleClass="hbox" prefWidth="500">
-            <RadioButton toggleGroup="$particleselectrion" text="Electrons" fx:id="electronselection" />
-            <RadioButton toggleGroup="$particleselectrion" text="Holes" />
+            <RadioButton toggleGroup="$particleselection" text="Electrons" fx:id="electronselection" />
+            <RadioButton toggleGroup="$particleselection" text="Holes" />
         </HBox>
     </VBox>
     

@@ -39,12 +39,12 @@ class ContinuousFunction
     private final Set<Double> m_abscissa;
     private final Map<Double, Double> m_values;
     
-    static public ContinuousFunction createElectricField(File p_fileValues) throws DifferentArraySizeException, DataFormatException, IOException, ArrayIndexOutOfBoundsException
+    static public ContinuousFunction createElectricField(File p_fileValues, double p_unitMultiplier) throws DifferentArraySizeException, DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
-       return new ContinuousFunction(p_fileValues, "eb", 23, new int[] {1,12});
+       return new ContinuousFunction(p_fileValues, p_unitMultiplier, "eb", 23, new int[] {1,12});
     }
     
-    private ContinuousFunction (File p_fileValues, String p_expectedExtension, int p_ncolumn, int[] columnToExtract) throws DifferentArraySizeException, FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
+    private ContinuousFunction (File p_fileValues, double p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws DifferentArraySizeException, FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
         m_abscissa = new TreeSet<>();
         m_values = new HashMap<>();
@@ -66,12 +66,13 @@ class ContinuousFunction
 	    
 	    if(cutSplit.length == p_ncolumn && numberRegex.matcher(cutSplit[0]).matches())
 	    {
-		double currentAbscissa = Double.valueOf(cutSplit[columnToExtract[0]]);
+		//we put the abscissa in meter in order to do all calculations in SI
+                double currentAbscissa = Double.valueOf(cutSplit[p_columnToExtract[0]])*p_unitMultiplier;
                 
                 if (!m_abscissa.contains(currentAbscissa))
                 {
                     m_abscissa.add(currentAbscissa);
-                    m_values.put(currentAbscissa, Double.valueOf(cutSplit[columnToExtract[1]]));
+                    m_values.put(currentAbscissa, Double.valueOf(cutSplit[p_columnToExtract[1]]));
                 }
 	    }
         }

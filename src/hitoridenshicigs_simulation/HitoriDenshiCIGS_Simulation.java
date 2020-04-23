@@ -34,40 +34,40 @@ public class HitoriDenshiCIGS_Simulation
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
         
-        double charge, mass;
-        int maxSteps;
-        if (p_conditions.m_isElectron)
-        {
-            charge = -1.60217733e-19;
-            mass = 0.089*9.10938188e-31;
-            maxSteps = 100000;
-        }
-        else
-        {
-            charge = 1.60217733e-19;
-            mass = 0.693*9.10938188e-31;
-            maxSteps = 50000;
-        }
+//        int maxSteps;
+//        double charge, mass;
+//        if (p_conditions.isParticleElectron())
+//        {
+//            charge = -CalculationConditions.Q;
+//            mass = 0.089*CalculationConditions.ME;
+//            maxSteps = 100000;
+//        }
+//        else
+//        {
+//            charge = CalculationConditions.Q;
+//            mass = 0.693*CalculationConditions.ME;
+//            maxSteps = 50000;
+//        }
         
-        for (String bias: p_conditions.m_biasVoltages)
+        for (String bias: p_conditions.getBiasVoltageArray())
         {
-            for (String notch: p_conditions.m_notchPositions)
+            for (String notch: p_conditions.getNotchPositionArray())
             {
                 try
                 {
                     File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notch+"nm.eb");
-                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions.m_isZeroAtFront, p_conditions.m_bufferWindowSize, p_conditions.m_sampleSize);
+                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions);
                     
-                    for (double initialPosition: p_conditions.m_startingPositons)
+                    for (double initialPosition: p_conditions.getStartingPositionList())
                     {
                         SimulationTracker currentTracker = new SimulationTracker();
                                 
-                        for (double velocity: p_conditions.m_velocityList)
+                        for (double velocity: p_conditions.getVelocityList())
                         {
-                            Particle currentIndividual = new Particle(charge, mass, initialPosition, velocity);
+                            Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
                             
                             int numberOfSteps = 0;
-                            while (!currentAbsorber.hasExited(currentIndividual) && numberOfSteps < maxSteps)
+                            while (!currentAbsorber.hasExited(currentIndividual) && numberOfSteps < p_conditions.getMaxSteps())
                             {
                                 currentIndividual.applyElectricField(currentAbsorber.getElectricField());
                             }

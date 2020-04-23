@@ -17,6 +17,7 @@
 package hitoridenshicigs_simulation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,6 +40,17 @@ public class Particle
     {
         m_charge = p_charge;
         m_masse = p_masse;
+        m_position = p_position;
+        m_velocity = p_velocity;
+        
+        m_trajectory.add(m_position);
+        m_velocities.add(m_velocity);
+    }
+    
+    public Particle(HashMap<String, Double> p_parameters, double p_position, double p_velocity)
+    {
+        m_charge = p_parameters.get("charge");
+        m_masse = p_parameters.get("mass");
         m_position = p_position;
         m_velocity = p_velocity;
         

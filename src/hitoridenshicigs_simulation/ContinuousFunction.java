@@ -57,7 +57,7 @@ class ContinuousFunction
         }
         
         BufferedReader fieldFile = new BufferedReader(new FileReader(p_fileValues));
-        Pattern numberRegex = Pattern.compile("^\\-?\\d+(.\\d+(e(\\+|\\-)\\d+)?)?");
+        Pattern numberRegex = Pattern.compile("^\\-?\\d+(\\.\\d+(e(\\+|\\-)\\d+)?)?");
 	
 	String line;
 	while (((line = fieldFile.readLine()) != null))

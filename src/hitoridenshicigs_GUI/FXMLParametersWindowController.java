@@ -35,6 +35,8 @@ public class FXMLParametersWindowController
     @FXML private TextField notches;
     @FXML private TextField generationpositions;
     @FXML private TextField samplewidth;
+    @FXML private TextField effectivemass;
+    @FXML private TextField lifetime;
     @FXML private TextField bufferwindowwidth;
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
@@ -119,9 +121,11 @@ public class FXMLParametersWindowController
         {
             double totalSampleWidth = Double.parseDouble(samplewidth.getText());
             double bufferWindowSize = Double.parseDouble(bufferwindowwidth.getText());
+            double effectiveMassDouble = Double.parseDouble(effectivemass.getText());
+            double lifetimeDouble = Double.parseDouble(lifetime.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
         
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, numberSimulatedParticle, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
+            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, numberSimulatedParticle, effectiveMassDouble, lifetimeDouble, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
             HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
             simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
         }

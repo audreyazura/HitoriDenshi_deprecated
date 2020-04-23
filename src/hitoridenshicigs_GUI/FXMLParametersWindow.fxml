@@ -62,6 +62,17 @@
     </VBox>
     
     <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Particle effective mass: "/>
+        <TextField styleClass="inputfield" fx:id="effectivemass" text="0.089" prefWidth="300"/>
+        <Label styleClass="windowtext" text="*electron mass"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Lifetime (ns): "/>
+        <TextField styleClass="inputfield" fx:id="lifetime" text="100" prefWidth="300"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Sample width (nm): "/>
         <TextField styleClass="inputfield" fx:id="samplewidth" text="2500"/>
         <Label styleClass="windowtext" text="Buffer+window width (nm): "/>

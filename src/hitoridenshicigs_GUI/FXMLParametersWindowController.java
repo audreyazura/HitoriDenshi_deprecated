@@ -18,9 +18,17 @@ package hitoridenshicigs_GUI;
 
 import hitoridenshicigs_simulation.CalculationConditions;
 import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
+import hitoridenshicigs_simulation.PhysicalConstants;
+import java.lang.IllegalArgumentException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
@@ -31,27 +39,97 @@ import javafx.stage.DirectoryChooser;
  */
 public class FXMLParametersWindowController
 {
+    @FXML private Label notchlabel;
+    @FXML private Label generationlabel;
+    @FXML private Label samplewidthlabel;
+    @FXML private Label bufferwindowlabel;
     @FXML private TextField biasvoltages;
     @FXML private TextField notches;
     @FXML private TextField generationpositions;
+    @FXML private TextField bufferwindowwidth;
     @FXML private TextField samplewidth;
     @FXML private TextField effectivemass;
     @FXML private TextField lifetime;
-    @FXML private TextField bufferwindowwidth;
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton zeroatfront;
-    @FXML private RadioButton unitselec;
+    @FXML private ChoiceBox unitselec;
+    
     private MainWindowCall m_mainApp;
+    private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
     
     void setMainWindow (HitoriDenshiCIGS_GUI p_mainGUI)
     {
         m_mainApp = p_mainGUI;
     }
     
-    @FXML private void BrowsingInput (ActionEvent event)
+    @FXML private void savePreviousSelection ()
+    {
+        try
+        {
+            m_previouslySelectedUnit = selectPrefix((String) unitselec.getValue());
+        }
+        catch (NullPointerException ex)
+        {
+            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
+        }
+    }
+    
+    @FXML private void applyNewSelection (ActionEvent event)
+    {
+        PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.BASE;
+        try
+        {
+            String selectedUnit = (String) unitselec.getValue();
+            
+            currentPrefix = selectPrefix(selectedUnit);
+            if (m_previouslySelectedUnit == PhysicalConstants.UnitsPrefix.BASE)
+            {
+                m_previouslySelectedUnit = currentPrefix;
+            }
+            
+            notchlabel.setText("Notch positions in the absorber ("+selectedUnit+", separated by ';'):");
+            generationlabel.setText("Generation positions ("+selectedUnit+", separated by ';'):");
+            samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
+            bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
+            
+            double previousMultiplier = m_previouslySelectedUnit.getMultiplier();
+            double currentMultiplier = currentPrefix.getMultiplier();
+
+            bufferwindowwidth.setText(changeEnteredNumberUnit(bufferwindowwidth.getText(), previousMultiplier, currentMultiplier));
+            samplewidth.setText(changeEnteredNumberUnit(samplewidth.getText(), previousMultiplier, currentMultiplier));
+
+            List<String> newNotchPositions = new ArrayList<>();
+            Arrays.asList(notches.getText().strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
+            {
+                @Override
+                public void accept(String position)
+                {
+                    newNotchPositions.add(changeEnteredNumberUnit(position, previousMultiplier, currentMultiplier));
+                }
+            });
+            notches.setText(String.join(" ; ", newNotchPositions));
+
+            List<String> newGenerationPositions = new ArrayList<>();
+            Arrays.asList(generationpositions.getText().strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
+            {
+                @Override
+                public void accept(String position)
+                {
+                    newGenerationPositions.add(changeEnteredNumberUnit(position, previousMultiplier, currentMultiplier));
+                }
+            });
+            generationpositions.setText(String.join(" ; ", newGenerationPositions));
+        }
+        catch (NullPointerException ex)
+        {
+            System.err.println("Select a proper unit!");
+        }
+    }
+    
+    @FXML private void browsingInput (ActionEvent event)
     {
         DirectoryChooser browser = new DirectoryChooser();
 	
@@ -78,7 +156,7 @@ public class FXMLParametersWindowController
 	}
     }
     
-    @FXML private void BrowsingOutput (ActionEvent event)
+    @FXML private void browsingOutput (ActionEvent event)
     {
         DirectoryChooser browser = new DirectoryChooser();
 	
@@ -105,7 +183,7 @@ public class FXMLParametersWindowController
 	}
     }
     
-    @FXML private void StartSimulation (ActionEvent event)
+    @FXML private void startSimulation (ActionEvent event)
     {
         String biasVoltagesList = biasvoltages.getText();
         String notchesList = notches.getText();
@@ -115,7 +193,6 @@ public class FXMLParametersWindowController
         
         boolean isElectron = electronselection.isSelected();
         boolean zeroFront = zeroatfront.isSelected();
-        boolean isMicrometer = unitselec.isSelected();
         
         try
         {
@@ -124,8 +201,10 @@ public class FXMLParametersWindowController
             double effectiveMassDouble = Double.parseDouble(effectivemass.getText());
             double lifetimeDouble = Double.parseDouble(lifetime.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
+            
+            PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, isMicrometer, numberSimulatedParticle, effectiveMassDouble, lifetimeDouble, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
+            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeDouble, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
             HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
             simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
         }
@@ -133,5 +212,38 @@ public class FXMLParametersWindowController
         {
             System.err.println("Verify you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
         }
+        catch (NullPointerException ex)
+        {
+            System.err.println("Verify that each field is properly filled.");
+        }
+    }
+    
+    private PhysicalConstants.UnitsPrefix selectPrefix (String p_unit)
+    {
+        PhysicalConstants.UnitsPrefix unitSelected = PhysicalConstants.UnitsPrefix.BASE;
+        
+        switch (p_unit)
+        {
+            case "nm":
+                unitSelected = PhysicalConstants.UnitsPrefix.NANO;
+                break;
+            case "μm":
+                unitSelected = PhysicalConstants.UnitsPrefix.MICRO;
+                break;
+        }
+        
+        return unitSelected;
+    }
+    
+    private String changeEnteredNumberUnit (String p_numberEntered, double p_previousMultiplier, double p_newMultiplier)
+    {
+        String conrrectedNumber = new String(p_numberEntered);
+        
+        if (conrrectedNumber.equals(""))
+        {
+            conrrectedNumber = "0";
+        }
+        
+        return new String(String.format("%.4g", Double.parseDouble(conrrectedNumber)*p_previousMultiplier/p_newMultiplier));
     }
 }

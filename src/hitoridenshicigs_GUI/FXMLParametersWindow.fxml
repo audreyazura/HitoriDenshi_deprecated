@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
@@ -9,6 +11,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 
 <VBox fx:controller="hitoridenshicigs_GUI.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="vbox" fx:id="parameterbox">
@@ -20,8 +23,7 @@
     <fx:define>
         <ToggleGroup fx:id="particleselection"/>
         <ToggleGroup fx:id="zeroselection"/>
-        <ToggleGroup fx:id="unit"/>
-    </fx:define>  
+    </fx:define>
     
     <HBox styleClass="hbox">
         <Label styleClass="windowtext" text="Bias voltages (V, separated by ;): "/>
@@ -30,25 +32,30 @@
     
     <VBox>
         <Label styleClass="windowtext" text="Abscissa unit:"/>
-        <HBox styleClass="hbox" prefWidth="500">
-            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="unitselec" />
-            <RadioButton toggleGroup="$unit" text="nm" />
+        <ChoiceBox fx:id="unitselec" value="μm" onAction="#applyNewSelection" onShowing="#savePreviousSelection">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="μm" />
+                    <String fx:value="nm" />
+                </FXCollections>
+            </items>    
+        </ChoiceBox>
     </VBox>
     
     <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): "/>
+        <Label styleClass="windowtext" text="Notch positions in the absorber (μm, separated by ';'): " fx:id="notchlabel"/>
         <TextField styleClass="inputfield" fx:id="notches" text="1.8" prefWidth="300"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Generation positions (separated by ';'): "/>
+        <Label styleClass="windowtext" text="Generation positions (μm, separated by ';'): " fx:id="generationlabel"/>
         <TextField styleClass="inputfield" fx:id="generationpositions" text="1" prefWidth="300"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Sample width: "/>
+        <Label styleClass="windowtext" text="Sample width (μm): " fx:id="samplewidthlabel"/>
         <TextField styleClass="inputfield" fx:id="samplewidth" text="2.5"/>
-        <Label styleClass="windowtext" text="Buffer+window width: "/>
+        <Label styleClass="windowtext" text="Buffer+window width (μm): " fx:id="bufferwindowlabel"/>
         <TextField styleClass="inputfield" fx:id="bufferwindowwidth" text="0.5"/>
     </HBox>
     
@@ -87,17 +94,17 @@
     <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Folder with the SCAPS gen file: "/>
         <TextField styleClass="inputfield" fx:id="inputFolder" text="/home/audreyazura/Documents/Work/Simulation/SCAPSData"/>
-        <Button text="Browse" alignment="center" onAction="#BrowsingInput"/>
+        <Button text="Browse" alignment="center" onAction="#browsingInput"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Output folder: "/>
         <TextField styleClass="inputfield" fx:id="outputFolder"/>
-        <Button text="Browse" alignment="center" onAction="#BrowsingOutput"/>
+        <Button text="Browse" alignment="center" onAction="#browsingOutput"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox">
-        <Button text="Start simulation" alignment="center" onAction="#StartSimulation"/>
+        <Button text="Start simulation" alignment="center" onAction="#startSimulation"/>
     </HBox>
     
 </VBox>

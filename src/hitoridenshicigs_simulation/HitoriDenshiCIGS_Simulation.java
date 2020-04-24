@@ -33,21 +33,6 @@ public class HitoriDenshiCIGS_Simulation
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
         
-//        int maxSteps;
-//        double charge, mass;
-//        if (p_conditions.isParticleElectron())
-//        {
-//            charge = -CalculationConditions.Q;
-//            mass = 0.089*CalculationConditions.ME;
-//            maxSteps = 100000;
-//        }
-//        else
-//        {
-//            charge = CalculationConditions.Q;
-//            mass = 0.693*CalculationConditions.ME;
-//            maxSteps = 50000;
-//        }
-        
         for (String bias: p_conditions.getBiasVoltageArray())
         {
             for (String notch: p_conditions.getNotchPositionArray())

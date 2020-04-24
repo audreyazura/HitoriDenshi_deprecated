@@ -28,14 +28,28 @@
         <TextField styleClass="inputfield" fx:id="biasvoltages" text="0.8" prefWidth="300"/>
     </HBox>
     
+    <VBox>
+        <Label styleClass="windowtext" text="Abscissa unit:"/>
+        <HBox styleClass="hbox" prefWidth="500">
+            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="unitselec" />
+            <RadioButton toggleGroup="$unit" text="nm" />
+    </VBox>
+    
     <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Notch positions (nm, separated by ';'): "/>
-        <TextField styleClass="inputfield" fx:id="notches" text="1800" prefWidth="300"/>
+        <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): "/>
+        <TextField styleClass="inputfield" fx:id="notches" text="1.8" prefWidth="300"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Generation positions (nm, separated by ';'): "/>
-        <TextField styleClass="inputfield" fx:id="generationpositions" text="1000" prefWidth="300"/>
+        <Label styleClass="windowtext" text="Generation positions (separated by ';'): "/>
+        <TextField styleClass="inputfield" fx:id="generationpositions" text="1" prefWidth="300"/>
+    </HBox>
+    
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Sample width: "/>
+        <TextField styleClass="inputfield" fx:id="samplewidth" text="2.5"/>
+        <Label styleClass="windowtext" text="Buffer+window width: "/>
+        <TextField styleClass="inputfield" fx:id="bufferwindowwidth" text="0.5"/>
     </HBox>
     
     <VBox>
@@ -47,18 +61,10 @@
     </VBox>
     
     <VBox>
-        <Label styleClass="windowtext" text="Chose position of x = 0 nm:"/>
+        <Label styleClass="windowtext" text="Chose position of x = 0:"/>
         <HBox styleClass="hbox" prefWidth="500">
             <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="zeroatfront" />
             <RadioButton toggleGroup="$zeroselection" text="Back" selected="true" />
-        </HBox>
-    </VBox>
-    
-    <VBox>
-        <Label styleClass="windowtext" text="Abscissa unit:"/>
-        <HBox styleClass="hbox" prefWidth="500">
-            <RadioButton toggleGroup="$unit" text="μm" selected="true" fx:id="unitselec" />
-            <RadioButton toggleGroup="$unit" text="nm" />
         </HBox>
     </VBox>
     
@@ -71,13 +77,6 @@
     <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Lifetime (ns): "/>
         <TextField styleClass="inputfield" fx:id="lifetime" text="100" prefWidth="300"/>
-    </HBox>
-    
-    <HBox styleClass="hbox" prefWidth="500">
-        <Label styleClass="windowtext" text="Sample width (nm): "/>
-        <TextField styleClass="inputfield" fx:id="samplewidth" text="2500"/>
-        <Label styleClass="windowtext" text="Buffer+window width (nm): "/>
-        <TextField styleClass="inputfield" fx:id="bufferwindowwidth" text="500"/>
     </HBox>
     
     <HBox styleClass="hbox" prefWidth="500">

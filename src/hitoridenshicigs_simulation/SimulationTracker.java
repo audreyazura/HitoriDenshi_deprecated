@@ -70,7 +70,7 @@ public class SimulationTracker
         m_numberNotExited = 0;
     }
     
-    public void saveToFile (String p_notchPosition, double p_initialPosition, String p_biasVoltage)
+    public void saveToFile (String p_biasVoltage, String p_notchPosition, double p_initialPosition, double timeStep)
     {
         File accelerationFile = new File("");
         File exitFile = new File("");

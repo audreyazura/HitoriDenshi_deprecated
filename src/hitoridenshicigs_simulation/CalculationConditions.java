@@ -16,6 +16,8 @@
  */
 package hitoridenshicigs_simulation;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,41 +31,36 @@ import java.util.function.Consumer;
  * @author audreyazura
  */
 public class CalculationConditions
-{
-    //Boltzman constant in J/K
-    private final double KB = 1.380649e-23;
+{    
     //Temperature in K
-    private final double T = 300;
-    //electron mass in kg
-    private final double ME = 9.10938188e-31;
-    //elementary charge in C
-    private final double Q = 1.60217733e-19;
+    static final BigDecimal T = new BigDecimal("300");
     //calculation step, chosen as one each femtosecond
-    private final double dt = 1e-12;
-    
+    static final BigDecimal DT = new BigDecimal("1e-12");
+
     private final boolean m_isZeroAtFront;
     private final int m_maxSteps;
-    private final double m_bufferWindowSize;
-    private final double m_sampleSize;
-    private final double m_abscissaMultiplier;
+    private final BigDecimal m_bufferWindowSize;
+    private final BigDecimal m_sampleSize;
+    private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
     private final String[] m_notchPositions;
-    private final List<Double> m_startingPositons = new ArrayList<>();
-    private final List<Double> m_velocityList = new ArrayList<>();
-    private final Map<String, Double> m_particleParameters = new HashMap<>();
+    private final List<BigDecimal> m_startingPositons = new ArrayList<>();
+    private final List<BigDecimal> m_velocityList = new ArrayList<>();
+    private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, boolean p_isMicrometer, int p_numberSimulatedParticules, double p_effectiveMass, double p_lifeTime, double p_bufferWindowSize, double p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicalConstants.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
     {
-        m_isZeroAtFront = p_isZeroAtFront;
-        m_bufferWindowSize = p_bufferWindowSize;
-        m_sampleSize = p_sampleSize;
-        
-        double particleEffectiveMass = p_effectiveMass*ME;
-        m_particleParameters.put("mass", particleEffectiveMass);
-        //lifetime is given in nanosecond, and we have to convert it into step, with a step every dt
-        m_maxSteps = (int) StrictMath.round(StrictMath.floor(p_lifeTime*1e-9/dt));
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
-        m_abscissaMultiplier = p_isMicrometer ? 1e-6 : 1e-9;
+        m_abscissaUnit = p_prefix;
+        
+        m_isZeroAtFront = p_isZeroAtFront;
+        m_bufferWindowSize = p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier());
+        m_sampleSize = p_sampleSize.multiply(m_abscissaUnit.getMultiplier());
+        
+        BigDecimal particleEffectiveMass = p_effectiveMass.multiply(PhysicalConstants.ME);
+        m_particleParameters.put("mass", particleEffectiveMass);
+        //lifetime is given in nanosecond, and we have to convert it into step, with a step every DT
+        m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT)).intValue();
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         m_notchPositions = p_notchPositions.strip().split("\\h*;\\h*");
@@ -74,28 +71,29 @@ public class CalculationConditions
             @Override
             public void accept(String position)
             {
-                m_startingPositons.add(Double.valueOf(position));
+                //the starting positions are entered in nm, they have to be converted back to m
+                m_startingPositons.add((new BigDecimal(position)).multiply(m_abscissaUnit.getMultiplier()));
             }
         });
         
         if(p_isElectron)
         {
-            m_particleParameters.put("charge", -Q);
+            m_particleParameters.put("charge", PhysicalConstants.Q.negate());
         }
         else
         {
-            m_particleParameters.put("charge", -Q);
+            m_particleParameters.put("charge", PhysicalConstants.Q);
         }
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
-        double vth = StrictMath.sqrt(KB*T/particleEffectiveMass);
+        BigDecimal vth = (PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass)).sqrt(MathContext.UNLIMITED);
         Random randomGenerator = new Random(0);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
-            m_velocityList.add(randomGenerator.nextGaussian()*vth);
+            m_velocityList.add((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth));
         }
     }
     
@@ -109,22 +107,22 @@ public class CalculationConditions
         return m_maxSteps;
     }
     
-    public double getBufferAndWindowSize()
+    public BigDecimal getBufferAndWindowSize()
     {
         return m_bufferWindowSize;
     }
     
-    public double getSolarCellSize()
+    public BigDecimal getSolarCellSize()
     {
         return m_sampleSize;
     }
     
-    public double getAbscissaMultiplier()
+    public BigDecimal getAbscissaMultiplier()
     {
-        return m_abscissaMultiplier;
+        return m_abscissaUnit.getMultiplier();
     }
     
-    public HashMap<String, Double> getParticleParameters()
+    public HashMap<String, BigDecimal> getParticleParameters()
     {
         return new HashMap(m_particleParameters);
     }
@@ -139,12 +137,12 @@ public class CalculationConditions
         return m_notchPositions.clone();
     }
     
-    public ArrayList<Double> getStartingPositionList()
+    public ArrayList<BigDecimal> getStartingPositionList()
     {
         return new ArrayList(m_startingPositons);
     }
     
-    public ArrayList<Double> getVelocityList()
+    public ArrayList<BigDecimal> getVelocityList()
     {
         return new ArrayList(m_velocityList);
     }

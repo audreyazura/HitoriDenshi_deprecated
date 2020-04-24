@@ -60,7 +60,7 @@ public class CalculationConditions
         BigDecimal particleEffectiveMass = p_effectiveMass.multiply(PhysicalConstants.ME);
         m_particleParameters.put("mass", particleEffectiveMass);
         //lifetime is given in nanosecond, and we have to convert it into step, with a step every DT
-        m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT)).intValue();
+        m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT, MathContext.DECIMAL128)).intValue();
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         m_notchPositions = p_notchPositions.strip().split("\\h*;\\h*");
@@ -89,7 +89,7 @@ public class CalculationConditions
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
-        BigDecimal vth = (PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass)).sqrt(MathContext.UNLIMITED);
+        BigDecimal vth = (PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128);
         Random randomGenerator = new Random(0);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {

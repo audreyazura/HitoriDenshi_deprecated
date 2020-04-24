@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -35,16 +36,49 @@ import java.util.zip.DataFormatException;
  */
 class ContinuousFunction
 {
+    //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
+
     //do not truncate values here: the field is also defined outside the absorber. Only the absorber knows if a particle exited itself. A ContinuousFunction can only say if a given position is in its range.
-    private final Set<Double> m_abscissa;
-    private final Map<Double, Double> m_values;
+    private final Set<BigDecimal> m_abscissa;
+    private final Map<BigDecimal, BigDecimal> m_values;
     
-    static public ContinuousFunction createElectricField(File p_fileValues, double p_unitMultiplier) throws DifferentArraySizeException, DataFormatException, IOException, ArrayIndexOutOfBoundsException
+    static public ContinuousFunction createElectricField(File p_fileValues, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
        return new ContinuousFunction(p_fileValues, p_unitMultiplier, "eb", 23, new int[] {1,12});
     }
     
-    public ContinuousFunction (File p_fileValues, double p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
+    public ContinuousFunction (ContinuousFunction p_passedFunction)
+    {
+        m_abscissa = p_passedFunction.getAbscissa();
+        m_values = p_passedFunction.getValues();
+        
+    }
+    
+    public ContinuousFunction (TreeSet<BigDecimal> p_abscissa, HashMap<BigDecimal, BigDecimal> p_values)
+    {
+        m_abscissa = p_abscissa;
+        m_values = p_values;
+    }
+    
+    public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_frontEffectiveField, BigDecimal p_backEffectiveField)
+    {
+        m_abscissa = p_abscissa;
+        m_values = new HashMap<>();
+        
+        for (BigDecimal position: m_abscissa)
+        {
+            if (position.compareTo(p_notchPosition) < 0)
+            {
+                m_values.put(position, p_frontEffectiveField);
+            }
+            else if (position.compareTo(p_notchPosition) > 0)
+            {
+                m_values.put(position, p_backEffectiveField);
+            }
+        }
+    }
+    
+    private ContinuousFunction (File p_fileValues, BigDecimal p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
         m_abscissa = new TreeSet<>();
         m_values = new HashMap<>();
@@ -67,37 +101,53 @@ class ContinuousFunction
 	    if(cutSplit.length == p_ncolumn && numberRegex.matcher(cutSplit[0]).matches())
 	    {
 		//we put the abscissa in meter in order to do all calculations in SI
-                double currentAbscissa = Double.valueOf(cutSplit[p_columnToExtract[0]])*p_unitMultiplier;
+                BigDecimal currentAbscissa = (new BigDecimal(cutSplit[p_columnToExtract[0]])).multiply(p_unitMultiplier);
                 
                 if (!m_abscissa.contains(currentAbscissa))
                 {
                     m_abscissa.add(currentAbscissa);
-                    m_values.put(currentAbscissa, Double.valueOf(cutSplit[p_columnToExtract[1]]));
+                    m_values.put(currentAbscissa, new BigDecimal(cutSplit[p_columnToExtract[1]]));
                 }
 	    }
         }
     }
     
-    public ContinuousFunction (ContinuousFunction p_passedFunction)
-    {
-        m_abscissa = p_passedFunction.getAbscissa();
-        m_values = p_passedFunction.getValues();
-        
-    }
-    
-    public TreeSet getAbscissa()
+    public TreeSet<BigDecimal> getAbscissa()
     {
         return new TreeSet(m_abscissa);
     }
     
-    public HashMap getValues()
+    public HashMap<BigDecimal, BigDecimal> getValues()
     {
         return new HashMap(m_values);
     }
-            
-    public double getValueAtPosition(double position)
+    
+    public ContinuousFunction add (ContinuousFunction p_passedFunction)
     {
-        double value;
+        Set<BigDecimal> addedAbscissa = new TreeSet(m_abscissa);
+        Map<BigDecimal, BigDecimal> addedValues = new HashMap<>();
+        
+        if (m_abscissa.equals(p_passedFunction.getAbscissa()))
+        {
+            for (BigDecimal position: addedAbscissa)
+            {
+                addedValues.put(position, m_values.get(position).add(p_passedFunction.getValues().get(position)));
+            }
+        }
+        else
+        {
+            for (BigDecimal position: addedAbscissa)
+            {
+                addedValues.put(position, m_values.get(position).add(p_passedFunction.getValueAtPosition(position)));
+            }
+        }
+        
+        return new ContinuousFunction((TreeSet) addedAbscissa, (HashMap) addedValues);
+    }
+            
+    public BigDecimal getValueAtPosition(BigDecimal position)
+    {
+        BigDecimal value;
         
         if (isInRange(position))
         {
@@ -107,13 +157,13 @@ class ContinuousFunction
             }
             else
             {
-                double previousPosition = ((TreeSet<Double>) m_abscissa).lower(position);
-                double nextPosition = ((TreeSet<Double>) m_abscissa).higher(position);
+                BigDecimal previousPosition = ((TreeSet<BigDecimal>) m_abscissa).lower(position);
+                BigDecimal nextPosition = ((TreeSet<BigDecimal>) m_abscissa).higher(position);
                 
-                double interpolationSlope = (m_values.get(nextPosition) - m_values.get(previousPosition)) / (nextPosition - previousPosition);
-                double interpolationOffset = m_values.get(previousPosition) - interpolationSlope*previousPosition;
+                BigDecimal interpolationSlope = (m_values.get(nextPosition).subtract(m_values.get(previousPosition))).divide(nextPosition.subtract(previousPosition));
+                BigDecimal interpolationOffset = m_values.get(previousPosition).subtract(interpolationSlope.multiply(previousPosition));
                 
-                value = interpolationSlope*position + interpolationOffset;
+                value = interpolationSlope.multiply(position).add(interpolationOffset);
             }
         }
         else
@@ -124,8 +174,8 @@ class ContinuousFunction
         return value;
     }
     
-    private boolean isInRange(double position)
+    private boolean isInRange (BigDecimal position)
     {
-        return position >= ((TreeSet<Double>) m_abscissa).first() && position <= ((TreeSet<Double>) m_abscissa).last();
+        return position.compareTo(((TreeSet<BigDecimal>) m_abscissa).first()) >= 0 && position.compareTo(((TreeSet<BigDecimal>) m_abscissa).last()) <= 0;
     }
 }

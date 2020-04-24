@@ -74,7 +74,7 @@ public class HitoriDenshiCIGS_Simulation
                             currentTracker.logParticle(currentIndividual);
                         }
                         
-                        currentTracker.saveToFile(bias, notch, initialPosition, p_conditions.getTimeStep());
+                        currentTracker.saveToFile(bias, notch, initialPosition);
                     }
                 }
                 catch (DifferentArraySizeException ex)

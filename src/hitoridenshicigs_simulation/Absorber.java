@@ -18,6 +18,7 @@ package hitoridenshicigs_simulation;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.zip.DataFormatException;
 
 /**
@@ -29,8 +30,8 @@ public class Absorber
 {
     private final ContinuousFunction m_electricField;
     private final boolean m_zeroAtFront;
-    private final double m_frontPosition;
-    private final double m_backPosition;
+    private final BigDecimal m_frontPosition;
+    private final BigDecimal m_backPosition;
     
 //    public Absorber(File p_electricField, double p_unitMultiplier, boolean p_zeroAtFront, double p_bufferWindowSize, double p_sampleSize) throws DifferentArraySizeException, DataFormatException, IOException
 //    {
@@ -48,19 +49,19 @@ public class Absorber
 //        }
 //    }
     
-    public Absorber(File p_electricField, CalculationConditions p_conditions) throws DifferentArraySizeException, DataFormatException, IOException
+    public Absorber(File p_electricField, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
         m_electricField = ContinuousFunction.createElectricField(p_electricField, p_conditions.getAbscissaMultiplier());
         m_zeroAtFront = p_conditions.isZeroAtFront();
         if(m_zeroAtFront)
         {
-            m_frontPosition = 0;
-            m_backPosition = p_conditions.getSolarCellSize() - p_conditions.getBufferAndWindowSize();
+            m_frontPosition = new BigDecimal("0");
+            m_backPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
         }
         else
         {
-            m_frontPosition = p_conditions.getSolarCellSize() - p_conditions.getBufferAndWindowSize();
-            m_backPosition = 0;
+            m_frontPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
+            m_backPosition = new BigDecimal("0");
         }
     }
     
@@ -75,22 +76,22 @@ public class Absorber
         
         if(m_zeroAtFront)
         {
-            if (exited = (p_particle.getCurrentPosition() <= m_frontPosition))
+            if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) <= 0))
             {
                 p_particle.collectionState = Particle.CollectionPossibility.FRONT;
             }
-            else if (exited = (p_particle.getCurrentPosition() >= m_backPosition))
+            else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) >= 0))
             {
                 p_particle.collectionState = Particle.CollectionPossibility.BACK;
             }
         }
         else
         {
-            if (exited = (p_particle.getCurrentPosition() >= m_frontPosition))
+            if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) >= 0))
             {
                 p_particle.collectionState = Particle.CollectionPossibility.FRONT;
             }
-            else if (exited = (p_particle.getCurrentPosition() <= m_backPosition))
+            else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) <= 0))
             {
                 p_particle.collectionState = Particle.CollectionPossibility.BACK;
             }

@@ -16,6 +16,7 @@
  */
 package hitoridenshicigs_simulation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,17 +27,19 @@ import java.util.List;
  */
 public class Particle 
 {
-    private final double m_charge;
-    private final double m_masse;
-    private double m_position;
-    private double m_velocity;
-    private List<Double> m_trajectory = new ArrayList<>();
-    private List<Double> m_velocities = new ArrayList<>();
-    private List<Double> m_accelerations = new ArrayList<>();
+    //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
+    
+    private final BigDecimal m_charge;
+    private final BigDecimal m_masse;
+    private BigDecimal m_position;
+    private BigDecimal m_velocity;
+    private List<BigDecimal> m_trajectory = new ArrayList<>();
+    private List<BigDecimal> m_velocities = new ArrayList<>();
+    private List<BigDecimal> m_accelerations = new ArrayList<>();
     
     CollectionPossibility collectionState = CollectionPossibility.NOTCOLLECTED;
     
-    public Particle(double p_charge, double p_masse, double p_position, double p_velocity)
+    public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
         m_charge = p_charge;
         m_masse = p_masse;
@@ -47,7 +50,7 @@ public class Particle
         m_velocities.add(m_velocity);
     }
     
-    public Particle(HashMap<String, Double> p_parameters, double p_position, double p_velocity)
+    public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
     {
         m_charge = p_parameters.get("charge");
         m_masse = p_parameters.get("mass");
@@ -63,7 +66,7 @@ public class Particle
         
     }
     
-    public double getCurrentPosition()
+    public BigDecimal getCurrentPosition()
     {
         return m_position;
     }

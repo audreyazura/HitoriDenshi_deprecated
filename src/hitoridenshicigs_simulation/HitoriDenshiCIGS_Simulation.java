@@ -18,6 +18,7 @@ package hitoridenshicigs_simulation;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -28,7 +29,6 @@ import java.util.zip.DataFormatException;
  */
 public class HitoriDenshiCIGS_Simulation 
 {
-    
     public void startSimulation(String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
@@ -42,11 +42,11 @@ public class HitoriDenshiCIGS_Simulation
                     File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notch+"nm.eb");
                     final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions);
                     
-                    for (double initialPosition: p_conditions.getStartingPositionList())
+                    for (BigDecimal initialPosition: p_conditions.getStartingPositionList())
                     {
                         SimulationTracker currentTracker = new SimulationTracker();
                                 
-                        for (double velocity: p_conditions.getVelocityList())
+                        for (BigDecimal velocity: p_conditions.getVelocityList())
                         {
                             Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
                             
@@ -61,10 +61,6 @@ public class HitoriDenshiCIGS_Simulation
                         
                         currentTracker.saveToFile(bias, notch, initialPosition);
                     }
-                }
-                catch (DifferentArraySizeException ex)
-                {
-                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 catch (DataFormatException ex)
                 {

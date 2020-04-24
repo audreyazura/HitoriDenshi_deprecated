@@ -17,6 +17,7 @@
 package hitoridenshicigs_simulation;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,10 @@ public class SimulationTracker
         m_numberNotExited = 0;
     }
     
-    public void saveToFile (String p_biasVoltage, String p_notchPosition, double p_initialPosition)
+    public void saveToFile (String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition)
     {
+        String initialPosition = String.valueOf(p_initialPosition.intValue());
+        
         File accelerationFile = new File("");
         File exitFile = new File("");
         File meanFile = new File("");

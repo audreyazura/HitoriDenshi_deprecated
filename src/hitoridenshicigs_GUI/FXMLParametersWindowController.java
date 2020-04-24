@@ -21,6 +21,7 @@ import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
 import hitoridenshicigs_simulation.PhysicalConstants;
 import java.lang.IllegalArgumentException;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,8 +96,8 @@ public class FXMLParametersWindowController
             samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
             
-            double previousMultiplier = m_previouslySelectedUnit.getMultiplier();
-            double currentMultiplier = currentPrefix.getMultiplier();
+            BigDecimal previousMultiplier = m_previouslySelectedUnit.getMultiplier();
+            BigDecimal currentMultiplier = currentPrefix.getMultiplier();
 
             bufferwindowwidth.setText(changeEnteredNumberUnit(bufferwindowwidth.getText(), previousMultiplier, currentMultiplier));
             samplewidth.setText(changeEnteredNumberUnit(samplewidth.getText(), previousMultiplier, currentMultiplier));
@@ -196,10 +197,10 @@ public class FXMLParametersWindowController
         
         try
         {
-            double totalSampleWidth = Double.parseDouble(samplewidth.getText());
-            double bufferWindowSize = Double.parseDouble(bufferwindowwidth.getText());
-            double effectiveMassDouble = Double.parseDouble(effectivemass.getText());
-            double lifetimeDouble = Double.parseDouble(lifetime.getText());
+            BigDecimal totalSampleWidth = new BigDecimal(samplewidth.getText());
+            BigDecimal bufferWindowSize = new BigDecimal(bufferwindowwidth.getText());
+            BigDecimal effectiveMassDouble = new BigDecimal(effectivemass.getText());
+            BigDecimal lifetimeDouble = new BigDecimal(lifetime.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
             
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
@@ -235,7 +236,7 @@ public class FXMLParametersWindowController
         return unitSelected;
     }
     
-    private String changeEnteredNumberUnit (String p_numberEntered, double p_previousMultiplier, double p_newMultiplier)
+    private String changeEnteredNumberUnit (String p_numberEntered, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)
     {
         String conrrectedNumber = new String(p_numberEntered);
         
@@ -244,6 +245,6 @@ public class FXMLParametersWindowController
             conrrectedNumber = "0";
         }
         
-        return new String(String.format("%.4g", Double.parseDouble(conrrectedNumber)*p_previousMultiplier/p_newMultiplier));
+        return new String(String.format("%.4g", (new BigDecimal(conrrectedNumber)).multiply(p_previousMultiplier).divide(p_newMultiplier)));
     }
 }

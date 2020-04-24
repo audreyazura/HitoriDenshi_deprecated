@@ -95,17 +95,17 @@ class ContinuousFunction
 	String line;
 	while (((line = fieldFile.readLine()) != null))
 	{	    
-	    String[] cutSplit = line.strip().split("\t");
+	    String[] lineSplit = line.strip().split("\t");
 	    
-	    if(cutSplit.length == p_ncolumn && numberRegex.matcher(cutSplit[0]).matches())
+	    if(lineSplit.length == p_ncolumn && numberRegex.matcher(lineSplit[0]).matches())
 	    {
 		//we put the abscissa in meter in order to do all calculations in SI
-                BigDecimal currentAbscissa = (new BigDecimal(cutSplit[p_columnToExtract[0]])).multiply(p_unitMultiplier);
+                BigDecimal currentAbscissa = (new BigDecimal(lineSplit[p_columnToExtract[0]].strip())).multiply(p_unitMultiplier);
                 
                 if (!m_abscissa.contains(currentAbscissa))
                 {
                     m_abscissa.add(currentAbscissa);
-                    m_values.put(currentAbscissa, new BigDecimal(cutSplit[p_columnToExtract[1]]));
+                    m_values.put(currentAbscissa, new BigDecimal(lineSplit[p_columnToExtract[1]].strip()));
                 }
 	    }
         }

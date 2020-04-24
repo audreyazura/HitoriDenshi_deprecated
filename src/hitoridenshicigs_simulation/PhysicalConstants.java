@@ -17,6 +17,7 @@
 package hitoridenshicigs_simulation;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  *
@@ -32,6 +33,8 @@ public class PhysicalConstants
     static final public BigDecimal ME = new BigDecimal("9.10938188e-31");
     //elementary charge in C
     static final public BigDecimal Q = new BigDecimal("1.60217733e-19");
+    //definition of the electronVolt in J
+    static final public BigDecimal EV = new BigDecimal("1.602176634e-19");
     
     //contains the possible units multiplier
     static public enum UnitsPrefix

@@ -54,6 +54,9 @@ public class FXMLParametersWindowController
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
+    @FXML private TextField frontbangap;
+    @FXML private TextField notchbandgap;
+    @FXML private TextField backbangap;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton zeroatfront;
     @FXML private ChoiceBox unitselec;
@@ -200,12 +203,15 @@ public class FXMLParametersWindowController
             BigDecimal totalSampleWidth = new BigDecimal(samplewidth.getText());
             BigDecimal bufferWindowSize = new BigDecimal(bufferwindowwidth.getText());
             BigDecimal effectiveMassDouble = new BigDecimal(effectivemass.getText());
-            BigDecimal lifetimeDouble = new BigDecimal(lifetime.getText());
+            BigDecimal lifetimeNumber = new BigDecimal(lifetime.getText());
+            BigDecimal frontBangapNumber = new BigDecimal(frontbangap.getText());
+            BigDecimal notchBandgapNumber = new BigDecimal(notchbandgap.getText());
+            BigDecimal backBangapNumber = new BigDecimal(backbangap.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
             
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeDouble, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
+            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
             HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
             simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
         }

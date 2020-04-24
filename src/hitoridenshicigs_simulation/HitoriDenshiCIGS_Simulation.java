@@ -40,7 +40,7 @@ public class HitoriDenshiCIGS_Simulation
                 try
                 {
                     File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notch+"nm.eb");
-                    final Absorber currentAbsorber = new Absorber(electricFieldFile, p_conditions);
+                    final Absorber currentAbsorber = new Absorber(electricFieldFile, new BigDecimal(notch), p_conditions);
                     
                     for (BigDecimal initialPosition: p_conditions.getStartingPositionList())
                     {

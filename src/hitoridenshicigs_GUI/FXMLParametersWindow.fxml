@@ -59,6 +59,15 @@
         <TextField styleClass="inputfield" fx:id="bufferwindowwidth" text="0.5"/>
     </HBox>
     
+    <HBox styleClass="hbox" prefWidth="500">
+        <Label styleClass="windowtext" text="Front bandgap (eV): "/>
+        <TextField styleClass="inputfield" fx:id="frontbangap" text="1.3"/>
+        <Label styleClass="windowtext" text="Minimum bandgap (eV): "/>
+        <TextField styleClass="inputfield" fx:id="notchbandgap" text="1.2"/>
+        <Label styleClass="windowtext" text="Back bandgap (eV): "/>
+        <TextField styleClass="inputfield" fx:id="backbangap" text="1.3"/>
+    </HBox>
+    
     <VBox>
         <Label styleClass="windowtext" text="Chose the simulated particle:"/>
         <HBox styleClass="hbox" prefWidth="500">

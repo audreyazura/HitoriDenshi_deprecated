@@ -59,7 +59,7 @@ class ContinuousFunction
         m_values = p_values;
     }
     
-    public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_frontEffectiveField, BigDecimal p_backEffectiveField)
+    public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_effectiveField0toNotch, BigDecimal p_effectiveFieldNotchtoEnd)
     {
         m_abscissa = p_abscissa;
         m_values = new HashMap<>();
@@ -68,11 +68,11 @@ class ContinuousFunction
         {
             if (position.compareTo(p_notchPosition) < 0)
             {
-                m_values.put(position, p_frontEffectiveField);
+                m_values.put(position, p_effectiveField0toNotch);
             }
             else if (position.compareTo(p_notchPosition) > 0)
             {
-                m_values.put(position, p_backEffectiveField);
+                m_values.put(position, p_effectiveFieldNotchtoEnd);
             }
         }
     }

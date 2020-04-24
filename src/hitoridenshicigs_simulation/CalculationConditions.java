@@ -39,6 +39,8 @@ public class CalculationConditions
 
     private final boolean m_isZeroAtFront;
     private final int m_maxSteps;
+    
+    //All the following numbers have to be stocked with SI units
     private final BigDecimal m_bufferWindowSize;
     private final BigDecimal m_sampleSize;
     private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
@@ -47,8 +49,9 @@ public class CalculationConditions
     private final List<BigDecimal> m_startingPositons = new ArrayList<>();
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
+    private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicalConstants.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicalConstants.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
@@ -56,6 +59,10 @@ public class CalculationConditions
         m_isZeroAtFront = p_isZeroAtFront;
         m_bufferWindowSize = p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier());
         m_sampleSize = p_sampleSize.multiply(m_abscissaUnit.getMultiplier());
+        
+        m_bandgaps.put("front", p_frontBandgap.multiply(PhysicalConstants.EV));
+        m_bandgaps.put("notch", p_notchBandgap.multiply(PhysicalConstants.EV));
+        m_bandgaps.put("back", p_backBandgap.multiply(PhysicalConstants.EV));
         
         BigDecimal particleEffectiveMass = p_effectiveMass.multiply(PhysicalConstants.ME);
         m_particleParameters.put("mass", particleEffectiveMass);
@@ -125,6 +132,11 @@ public class CalculationConditions
     public HashMap<String, BigDecimal> getParticleParameters()
     {
         return new HashMap(m_particleParameters);
+    }
+    
+    public HashMap<String, BigDecimal> getBandgaps()
+    {
+        return new HashMap(m_bandgaps);
     }
     
     public String[] getBiasVoltageArray()

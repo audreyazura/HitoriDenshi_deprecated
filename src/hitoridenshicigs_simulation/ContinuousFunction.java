@@ -44,7 +44,7 @@ class ContinuousFunction
        return new ContinuousFunction(p_fileValues, p_unitMultiplier, "eb", 23, new int[] {1,12});
     }
     
-    private ContinuousFunction (File p_fileValues, double p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws DifferentArraySizeException, FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
+    public ContinuousFunction (File p_fileValues, double p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
         m_abscissa = new TreeSet<>();
         m_values = new HashMap<>();

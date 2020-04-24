@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -36,8 +37,6 @@ import java.util.zip.DataFormatException;
  */
 class ContinuousFunction
 {
-    //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
-
     //do not truncate values here: the field is also defined outside the absorber. Only the absorber knows if a particle exited itself. A ContinuousFunction can only say if a given position is in its range.
     private final Set<BigDecimal> m_abscissa;
     private final Map<BigDecimal, BigDecimal> m_values;
@@ -160,7 +159,7 @@ class ContinuousFunction
                 BigDecimal previousPosition = ((TreeSet<BigDecimal>) m_abscissa).lower(position);
                 BigDecimal nextPosition = ((TreeSet<BigDecimal>) m_abscissa).higher(position);
                 
-                BigDecimal interpolationSlope = (m_values.get(nextPosition).subtract(m_values.get(previousPosition))).divide(nextPosition.subtract(previousPosition));
+                BigDecimal interpolationSlope = (m_values.get(nextPosition).subtract(m_values.get(previousPosition))).divide(nextPosition.subtract(previousPosition), MathContext.DECIMAL128);
                 BigDecimal interpolationOffset = m_values.get(previousPosition).subtract(interpolationSlope.multiply(previousPosition));
                 
                 value = interpolationSlope.multiply(position).add(interpolationOffset);

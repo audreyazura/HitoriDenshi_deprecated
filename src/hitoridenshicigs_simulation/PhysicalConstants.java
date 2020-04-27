@@ -39,9 +39,9 @@ public class PhysicalConstants
     //contains the possible units multiplier
     static public enum UnitsPrefix
     {
-        NANO ("1e-9"),
-        MICRO ("1e-6"),
-        BASE ("1.0");
+        NANO ("1e-9"),  //[SI unit]/[NANO unit]
+        MICRO ("1e-6"), //[SI unit]/[MICRO unit]
+        BASE ("1.0");   //[SI unit]/[SI unit]
         
         private final BigDecimal m_multiplier;
 

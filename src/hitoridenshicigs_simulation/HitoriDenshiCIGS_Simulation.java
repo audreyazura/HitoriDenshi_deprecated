@@ -55,7 +55,7 @@ public class HitoriDenshiCIGS_Simulation
                             int numberOfSteps = 0;
                             while (!currentIndividual.isCollected() && numberOfSteps < p_conditions.getMaxSteps())
                             {
-                                currentIndividual.applyExteriorFields(currentAbsorber);
+                                currentIndividual.applyExteriorFields(currentAbsorber, CalculationConditions.DT);
                             }
                             
                             currentTracker.logParticle(currentIndividual);

@@ -32,8 +32,8 @@ public class Particle
     private BigDecimal m_position;
     private BigDecimal m_velocity;
     private List<BigDecimal> m_trajectory = new ArrayList<>();
-    private List<BigDecimal> m_velocities = new ArrayList<>();
-    private List<BigDecimal> m_accelerations = new ArrayList<>();
+    private List<BigDecimal> m_velocityList = new ArrayList<>();
+    private List<BigDecimal> m_accelerationList = new ArrayList<>();
     
     CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
     
@@ -45,7 +45,7 @@ public class Particle
         m_velocity = p_velocity;
         
         m_trajectory.add(m_position);
-        m_velocities.add(m_velocity);
+        m_velocityList.add(m_velocity);
     }
     
     public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
@@ -56,13 +56,26 @@ public class Particle
         m_velocity = p_velocity;
         
         m_trajectory.add(m_position);
-        m_velocities.add(m_velocity);
+        m_velocityList.add(m_velocity);
     }
     
-    public void applyExteriorFields(Absorber p_absorber)
+    public void applyExteriorFields(Absorber p_absorber, BigDecimal p_timeStep)
     {
-        ContinuousFunction internalElectricField = p_absorber.getElectricField();
-        //operating
+        BigDecimal electricFieldValueAtPosition = p_absorber.getElectricField().getValueAtPosition(m_position);
+        
+        //calculating acceleration
+        BigDecimal currentAcceleration = m_charge.multiply(electricFieldValueAtPosition).divide(m_masse);
+        m_accelerationList.add(currentAcceleration);
+        
+        //calculating new velocity and a mean velocity that will be used to update the position
+        BigDecimal newVelocity = m_velocity.add(currentAcceleration.multiply(p_timeStep));
+        BigDecimal meanVelocity = (m_velocity.add(newVelocity)).divide(new BigDecimal("2"));
+        m_velocity = newVelocity;
+        m_velocityList.add(m_velocity);
+        
+        //calculating new position
+        m_position = m_position.add(meanVelocity.multiply(p_timeStep));
+        m_trajectory.add(m_position);
         
         m_collectionState = p_absorber.giveCollection(m_position);
     }

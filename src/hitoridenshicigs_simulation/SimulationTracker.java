@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class SimulationTracker
 {
-    private boolean m_firstLog;
-    
     private int m_numberFrontExit;
     private int m_numberBackExit;
     private int m_numberNotExited;
@@ -65,8 +63,7 @@ public class SimulationTracker
     
     public SimulationTracker()
     {
-        m_firstLog = true;
-        m_numberBackExit = 0;
+       m_numberBackExit = 0;
         m_numberFrontExit = 0;
         m_numberNotExited = 0;
     }
@@ -84,11 +81,11 @@ public class SimulationTracker
         File backFastFile = new File("");
         File backSlowFile = new File("");
         File backMeanFile = new File("");
-    }
+    }   
     
-    private void updateExit (Particle p_particle)
+    public void logParticle (ParticleTracker p_tracker)
     {
-        switch (p_particle.collectionState)
+        switch (p_tracker.getCollectionState())
         {
             case FRONT:
                 m_numberFrontExit += 1;
@@ -97,17 +94,10 @@ public class SimulationTracker
             case NOTCOLLECTED:
                 m_numberNotExited += 1;            
         }
-    }
-    
-    public void logParticle (Particle p_particle)
-    {
-        updateExit(p_particle);
         
-        if (m_firstLog)
+        if (m_meanTrajectory.size() == 0)
         {
             //log everything
-            
-            m_firstLog = false;
         }
         else
         {

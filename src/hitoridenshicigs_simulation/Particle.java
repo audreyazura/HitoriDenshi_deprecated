@@ -16,10 +16,9 @@
  */
 package hitoridenshicigs_simulation;
 
+import hitoridenshicigs_simulation.ParticleTracker.CollectionState;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  *
@@ -33,11 +32,8 @@ public class Particle
     private final BigDecimal m_masse;
     private BigDecimal m_position;
     private BigDecimal m_velocity;
-    private List<BigDecimal> m_trajectory = new ArrayList<>();
-    private List<BigDecimal> m_velocities = new ArrayList<>();
-    private List<BigDecimal> m_accelerations = new ArrayList<>();
-    
-    CollectionPossibility collectionState = CollectionPossibility.NOTCOLLECTED;
+    private BigDecimal m_acceleration = new BigDecimal("0");
+    private ParticleTracker m_tracker;
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
@@ -45,9 +41,7 @@ public class Particle
         m_masse = p_masse;
         m_position = p_position;
         m_velocity = p_velocity;
-        
-        m_trajectory.add(m_position);
-        m_velocities.add(m_velocity);
+        m_tracker = new ParticleTracker(m_position, m_velocity, m_acceleration);
     }
     
     public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
@@ -56,14 +50,31 @@ public class Particle
         m_masse = p_parameters.get("mass");
         m_position = p_position;
         m_velocity = p_velocity;
-        
-        m_trajectory.add(m_position);
-        m_velocities.add(m_velocity);
+        m_tracker = new ParticleTracker(m_position, m_velocity, m_acceleration);
     }
     
-    public void applyElectricField(ContinuousFunction p_electricField)
+    public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity, BigDecimal p_electricFieldAtPosition)
     {
+        m_charge = p_parameters.get("charge");
+        m_masse = p_parameters.get("mass");
+        m_position = p_position;
+        m_velocity = p_velocity;
+        m_acceleration = getInitialAcceleration(p_electricFieldAtPosition);
+        m_tracker = new ParticleTracker(m_position, m_velocity, m_acceleration);
+    }
+    
+    private BigDecimal getInitialAcceleration(BigDecimal p_exteriorElectricFieldValue)
+    {
+        return m_charge.multiply(p_exteriorElectricFieldValue).divide(m_masse);
+    }
+    
+    public void update(BigDecimal p_newPosition, BigDecimal p_newVelocity, BigDecimal p_newAcceleration, CollectionState p_collection)
+    {
+        m_position = p_newPosition;
+        m_velocity = p_newVelocity;
+        m_acceleration = p_newAcceleration;
         
+        m_tracker.update(m_position, m_velocity, m_acceleration, p_collection);
     }
     
     public BigDecimal getCurrentPosition()
@@ -71,8 +82,18 @@ public class Particle
         return m_position;
     }
     
-    public enum CollectionPossibility
+    public BigDecimal getCurrentVelocity()
     {
-        BACK, FRONT, NOTCOLLECTED
+        return m_velocity;
+    }
+    
+    public BigDecimal getCurrentAcceleration()
+    {
+        return m_acceleration;
+    }
+    
+    public ParticleTracker getTracker()
+    {
+        return new ParticleTracker(m_tracker);
     }
 }

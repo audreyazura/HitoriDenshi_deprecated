@@ -16,6 +16,7 @@
  */
 package hitoridenshicigs_simulation;
 
+import hitoridenshicigs_simulation.ParticleTracker.CollectionState;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -90,33 +91,33 @@ public class Absorber
         return new ContinuousFunction(m_electricField);
     }
     
-    public boolean hasExited(Particle p_particle)
+    public CollectionState giveCollection (BigDecimal p_position)
     {
-        boolean exited = false;
+        CollectionState collection = CollectionState.NOTCOLLECTED;
         
         if(m_zeroAtFront)
         {
-            if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) <= 0))
+            if (p_position.compareTo(m_frontPosition) <= 0)
             {
-                p_particle.collectionState = Particle.CollectionPossibility.FRONT;
+                collection = CollectionState.FRONT;
             }
-            else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) >= 0))
+            else if (p_position.compareTo(m_backPosition) >= 0)
             {
-                p_particle.collectionState = Particle.CollectionPossibility.BACK;
+                collection = CollectionState.BACK;
             }
         }
         else
         {
-            if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) >= 0))
+            if (p_position.compareTo(m_frontPosition) >= 0)
             {
-                p_particle.collectionState = Particle.CollectionPossibility.FRONT;
+                collection = CollectionState.FRONT;
             }
-            else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) <= 0))
+            else if (p_position.compareTo(m_backPosition) <= 0)
             {
-                p_particle.collectionState = Particle.CollectionPossibility.BACK;
+                collection = CollectionState.BACK;
             }
         }
         
-        return exited;
+        return collection;
     }
 }

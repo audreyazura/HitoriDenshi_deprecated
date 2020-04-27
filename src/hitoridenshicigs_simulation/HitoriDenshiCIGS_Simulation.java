@@ -50,10 +50,11 @@ public class HitoriDenshiCIGS_Simulation
                                 
                         for (BigDecimal velocity: p_conditions.getVelocityList())
                         {
-                            Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
+                            BigDecimal startingElectricFieldValue = currentAbsorber.getElectricField().getValueAtPosition(notch);
+                            Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity, startingElectricFieldValue);
                             
                             int numberOfSteps = 0;
-                            while (!currentAbsorber.hasExited(currentIndividual) && numberOfSteps < p_conditions.getMaxSteps())
+                            while (!currentIndividual.getTracker().isCollected() && numberOfSteps < p_conditions.getMaxSteps())
                             {
                                 currentIndividual.applyElectricField(currentAbsorber.getElectricField());
                             }

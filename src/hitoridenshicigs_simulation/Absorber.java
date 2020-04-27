@@ -98,22 +98,22 @@ public class Absorber
         {
             if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) <= 0))
             {
-                p_particle.collectionState = Particle.CollectionPossibility.FRONT;
+                p_particle.collectionState = Particle.CollectionState.FRONT;
             }
             else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) >= 0))
             {
-                p_particle.collectionState = Particle.CollectionPossibility.BACK;
+                p_particle.collectionState = Particle.CollectionState.BACK;
             }
         }
         else
         {
             if (exited = (p_particle.getCurrentPosition().compareTo(m_frontPosition) >= 0))
             {
-                p_particle.collectionState = Particle.CollectionPossibility.FRONT;
+                p_particle.collectionState = Particle.CollectionState.FRONT;
             }
             else if (exited = (p_particle.getCurrentPosition().compareTo(m_backPosition) <= 0))
             {
-                p_particle.collectionState = Particle.CollectionPossibility.BACK;
+                p_particle.collectionState = Particle.CollectionState.BACK;
             }
         }
         

@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class Particle 
 {
-    //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
-    
     private final BigDecimal m_charge;
     private final BigDecimal m_masse;
     private BigDecimal m_position;
@@ -37,7 +35,7 @@ public class Particle
     private List<BigDecimal> m_velocities = new ArrayList<>();
     private List<BigDecimal> m_accelerations = new ArrayList<>();
     
-    CollectionPossibility collectionState = CollectionPossibility.NOTCOLLECTED;
+    CollectionState collectionState = CollectionState.NOTCOLLECTED;
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
@@ -71,7 +69,7 @@ public class Particle
         return m_position;
     }
     
-    public enum CollectionPossibility
+    public enum CollectionState
     {
         BACK, FRONT, NOTCOLLECTED
     }

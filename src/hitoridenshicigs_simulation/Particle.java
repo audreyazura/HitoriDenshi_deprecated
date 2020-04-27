@@ -59,9 +59,17 @@ public class Particle
         m_velocities.add(m_velocity);
     }
     
-    public void applyElectricField(ContinuousFunction p_electricField)
+    public void applyExteriorFields(Absorber p_absorber)
     {
+        ContinuousFunction internalElectricField = p_absorber.getElectricField();
+        //operating
         
+        m_collectionState = p_absorber.giveCollection(m_position);
+    }
+    
+    public boolean isCollected()
+    {
+        return m_collectionState != CollectionState.NOTCOLLECTED;
     }
     
     public BigDecimal getCurrentPosition()

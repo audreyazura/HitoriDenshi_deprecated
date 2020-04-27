@@ -53,9 +53,9 @@ public class HitoriDenshiCIGS_Simulation
                             Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
                             
                             int numberOfSteps = 0;
-                            while (!currentAbsorber.hasExited(currentIndividual) && numberOfSteps < p_conditions.getMaxSteps())
+                            while (!currentIndividual.isCollected() && numberOfSteps < p_conditions.getMaxSteps())
                             {
-                                currentIndividual.applyElectricField(currentAbsorber.getElectricField());
+                                currentIndividual.applyExteriorFields(currentAbsorber);
                             }
                             
                             currentTracker.logParticle(currentIndividual);

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -46,9 +47,10 @@ public class HitoriDenshiCIGS_Simulation
                     
                     for (BigDecimal initialPosition: p_conditions.getStartingPositionList())
                     {
-                        SimulationTracker currentTracker = new SimulationTracker();
+                        List<BigDecimal> velocities = p_conditions.getVelocityList();
+                        SimulationTracker currentTracker = new SimulationTracker(velocities.size());
                                 
-                        for (BigDecimal velocity: p_conditions.getVelocityList())
+                        for (BigDecimal velocity: velocities)
                         {
                             Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
                             

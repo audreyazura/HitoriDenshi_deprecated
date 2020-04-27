@@ -61,10 +61,9 @@ class ContinuousFunction
     
     public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_effectiveField0toNotch, BigDecimal p_effectiveFieldNotchtoEnd)
     {
-        m_abscissa = p_abscissa;
         m_values = new HashMap<>();
         
-        for (BigDecimal position: m_abscissa)
+        for (BigDecimal position: p_abscissa)
         {
             if (position.compareTo(p_notchPosition) < 0)
             {
@@ -75,6 +74,8 @@ class ContinuousFunction
                 m_values.put(position, p_effectiveFieldNotchtoEnd);
             }
         }
+        
+        m_abscissa = new TreeSet(m_values.keySet());
     }
     
     private ContinuousFunction (File p_fileValues, BigDecimal p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException

@@ -17,6 +17,7 @@
 package hitoridenshicigs_simulation;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class Particle
     private List<BigDecimal> m_velocityList = new ArrayList<>();
     private List<BigDecimal> m_accelerationList = new ArrayList<>();
     
-    CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
+    private CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
@@ -64,12 +65,12 @@ public class Particle
         BigDecimal electricFieldValueAtPosition = p_absorber.getElectricField().getValueAtPosition(m_position);
         
         //calculating acceleration
-        BigDecimal currentAcceleration = m_charge.multiply(electricFieldValueAtPosition).divide(m_masse);
+        BigDecimal currentAcceleration = m_charge.multiply(electricFieldValueAtPosition).divide(m_masse, MathContext.DECIMAL128);
         m_accelerationList.add(currentAcceleration);
         
         //calculating new velocity and a mean velocity that will be used to update the position
         BigDecimal newVelocity = m_velocity.add(currentAcceleration.multiply(p_timeStep));
-        BigDecimal meanVelocity = (m_velocity.add(newVelocity)).divide(new BigDecimal("2"));
+        BigDecimal meanVelocity = (m_velocity.add(newVelocity)).divide(new BigDecimal("2", MathContext.DECIMAL128));
         m_velocity = newVelocity;
         m_velocityList.add(m_velocity);
         
@@ -88,6 +89,26 @@ public class Particle
     public BigDecimal getCurrentPosition()
     {
         return m_position;
+    }
+    
+    public ArrayList<BigDecimal> getTrajectory()
+    {
+        return new ArrayList(m_trajectory);
+    }
+    
+    public ArrayList<BigDecimal> getVelocityList()
+    {
+        return new ArrayList(m_velocityList);
+    }
+    
+    public ArrayList<BigDecimal> getAccelerationList()
+    {
+        return new ArrayList(m_accelerationList);
+    }
+    
+    public CollectionState getCollection ()
+    {
+        return m_collectionState;
     }
     
     public enum CollectionState

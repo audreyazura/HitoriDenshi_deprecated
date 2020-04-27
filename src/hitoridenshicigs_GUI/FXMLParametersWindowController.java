@@ -221,7 +221,8 @@ public class FXMLParametersWindowController
         }
         catch (NullPointerException ex)
         {
-            System.err.println("Verify that each field is properly filled.");
+//            System.err.println("Verify that each field is properly filled.");
+            ex.printStackTrace();
         }
     }
     

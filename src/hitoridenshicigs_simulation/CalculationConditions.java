@@ -114,6 +114,7 @@ public class CalculationConditions
         return m_maxSteps;
     }
     
+    //no need to return copy of BigDecimal because it is immutable
     public BigDecimal getBufferAndWindowSize()
     {
         return m_bufferWindowSize;

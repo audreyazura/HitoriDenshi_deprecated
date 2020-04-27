@@ -45,8 +45,8 @@ public class CalculationConditions
     private final BigDecimal m_sampleSize;
     private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
-    private final List<BigDecimal> m_notchPositions = new ArrayList<>();
-    private final List<BigDecimal> m_startingPositons = new ArrayList<>();
+    private final List<BigDecimal> m_notchPositions;
+    private final List<BigDecimal> m_startingPositons;
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
@@ -71,27 +71,8 @@ public class CalculationConditions
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         
-        //splitting the notch position string as above, and converting each element to BigDecimal to add them to m_notchPositions
-        Arrays.asList(p_notchPositions.strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
-        {
-            @Override
-            public void accept(String position)
-            {
-                //the starting positions are entered in nm, they have to be converted back to m
-                m_notchPositions.add((new BigDecimal(position)).multiply(m_abscissaUnit.getMultiplier()));
-            }
-        });
-        
-        //doing the same to the starting positions string
-        Arrays.asList(p_startingPositions.strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
-        {
-            @Override
-            public void accept(String position)
-            {
-                //the starting positions are entered in nm, they have to be converted back to m
-                m_startingPositons.add((new BigDecimal(position)).multiply(m_abscissaUnit.getMultiplier()));
-            }
-        });
+        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, m_abscissaUnit.getMultiplier());
+        m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, m_abscissaUnit.getMultiplier());
         
         if(p_isElectron)
         {
@@ -112,6 +93,24 @@ public class CalculationConditions
         {
             m_velocityList.add((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth));
         }
+    }
+    
+    //splits the passed string and converts each element to BigDecimal to before returning the list created this way
+    private ArrayList<BigDecimal> getBigDecimalArrayFromString(String p_values, BigDecimal p_multiplier)
+    {
+        List<BigDecimal> returnList = new ArrayList<>();
+        
+        Arrays.asList(p_values.strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
+        {
+            @Override
+            public void accept(String position)
+            {
+                //the starting positions are entered in nm, they have to be converted back to m
+                returnList.add((new BigDecimal(position)).multiply(p_multiplier));
+            }
+        });
+        
+        return (ArrayList<BigDecimal>) returnList;
     }
     
     public boolean isZeroAtFront()

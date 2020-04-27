@@ -35,7 +35,7 @@ public class Particle
     private List<BigDecimal> m_velocities = new ArrayList<>();
     private List<BigDecimal> m_accelerations = new ArrayList<>();
     
-    CollectionState collectionState = CollectionState.NOTCOLLECTED;
+    CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {

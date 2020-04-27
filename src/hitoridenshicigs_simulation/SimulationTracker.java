@@ -88,7 +88,7 @@ public class SimulationTracker
     
     private void updateExit (Particle p_particle)
     {
-        switch (p_particle.collectionState)
+        switch (p_particle.m_collectionState)
         {
             case FRONT:
                 m_numberFrontExit += 1;

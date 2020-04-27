@@ -45,7 +45,7 @@ public class CalculationConditions
     private final BigDecimal m_sampleSize;
     private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
-    private final String[] m_notchPositions;
+    private final List<BigDecimal> m_notchPositions = new ArrayList<>();
     private final List<BigDecimal> m_startingPositons = new ArrayList<>();
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
@@ -70,9 +70,19 @@ public class CalculationConditions
         m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT, MathContext.DECIMAL128)).intValue();
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
-        m_notchPositions = p_notchPositions.strip().split("\\h*;\\h*");
         
-        //splitting the starting position string as above, and converting each element to double to add them to m_startingPositions
+        //splitting the notch position string as above, and converting each element to BigDecimal to add them to m_notchPositions
+        Arrays.asList(p_notchPositions.strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
+        {
+            @Override
+            public void accept(String position)
+            {
+                //the starting positions are entered in nm, they have to be converted back to m
+                m_notchPositions.add((new BigDecimal(position)).multiply(m_abscissaUnit.getMultiplier()));
+            }
+        });
+        
+        //doing the same to the starting positions string
         Arrays.asList(p_startingPositions.strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
         {
             @Override
@@ -145,9 +155,9 @@ public class CalculationConditions
         return m_biasVoltages.clone();
     }
     
-    public String[] getNotchPositionArray()
+    public ArrayList<BigDecimal> getNotchPositionArray()
     {
-        return m_notchPositions.clone();
+        return new ArrayList(m_notchPositions);
     }
     
     public ArrayList<BigDecimal> getStartingPositionList()

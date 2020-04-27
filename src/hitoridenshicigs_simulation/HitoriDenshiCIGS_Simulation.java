@@ -19,6 +19,7 @@ package hitoridenshicigs_simulation;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -35,12 +36,13 @@ public class HitoriDenshiCIGS_Simulation
         
         for (String bias: p_conditions.getBiasVoltageArray())
         {
-            for (String notch: p_conditions.getNotchPositionArray())
+            for (BigDecimal notch: p_conditions.getNotchPositionArray())
             {
                 try
                 {
-                    File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notch+"nm.eb");
-                    final Absorber currentAbsorber = new Absorber(electricFieldFile, new BigDecimal(notch), p_conditions);
+                    String notchNanometer = String.valueOf((notch.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier())).intValue());
+                    File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notchNanometer+"nm.eb");
+                    final Absorber currentAbsorber = new Absorber(electricFieldFile, notch, p_conditions);
                     
                     for (BigDecimal initialPosition: p_conditions.getStartingPositionList())
                     {
@@ -59,7 +61,7 @@ public class HitoriDenshiCIGS_Simulation
                             currentTracker.logParticle(currentIndividual);
                         }
                         
-                        currentTracker.saveToFile(bias, notch, initialPosition);
+                        currentTracker.saveToFile(bias, notchNanometer, initialPosition);
                     }
                 }
                 catch (DataFormatException ex)

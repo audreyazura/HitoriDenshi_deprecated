@@ -16,8 +16,13 @@
  */
 package hitoridenshicigs_simulation;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,9 +76,11 @@ public class SimulationTracker
         m_numberNotExited = 0;
     }
     
-    private void addMean (ListType p_type, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
+    synchronized private void addMean (ListType p_type, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
     {
-        List<BigDecimal> trackerTrajectoryArray, trackerVelocityArray, trackerAccelerationArray;
+        List<BigDecimal> trackerTrajectoryArray = new ArrayList<BigDecimal>();
+        List<BigDecimal> trackerVelocityArray = new ArrayList<BigDecimal>();
+        List<BigDecimal> trackerAccelerationArray = new ArrayList<BigDecimal>();
         
         switch(p_type)
         {
@@ -92,59 +99,97 @@ public class SimulationTracker
                 trackerVelocityArray = m_meanBackVelocity;
                 trackerAccelerationArray = m_meanBackAcceleration;
                 break;
-            default:
-                trackerTrajectoryArray = new ArrayList<BigDecimal>();
-                trackerVelocityArray = new ArrayList<BigDecimal>();
-                trackerAccelerationArray = new ArrayList<BigDecimal>();
         }
         
         int trackerArraySize = trackerTrajectoryArray.size(); 
         int particleArraySize = p_particleTrajectoryArray.size();
+        int shortestAcceleration = Math.min(trackerAccelerationArray.size(), p_particleAccelerationArray.size());
         
-        if (trackerArraySize <= particleArraySize)
+        for(int i = 0 ; i < particleArraySize ; i += 1)
         {
-            for(int i = 0 ; i < particleArraySize ; i += 1)
+            if (i < trackerArraySize)
             {
-                if (i < trackerArraySize)
+                trackerTrajectoryArray.set(i, trackerTrajectoryArray.get(i).add(p_particleTrajectoryArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
+                trackerVelocityArray.set(i, trackerVelocityArray.get(i).add(p_particleVelocityArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
+                if (i < shortestAcceleration)
                 {
-                    trackerTrajectoryArray.set(i, trackerTrajectoryArray.get(i).add(p_particleTrajectoryArray.get(i).divide(m_numberParticle)));
-                    trackerVelocityArray.set(i, trackerVelocityArray.get(i).add(p_particleVelocityArray.get(i).divide(m_numberParticle)));
-                    trackerAccelerationArray.set(i, trackerAccelerationArray.get(i).add(p_particleAccelerationArray.get(i).divide(m_numberParticle)));
+                    trackerAccelerationArray.set(i, trackerAccelerationArray.get(i).add(p_particleAccelerationArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
                 }
-                else
+            }
+            else
+            {
+                trackerTrajectoryArray.add(p_particleTrajectoryArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
+                trackerVelocityArray.add(p_particleVelocityArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
+                if (i < particleArraySize -1)
                 {
-                    trackerTrajectoryArray.add(p_particleTrajectoryArray.get(i).divide(m_numberParticle));
-                    trackerVelocityArray.add(p_particleVelocityArray.get(i).divide(m_numberParticle));
-                    
-                    if (i < particleArraySize -1)
-                    {
-                        trackerAccelerationArray.add(p_particleAccelerationArray.get(i).divide(m_numberParticle));
-                    }
+                    trackerAccelerationArray.add(p_particleAccelerationArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
                 }
             }
         }
-        else
+    }
+    
+    private void writeFile(ListTypeToWrite p_listType, BufferedWriter p_writer, PhysicalConstants.UnitsPrefix p_prefix) throws IOException
+    {
+        BigDecimal multiplier = p_prefix.getMultiplier();
+        String toBeWritten = new String();
+        List<BigDecimal> trajectoryToWrite;
+        List<BigDecimal> velocitiesToWrite;
+        List<BigDecimal> accelerationsToWrite;
+        
+        switch(p_listType)
         {
-            for(int i = 0 ; i < trackerArraySize ; i += 1)
-            {
-                if (i < particleArraySize)
-                {
-                    trackerTrajectoryArray.set(i, trackerTrajectoryArray.get(i).add(p_particleTrajectoryArray.get(i).divide(m_numberParticle)));
-                    trackerVelocityArray.set(i, trackerVelocityArray.get(i).add(p_particleVelocityArray.get(i).divide(m_numberParticle)));
-                    trackerAccelerationArray.set(i, trackerAccelerationArray.get(i).add(p_particleAccelerationArray.get(i).divide(m_numberParticle)));
-                }
-                else
-                {
-                    trackerTrajectoryArray.set(i, trackerTrajectoryArray.get(i));
-                    trackerVelocityArray.set(i, trackerVelocityArray.get(i));
-                    
-                    if (i < trackerArraySize -1)
-                    {
-                        trackerAccelerationArray.set(i, trackerAccelerationArray.get(i));
-                    }
-                }
-            }
+            case GENERALMEAN:
+                trajectoryToWrite = new ArrayList(m_meanTrajectory);
+                velocitiesToWrite = new ArrayList(m_meanVelocity);
+                accelerationsToWrite = new ArrayList(m_meanAcceleration);
+                break;
+            case FRONTMEAN:
+                trajectoryToWrite = new ArrayList(m_meanFrontTrajectory);
+                velocitiesToWrite = new ArrayList(m_meanFrontVelocity);
+                accelerationsToWrite = new ArrayList(m_meanFrontAcceleration);
+                break;
+            case FRONTFAST:
+                trajectoryToWrite = new ArrayList(m_fastestFrontTrajectory);
+                velocitiesToWrite = new ArrayList(m_fastestFrontVelocity);
+                accelerationsToWrite = new ArrayList(m_fastestFrontAcceleration);
+                break;
+            case FRONTSLOW:
+                trajectoryToWrite = new ArrayList(m_slowestFrontTrajectory);
+                velocitiesToWrite = new ArrayList(m_slowestFrontVelocity);
+                accelerationsToWrite = new ArrayList(m_slowestFrontAcceleration);
+                break;
+            case BACKMEAN:
+                trajectoryToWrite = new ArrayList(m_meanBackTrajectory);
+                velocitiesToWrite = new ArrayList(m_meanBackVelocity);
+                accelerationsToWrite = new ArrayList(m_meanBackAcceleration);
+                break;
+            case BACKFAST:
+                trajectoryToWrite = new ArrayList(m_fastestBackTrajectory);
+                velocitiesToWrite = new ArrayList(m_fastestBackVelocity);
+                accelerationsToWrite = new ArrayList(m_fastestBackAcceleration);
+                break;
+            case BACKSLOW:
+                trajectoryToWrite = new ArrayList(m_slowestBackTrajectory);
+                velocitiesToWrite = new ArrayList(m_slowestBackVelocity);
+                accelerationsToWrite = new ArrayList(m_slowestBackAcceleration);
+                break;
+            default:
+                trajectoryToWrite = new ArrayList();
+                velocitiesToWrite = new ArrayList();
+                accelerationsToWrite = new ArrayList();
+                break;
         }
+        
+        p_writer.write("Time (ns)\tPosition ("+p_prefix.getPrefix()+"m)\tVelocity (m/s)\tAcceleration (m²/s)");
+        for (int i = 0 ; i < trajectoryToWrite.size() ; i++)
+        {
+            p_writer.newLine();
+            toBeWritten = CalculationConditions.DT.multiply(new BigDecimal(i))+"\t"+trajectoryToWrite.get(i).divide(multiplier, MathContext.DECIMAL32)+"\t"+velocitiesToWrite.get(i).round(MathContext.DECIMAL32);
+            toBeWritten += i < accelerationsToWrite.size() ? "\t"+accelerationsToWrite.get(i).round(MathContext.DECIMAL32):"";
+            p_writer.write(toBeWritten);
+        }
+        p_writer.flush();
+        p_writer.close();
     }
     
     private enum ListType
@@ -152,7 +197,12 @@ public class SimulationTracker
         GENERAL, FRONT, BACK;
     }
     
-    public void logParticle (Particle p_particle)
+    private enum ListTypeToWrite
+    {
+        GENERALMEAN, FRONTMEAN, FRONTFAST, FRONTSLOW, BACKMEAN, BACKFAST, BACKSLOW;
+    }
+    
+    synchronized public void logParticle (Particle p_particle)
     {
         ArrayList<BigDecimal> particleTrajectory = p_particle.getTrajectory();
         ArrayList<BigDecimal> particleVelocities = p_particle.getVelocityList();
@@ -191,6 +241,7 @@ public class SimulationTracker
                         m_slowestFrontAcceleration = particleAccelerations;
                     }
                 }
+                break;
             case BACK:
                 m_numberBackExit += 1;
                 this.addMean(ListType.BACK, particleTrajectory, particleVelocities, particleAccelerations);
@@ -220,23 +271,47 @@ public class SimulationTracker
                         m_slowestBackAcceleration = particleAccelerations;
                     }
                 }
+                break;
             case NOTCOLLECTED:
-                m_numberNotExited += 1;            
+                m_numberNotExited += 1; 
+                break;
         }
+        
+//        System.out.println("Particle logged.");
     }
     
-    public void saveToFile (String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition)
+    synchronized public void saveToFile (String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicalConstants.UnitsPrefix p_prefix) throws FileSystemException, IOException
     {
-        String initialPosition = String.valueOf(p_initialPosition.intValue());
+        String initialPositionString = String.valueOf(p_initialPosition.intValue());
         
-        File accelerationFile = new File("");
-        File exitFile = new File("");
-        File meanFile = new File("");
-        File frontFastFile = new File("");
-        File frontSlowFile = new File("");
-        File frontMeanFile = new File("");
-        File backFastFile = new File("");
-        File backSlowFile = new File("");
-        File backMeanFile = new File("");
+        File currenOutputFolder = new File (new String(p_generalOutputFolder + "/E" + p_biasVoltage + "V/Notch"+p_notchPosition+"nm/xi"+initialPositionString+"nm"));
+        
+        if (currenOutputFolder.mkdirs() || currenOutputFolder.isDirectory())
+        {
+            BufferedWriter exitFileBuffer = new BufferedWriter(new FileWriter(currenOutputFolder + "/Exit.sim"));
+            exitFileBuffer.write("Abscissa\tPosition\t#carriers");
+            exitFileBuffer.newLine();
+            exitFileBuffer.write("0\tNot accounted\t"+m_numberNotExited);
+            exitFileBuffer.newLine();
+            exitFileBuffer.write("1\tFront\t"+m_numberFrontExit);
+            exitFileBuffer.newLine();
+            exitFileBuffer.write("2\tBack\t"+m_numberBackExit);
+            exitFileBuffer.flush();
+            exitFileBuffer.close();
+            
+            this.writeFile(ListTypeToWrite.GENERALMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovement.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.FRONTFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToFront.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.FRONTSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToFront.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.FRONTMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToFront.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
+            this.writeFile(ListTypeToWrite.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
+            
+            
+        }
+        else
+        {
+            throw new FileSystemException(currenOutputFolder.getPath(), null, "Impossible to create the output directory.");
+        }
     }
 }

@@ -123,6 +123,11 @@ public class CalculationConditions
         return m_maxSteps;
     }
     
+    public PhysicalConstants.UnitsPrefix getAbscissaScale()
+    {
+        return m_abscissaUnit;
+    }
+    
     //no need to return copy of BigDecimal because it is immutable
     public BigDecimal getBufferAndWindowSize()
     {

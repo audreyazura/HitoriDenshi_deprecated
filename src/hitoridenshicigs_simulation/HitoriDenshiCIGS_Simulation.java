@@ -19,7 +19,7 @@ package hitoridenshicigs_simulation;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.nio.file.FileSystemException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,12 +63,16 @@ public class HitoriDenshiCIGS_Simulation
                             currentTracker.logParticle(currentIndividual);
                         }
                         
-                        currentTracker.saveToFile(bias, notchNanometer, initialPosition);
+                        currentTracker.saveToFile(p_outputFolder, bias, notchNanometer, initialPosition, p_conditions.getAbscissaScale());
                     }
                 }
                 catch (DataFormatException ex)
                 {
                     Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (FileSystemException ex)
+                {
+                    System.err.println("Erreur with the file "+ex.getFile()+": "+ex.getReason());
                 }
                 catch (IOException ex)
                 {
@@ -76,6 +80,7 @@ public class HitoriDenshiCIGS_Simulation
                 }
             }
         }
+        System.out.println("End of simulation!");
     } 
     
 }

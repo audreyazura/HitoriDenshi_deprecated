@@ -39,20 +39,27 @@ public class PhysicalConstants
     //contains the possible units multiplier
     static public enum UnitsPrefix
     {
-        NANO ("1e-9"),  //[SI unit]/[NANO unit]
-        MICRO ("1e-6"), //[SI unit]/[MICRO unit]
-        BASE ("1.0");   //[SI unit]/[SI unit]
+        NANO ("1e-9", "n"),  //[SI unit]/[NANO unit]
+        MICRO ("1e-6", "μ"), //[SI unit]/[MICRO unit]
+        BASE ("1.0", "");   //[SI unit]/[SI unit]
         
         private final BigDecimal m_multiplier;
+        private final String m_textPrefix;
 
-        UnitsPrefix(String p_multiplier)
+        UnitsPrefix(String p_multiplier, String p_prefix)
         {
             m_multiplier = new BigDecimal(p_multiplier);
+            m_textPrefix = new String(p_prefix);
         }
         
         public BigDecimal getMultiplier()
         {
             return m_multiplier;
+        }
+        
+        public String getPrefix()
+        {
+            return m_textPrefix;
         }
     }
 }

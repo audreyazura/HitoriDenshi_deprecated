@@ -108,7 +108,7 @@
     
     <HBox styleClass="hbox" prefWidth="500">
         <Label styleClass="windowtext" text="Output folder: "/>
-        <TextField styleClass="inputfield" fx:id="outputFolder"/>
+        <TextField styleClass="inputfield" text="/home/audreyazura/Documents/Work/Simulation/SimuResult" fx:id="outputFolder"/>
         <Button text="Browse" alignment="center" onAction="#browsingOutput"/>
     </HBox>
     

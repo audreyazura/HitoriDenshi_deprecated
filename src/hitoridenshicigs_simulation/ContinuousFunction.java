@@ -138,7 +138,14 @@ class ContinuousFunction
         {
             for (BigDecimal position: addedAbscissa)
             {
-                addedValues.put(position, m_values.get(position).add(p_passedFunction.getValueAtPosition(position)));
+                try
+                {
+                    addedValues.put(position, m_values.get(position).add(p_passedFunction.getValueAtPosition(position)));
+                }
+                catch (NoSuchElementException ex)
+                {
+                    addedValues.put(position, m_values.get(position));
+                }
             }
         }
         

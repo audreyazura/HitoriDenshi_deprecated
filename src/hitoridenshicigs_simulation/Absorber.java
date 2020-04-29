@@ -61,15 +61,21 @@ public class Absorber
         ContinuousFunction internalElectricField = ContinuousFunction.createElectricField(p_electricField, p_conditions.getAbscissaMultiplier());
         
         m_zeroAtFront = p_conditions.isZeroAtFront();
+        //À refactoriser !!!!!!
         if(m_zeroAtFront)
         {
             m_frontPosition = new BigDecimal("0");
             m_backPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
             
-            if (p_currentNotch.compareTo(new BigDecimal("0")) == 0)
+            if (p_currentNotch.compareTo(m_frontPosition) == 0)
             {
                 frontEffectiveField = new BigDecimal("0");
                 backEffectiveField = bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
+            }
+            else if (p_currentNotch.compareTo(m_backPosition) == 0)
+            {
+                frontEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_currentNotch.subtract(m_frontPosition), MathContext.DECIMAL128);
+                backEffectiveField = new BigDecimal("0");
             }
             else
             {
@@ -85,10 +91,15 @@ public class Absorber
             m_frontPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
             m_backPosition = new BigDecimal("0");
             
-            if (p_currentNotch.compareTo(new BigDecimal("0")) == 0)
+            if (p_currentNotch.compareTo(m_backPosition) == 0)
             {
                 frontEffectiveField = bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
                 backEffectiveField = new BigDecimal("0");
+            }
+            else if (p_currentNotch.compareTo(m_frontPosition) == 0)
+            {
+                frontEffectiveField = new BigDecimal("0");
+                backEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_currentNotch.subtract(m_backPosition), MathContext.DECIMAL128);
             }
             else
             {

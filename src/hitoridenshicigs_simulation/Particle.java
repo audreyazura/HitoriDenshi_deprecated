@@ -21,6 +21,9 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -63,7 +66,10 @@ public class Particle
     public void applyExteriorFields(Absorber p_absorber, BigDecimal p_timeStep)
     {
         BigDecimal electricFieldValueAtPosition = p_absorber.getElectricField().getValueAtPosition(m_position);
+        Set<BigDecimal> keys = new TreeSet(p_absorber.getElectricField().getValues().keySet());
         
+        System.out.println(p_absorber.getElectricField().getAbscissa().contains(m_position) + "\t" + p_absorber.getElectricField().getValues().keySet().contains(m_position) +"\t"+ keys.contains(m_position));
+        System.out.println(m_position+"\t"+electricFieldValueAtPosition);
         //calculating acceleration
         BigDecimal currentAcceleration = m_charge.multiply(electricFieldValueAtPosition).divide(m_masse, MathContext.DECIMAL128);
         m_accelerationList.add(currentAcceleration);

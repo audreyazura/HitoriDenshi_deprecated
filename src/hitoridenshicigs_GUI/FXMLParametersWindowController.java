@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 audreyazura
+ * Copyright (C) 2020 Alban Lafuente
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 
 /**
@@ -40,10 +41,15 @@ import javafx.stage.DirectoryChooser;
  */
 public class FXMLParametersWindowController
 {
+    
+    @FXML private ChoiceBox unitselec;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
+    @FXML private RadioButton electronselection;
+    @FXML private RadioButton holeselection;
+    @FXML private RadioButton zeroatfront;
     @FXML private TextField biasvoltages;
     @FXML private TextField notches;
     @FXML private TextField generationpositions;
@@ -57,9 +63,6 @@ public class FXMLParametersWindowController
     @FXML private TextField frontbangap;
     @FXML private TextField notchbandgap;
     @FXML private TextField backbangap;
-    @FXML private RadioButton electronselection;
-    @FXML private RadioButton zeroatfront;
-    @FXML private ChoiceBox unitselec;
     
     private MainWindowCall m_mainApp;
     private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
@@ -81,7 +84,7 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void applyNewSelection (ActionEvent event)
+    @FXML private void applyNewUnitSelection (ActionEvent event)
     {
         PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.BASE;
         try
@@ -130,6 +133,22 @@ public class FXMLParametersWindowController
         catch (NullPointerException ex)
         {
             System.err.println("Select a proper unit!");
+        }
+    }
+    
+    @FXML private void changeSelectedParticle(ActionEvent event)
+    {
+        if (electronselection.isSelected())
+        {
+            effectivemass.setText("0.089");
+            lifetime.setText("100");
+            numbersimulated.setText("10000");
+        }
+        else if (holeselection.isSelected())
+        {
+            effectivemass.setText("0.693");
+            lifetime.setText("50");
+            numbersimulated.setText("5000");
         }
     }
     
@@ -218,11 +237,12 @@ public class FXMLParametersWindowController
         catch (NumberFormatException ex)
         {
             System.err.println("Verify you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
+//            ex.printStackTrace();
         }
         catch (NullPointerException ex)
         {
-//            System.err.println("Verify that each field is properly filled.");
-            ex.printStackTrace();
+            System.err.println("Verify that each field is properly filled.");
+//            ex.printStackTrace();
         }
     }
     

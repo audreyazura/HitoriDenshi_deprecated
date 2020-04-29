@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  *
- * @author audreyazura
+ * @author Alban Lafuente
  */
 public class SimulationTracker
 {

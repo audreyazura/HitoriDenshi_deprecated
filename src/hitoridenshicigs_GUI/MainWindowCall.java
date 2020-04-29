@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 audreyazura
+ * Copyright (C) 2020 Alban Lafuente
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author audreyazura
+ * @author Alban Lafuente
  */
 public interface MainWindowCall
 {

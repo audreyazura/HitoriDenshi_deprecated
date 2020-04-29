@@ -105,7 +105,6 @@ class ContinuousFunction
                 
                 if (!abscissaSet.contains(currentAbscissa))
                 {
-//                    m_abscissa.add(currentAbscissa);
                     m_values.put(currentAbscissa, CalculationConditions.formatBigDecimal(new BigDecimal(lineSplit[p_columnToExtract[1]].strip())));
                 }
 	    }

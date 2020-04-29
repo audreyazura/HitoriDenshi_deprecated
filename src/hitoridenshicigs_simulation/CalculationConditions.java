@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @author audreyazura
+ * @author Alban Lafuente
  */
 public class CalculationConditions
 {    

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 audreyazura
+ * Copyright (C) 2020 Alban Lafuente
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import java.util.zip.DataFormatException;
 /**
  * To store the data about the solar cell, especially the abscissa (one for the eb file, one for the gen file), and tell if a particle has been or not, as well as the collection side. Also store backAbscissa and frontAbscissa.
  * 
- * @author audreyazura
+ * @author Alban Lafuente
  */
 public class Absorber
 {

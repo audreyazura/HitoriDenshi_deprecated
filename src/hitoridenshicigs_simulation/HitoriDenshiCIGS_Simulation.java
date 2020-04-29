@@ -19,6 +19,7 @@ package hitoridenshicigs_simulation;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.nio.file.FileSystemException;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,7 +35,10 @@ public class HitoriDenshiCIGS_Simulation
     public void startSimulation(String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
     {
         System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
+        System.out.println(p_conditions.getNotchPositionArray());
+        System.out.println(p_conditions.getStartingPositionList());
         
+        //all the values in p_conditions are in SI units
         for (String bias: p_conditions.getBiasVoltageArray())
         {
             for (BigDecimal notch: p_conditions.getNotchPositionArray())
@@ -49,6 +53,8 @@ public class HitoriDenshiCIGS_Simulation
                     {
                         List<BigDecimal> velocities = p_conditions.getVelocityList();
                         SimulationTracker currentTracker = new SimulationTracker(velocities.size());
+                        
+                        System.out.println("Calculation starts for x_notch = "+notchNanometer+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                                 
                         for (BigDecimal velocity: velocities)
                         {
@@ -63,7 +69,8 @@ public class HitoriDenshiCIGS_Simulation
                             currentTracker.logParticle(currentIndividual);
                         }
                         
-                        currentTracker.saveToFile(p_outputFolder, bias, notchNanometer, initialPosition, p_conditions.getAbscissaScale());
+                        currentTracker.saveToFile(p_outputFolder, bias, notchNanometer, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), p_conditions.getAbscissaScale());
+                        System.out.println("Calculation ended for x_notch = "+notchNanometer+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                     }
                 }
                 catch (DataFormatException ex)
@@ -84,3 +91,6 @@ public class HitoriDenshiCIGS_Simulation
     } 
     
 }
+
+//0 ; 0.2 ; 0.4 ; 0.6 ; 0.8 ; 1 ; 1.2 ; 1.3 ; 1.4 ; 1.5 ; 1.6 ; 1.7 ; 1.75 ; 1.8 ; 1.85 ; 1.9 ; 1.95 ; 2
+//1 ; 1.25 ; 1.5 ; 1.55 ; 1.6 ; 1.65 ; 1.7 ; 1.75 ; 1.8 ; 1.85

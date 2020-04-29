@@ -48,14 +48,14 @@ class ContinuousFunction
     
     public ContinuousFunction (ContinuousFunction p_passedFunction)
     {
-        m_abscissa = p_passedFunction.getAbscissa();
         m_values = p_passedFunction.getValues();
+        m_abscissa = new TreeSet(m_values.keySet());
         
     }
     
-    public ContinuousFunction (TreeSet<BigDecimal> p_abscissa, HashMap<BigDecimal, BigDecimal> p_values)
+    public ContinuousFunction (HashMap<BigDecimal, BigDecimal> p_values)
     {
-        m_abscissa = p_abscissa;
+        m_abscissa = new TreeSet(p_values.keySet());
         m_values = p_values;
     }
     
@@ -67,11 +67,11 @@ class ContinuousFunction
         {
             if (position.compareTo(p_notchPosition) < 0)
             {
-                m_values.put(position, p_effectiveField0toNotch);
+                m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveField0toNotch));
             }
             else if (position.compareTo(p_notchPosition) > 0)
             {
-                m_values.put(position, p_effectiveFieldNotchtoEnd);
+                m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveFieldNotchtoEnd));
             }
         }
         
@@ -80,7 +80,6 @@ class ContinuousFunction
     
     private ContinuousFunction (File p_fileValues, BigDecimal p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
-        m_abscissa = new TreeSet<>();
         m_values = new HashMap<>();
         
         String[] nameSplit = p_fileValues.getPath().split("\\.");
@@ -101,15 +100,18 @@ class ContinuousFunction
 	    if(lineSplit.length == p_ncolumn && numberRegex.matcher(lineSplit[0]).matches())
 	    {
 		//we put the abscissa in meter in order to do all calculations in SI
-                BigDecimal currentAbscissa = (new BigDecimal(lineSplit[p_columnToExtract[0]].strip())).multiply(p_unitMultiplier);
+                BigDecimal currentAbscissa = CalculationConditions.formatBigDecimal((new BigDecimal(lineSplit[p_columnToExtract[0]].strip())).multiply(p_unitMultiplier));
+                Set<BigDecimal> abscissaSet = new TreeSet(m_values.keySet());
                 
-                if (!m_abscissa.contains(currentAbscissa))
+                if (!abscissaSet.contains(currentAbscissa))
                 {
-                    m_abscissa.add(currentAbscissa);
-                    m_values.put(currentAbscissa, new BigDecimal(lineSplit[p_columnToExtract[1]].strip()));
+//                    m_abscissa.add(currentAbscissa);
+                    m_values.put(currentAbscissa, CalculationConditions.formatBigDecimal(new BigDecimal(lineSplit[p_columnToExtract[1]].strip())));
                 }
 	    }
         }
+        
+        m_abscissa = new TreeSet(m_values.keySet());
     }
     
     public TreeSet<BigDecimal> getAbscissa()
@@ -124,19 +126,18 @@ class ContinuousFunction
     
     public ContinuousFunction add (ContinuousFunction p_passedFunction)
     {
-        Set<BigDecimal> addedAbscissa = new TreeSet(m_abscissa);
         Map<BigDecimal, BigDecimal> addedValues = new HashMap<>();
         
         if (m_abscissa.equals(p_passedFunction.getAbscissa()))
         {
-            for (BigDecimal position: addedAbscissa)
+            for (BigDecimal position: m_abscissa)
             {
                 addedValues.put(position, m_values.get(position).add(p_passedFunction.getValues().get(position)));
             }
         }
         else
         {
-            for (BigDecimal position: addedAbscissa)
+            for (BigDecimal position: m_abscissa)
             {
                 try
                 {
@@ -149,7 +150,7 @@ class ContinuousFunction
             }
         }
         
-        return new ContinuousFunction((TreeSet) addedAbscissa, (HashMap) addedValues);
+        return new ContinuousFunction((HashMap) addedValues);
     }
             
     public BigDecimal getValueAtPosition(BigDecimal position)

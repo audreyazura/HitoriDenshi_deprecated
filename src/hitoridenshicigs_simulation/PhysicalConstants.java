@@ -28,13 +28,13 @@ public class PhysicalConstants
     //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
     
     //Boltzman constant in J/K
-    static final public BigDecimal KB = new BigDecimal("1.380649e-23");
+    static final public BigDecimal KB = CalculationConditions.formatBigDecimal(new BigDecimal("1.380649e-23"));
     //electron mass in kg
-    static final public BigDecimal ME = new BigDecimal("9.10938188e-31");
+    static final public BigDecimal ME = CalculationConditions.formatBigDecimal(new BigDecimal("9.10938188e-31"));
     //elementary charge in C
-    static final public BigDecimal Q = new BigDecimal("1.60217733e-19");
+    static final public BigDecimal Q = CalculationConditions.formatBigDecimal(new BigDecimal("1.60217733e-19"));
     //definition of the electronVolt in J
-    static final public BigDecimal EV = new BigDecimal("1.602176634e-19");
+    static final public BigDecimal EV = CalculationConditions.formatBigDecimal(new BigDecimal("1.602176634e-19"));
     
     //contains the possible units multiplier
     static public enum UnitsPrefix
@@ -48,7 +48,7 @@ public class PhysicalConstants
 
         UnitsPrefix(String p_multiplier, String p_prefix)
         {
-            m_multiplier = new BigDecimal(p_multiplier);
+            m_multiplier = CalculationConditions.formatBigDecimal(new BigDecimal(p_multiplier));
             m_textPrefix = new String(p_prefix);
         }
         

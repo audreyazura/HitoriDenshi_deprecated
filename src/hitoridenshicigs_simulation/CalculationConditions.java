@@ -33,9 +33,9 @@ import java.util.function.Consumer;
 public class CalculationConditions
 {    
     //Temperature in K
-    static final BigDecimal T = new BigDecimal("300");
+    static final BigDecimal T = CalculationConditions.formatBigDecimal(new BigDecimal("300"));
     //calculation step, chosen as one each femtosecond
-    static final BigDecimal DT = new BigDecimal("1e-12");
+    static final BigDecimal DT = CalculationConditions.formatBigDecimal(new BigDecimal("1e-12"));
 
     private final boolean m_isZeroAtFront;
     private final int m_maxSteps;
@@ -57,14 +57,14 @@ public class CalculationConditions
         m_abscissaUnit = p_prefix;
         
         m_isZeroAtFront = p_isZeroAtFront;
-        m_bufferWindowSize = p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier());
-        m_sampleSize = p_sampleSize.multiply(m_abscissaUnit.getMultiplier());
+        m_bufferWindowSize = CalculationConditions.formatBigDecimal(p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier()));
+        m_sampleSize = CalculationConditions.formatBigDecimal(p_sampleSize.multiply(m_abscissaUnit.getMultiplier()));
         
-        m_bandgaps.put("front", p_frontBandgap.multiply(PhysicalConstants.EV));
-        m_bandgaps.put("notch", p_notchBandgap.multiply(PhysicalConstants.EV));
-        m_bandgaps.put("back", p_backBandgap.multiply(PhysicalConstants.EV));
+        m_bandgaps.put("front", CalculationConditions.formatBigDecimal(p_frontBandgap.multiply(PhysicalConstants.EV)));
+        m_bandgaps.put("notch", CalculationConditions.formatBigDecimal(p_notchBandgap.multiply(PhysicalConstants.EV)));
+        m_bandgaps.put("back", CalculationConditions.formatBigDecimal(p_backBandgap.multiply(PhysicalConstants.EV)));
         
-        BigDecimal particleEffectiveMass = p_effectiveMass.multiply(PhysicalConstants.ME);
+        BigDecimal particleEffectiveMass = CalculationConditions.formatBigDecimal(p_effectiveMass.multiply(PhysicalConstants.ME));
         m_particleParameters.put("mass", particleEffectiveMass);
         //lifetime is given in nanosecond, and we have to convert it into step, with a step every DT
         m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT, MathContext.DECIMAL128)).intValue();
@@ -87,12 +87,17 @@ public class CalculationConditions
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
-        BigDecimal vth = (PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128);
+        BigDecimal vth = CalculationConditions.formatBigDecimal((PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
         Random randomGenerator = new Random(0);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
-            m_velocityList.add((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth));
+            m_velocityList.add(CalculationConditions.formatBigDecimal((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth)));
         }
+    }
+    
+    static public BigDecimal formatBigDecimal(BigDecimal p_toBeFormatted)
+    {
+        return p_toBeFormatted.stripTrailingZeros();
     }
     
     //splits the passed string and converts each element to BigDecimal to before returning the list created this way
@@ -106,7 +111,7 @@ public class CalculationConditions
             public void accept(String position)
             {
                 //the starting positions are entered in nm, they have to be converted back to m
-                returnList.add((new BigDecimal(position)).multiply(p_multiplier));
+                returnList.add(CalculationConditions.formatBigDecimal((new BigDecimal(position)).multiply(p_multiplier)));
             }
         });
         

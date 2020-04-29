@@ -43,10 +43,10 @@ public class Particle
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
-        m_charge = p_charge;
-        m_masse = p_masse;
-        m_position = p_position;
-        m_velocity = p_velocity;
+        m_charge = CalculationConditions.formatBigDecimal(p_charge);
+        m_masse = CalculationConditions.formatBigDecimal(p_masse);
+        m_position = CalculationConditions.formatBigDecimal(p_position);
+        m_velocity = CalculationConditions.formatBigDecimal(p_velocity);
         
         m_trajectory.add(m_position);
         m_velocityList.add(m_velocity);
@@ -54,10 +54,10 @@ public class Particle
     
     public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
     {
-        m_charge = p_parameters.get("charge");
-        m_masse = p_parameters.get("mass");
-        m_position = p_position;
-        m_velocity = p_velocity;
+        m_charge = CalculationConditions.formatBigDecimal(p_parameters.get("charge"));
+        m_masse = CalculationConditions.formatBigDecimal(p_parameters.get("mass"));
+        m_position = CalculationConditions.formatBigDecimal(p_position);
+        m_velocity = CalculationConditions.formatBigDecimal(p_velocity);
         
         m_trajectory.add(m_position);
         m_velocityList.add(m_velocity);
@@ -65,23 +65,20 @@ public class Particle
     
     public void applyExteriorFields(Absorber p_absorber, BigDecimal p_timeStep)
     {
-        BigDecimal electricFieldValueAtPosition = p_absorber.getElectricField().getValueAtPosition(m_position);
-        Set<BigDecimal> keys = new TreeSet(p_absorber.getElectricField().getValues().keySet());
+        BigDecimal electricFieldValueAtPosition = CalculationConditions.formatBigDecimal(p_absorber.getElectricField().getValueAtPosition(m_position));
         
-        System.out.println(p_absorber.getElectricField().getAbscissa().contains(m_position) + "\t" + p_absorber.getElectricField().getValues().keySet().contains(m_position) +"\t"+ keys.contains(m_position));
-        System.out.println(m_position+"\t"+electricFieldValueAtPosition);
         //calculating acceleration
-        BigDecimal currentAcceleration = m_charge.multiply(electricFieldValueAtPosition).divide(m_masse, MathContext.DECIMAL128);
+        BigDecimal currentAcceleration = CalculationConditions.formatBigDecimal(m_charge.multiply(electricFieldValueAtPosition).divide(m_masse, MathContext.DECIMAL128));
         m_accelerationList.add(currentAcceleration);
         
         //calculating new velocity and a mean velocity that will be used to update the position
-        BigDecimal newVelocity = m_velocity.add(currentAcceleration.multiply(p_timeStep));
-        BigDecimal meanVelocity = (m_velocity.add(newVelocity)).divide(new BigDecimal("2", MathContext.DECIMAL128));
+        BigDecimal newVelocity = CalculationConditions.formatBigDecimal(m_velocity.add(currentAcceleration.multiply(p_timeStep)));
+        BigDecimal meanVelocity = CalculationConditions.formatBigDecimal((m_velocity.add(newVelocity)).divide(new BigDecimal("2", MathContext.DECIMAL128)));
         m_velocity = newVelocity;
         m_velocityList.add(m_velocity);
         
         //calculating new position
-        m_position = m_position.add(meanVelocity.multiply(p_timeStep));
+        m_position = CalculationConditions.formatBigDecimal(m_position.add(meanVelocity.multiply(p_timeStep)));
         m_trajectory.add(m_position);
         
         m_collectionState = p_absorber.giveCollection(m_position);
@@ -94,7 +91,7 @@ public class Particle
     
     public BigDecimal getCurrentPosition()
     {
-        return m_position;
+        return CalculationConditions.formatBigDecimal(m_position);
     }
     
     public ArrayList<BigDecimal> getTrajectory()

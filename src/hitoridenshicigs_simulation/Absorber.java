@@ -64,52 +64,49 @@ public class Absorber
         //À refactoriser !!!!!!
         if(m_zeroAtFront)
         {
-            m_frontPosition = new BigDecimal("0");
-            m_backPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
+            m_frontPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+            m_backPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
             
             if (p_currentNotch.compareTo(m_frontPosition) == 0)
             {
-                frontEffectiveField = new BigDecimal("0");
-                backEffectiveField = bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
+                frontEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_currentNotch), MathContext.DECIMAL128));
             }
             else if (p_currentNotch.compareTo(m_backPosition) == 0)
             {
-                frontEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_currentNotch.subtract(m_frontPosition), MathContext.DECIMAL128);
-                backEffectiveField = new BigDecimal("0");
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_currentNotch.subtract(m_frontPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             }
             else
             {
-                frontEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_currentNotch.subtract(m_frontPosition), MathContext.DECIMAL128);
-                backEffectiveField = bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_currentNotch.subtract(m_frontPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_currentNotch), MathContext.DECIMAL128));
             }
-            
-            ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), p_currentNotch, frontEffectiveField, backEffectiveField);
-            m_electricField = internalElectricField.add(notchEffectiveElectricField);
         }
         else
         {
-            m_frontPosition = p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize());
-            m_backPosition = new BigDecimal("0");
+            m_frontPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
+            m_backPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             
             if (p_currentNotch.compareTo(m_backPosition) == 0)
             {
-                frontEffectiveField = bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
-                backEffectiveField = new BigDecimal("0");
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_currentNotch), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             }
             else if (p_currentNotch.compareTo(m_frontPosition) == 0)
             {
-                frontEffectiveField = new BigDecimal("0");
-                backEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_currentNotch.subtract(m_backPosition), MathContext.DECIMAL128);
+                frontEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_currentNotch.subtract(m_backPosition), MathContext.DECIMAL128));
             }
             else
             {
-                frontEffectiveField = bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_currentNotch), MathContext.DECIMAL128);
-                backEffectiveField = bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_currentNotch.subtract(m_backPosition), MathContext.DECIMAL128);
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_currentNotch), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_currentNotch.subtract(m_backPosition), MathContext.DECIMAL128));
             }
-            
-            ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), p_currentNotch, backEffectiveField, frontEffectiveField);
-            m_electricField = internalElectricField.add(notchEffectiveElectricField);
         }
+        
+        ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), p_currentNotch, frontEffectiveField, backEffectiveField);
+        m_electricField = internalElectricField.add(notchEffectiveElectricField);
     }
     
     public ContinuousFunction getElectricField()

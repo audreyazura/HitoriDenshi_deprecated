@@ -276,8 +276,6 @@ public class SimulationTracker
                 m_numberNotExited += 1; 
                 break;
         }
-        
-//        System.out.println("Particle logged.");
     }
     
     synchronized public void saveToFile (String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicalConstants.UnitsPrefix p_prefix) throws FileSystemException, IOException
@@ -306,8 +304,6 @@ public class SimulationTracker
             this.writeFile(ListTypeToWrite.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
             this.writeFile(ListTypeToWrite.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
             this.writeFile(ListTypeToWrite.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
-            
-            
         }
         else
         {

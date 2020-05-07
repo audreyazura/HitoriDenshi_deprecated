@@ -16,12 +16,12 @@
  */
 package hitoridenshicigs_simulation;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.nio.file.FileSystemException;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
@@ -38,55 +38,77 @@ public class HitoriDenshiCIGS_Simulation
         System.out.println(p_conditions.getNotchPositionArray());
         System.out.println(p_conditions.getStartingPositionList());
         
-        //all the values in p_conditions are in SI units
-        for (String bias: p_conditions.getBiasVoltageArray())
+        
+        try
         {
-            for (BigDecimal notch: p_conditions.getNotchPositionArray())
+            //preparing the absorbers on which the simulation will be run
+            Set<Absorber> absorberList = new HashSet<>();
+            //all the values in p_conditions are in SI units
+            for (String bias: p_conditions.getBiasVoltageArray())
             {
-                try
+                for (BigDecimal notch: p_conditions.getNotchPositionArray())
                 {
-                    String notchNanometer = String.valueOf((notch.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier())).intValue());
-                    File electricFieldFile = new File(p_folderElectricFields+"/E"+bias+"V_N"+notchNanometer+"nm.eb");
-                    final Absorber currentAbsorber = new Absorber(electricFieldFile, notch, p_conditions);
-                    
-                    for (BigDecimal initialPosition: p_conditions.getStartingPositionList())
-                    {
-                        List<BigDecimal> velocities = p_conditions.getVelocityList();
-                        SimulationTracker currentTracker = new SimulationTracker(velocities.size());
-                        
-                        System.out.println("Calculation starts for x_notch = "+notchNanometer+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
-                                
-                        for (BigDecimal velocity: velocities)
-                        {
-                            Particle currentIndividual = new Particle(p_conditions.getParticleParameters(), initialPosition, velocity);
-                            
-                            int numberOfSteps = 0;
-                            while (!currentIndividual.isCollected() && numberOfSteps < p_conditions.getMaxSteps())
-                            {
-                                currentIndividual.applyExteriorFields(currentAbsorber, CalculationConditions.DT);
-                            }
-                            
-                            currentTracker.logParticle(currentIndividual);
-                        }
-                        
-                        currentTracker.saveToFile(p_outputFolder, bias, notchNanometer, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), p_conditions.getAbscissaScale());
-                        System.out.println("Calculation ended for x_notch = "+notchNanometer+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
-                    }
-                }
-                catch (DataFormatException ex)
-                {
-                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (FileSystemException ex)
-                {
-                    System.err.println("Erreur with the file "+ex.getFile()+": "+ex.getReason());
-                }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                    absorberList.add(new Absorber(p_folderElectricFields, bias, notch, p_conditions));
                 }
             }
+            
+            //preparing the different chunk to be threaded
+            int nAvailableCore = Runtime.getRuntime().availableProcessors();
+            int nAbsorbers = absorberList.size();
+            int nWorker = (nAvailableCore < nAbsorbers) ? nAvailableCore : nAbsorbers;
+            //int division casting to an int truncate it
+            int chunkSize = nAbsorbers / nWorker;
+            int nSupplementaryAbsorber = nAbsorbers % nWorker;
+            Iterator<Absorber> absorberListIterator = absorberList.iterator();
+            Thread[] workerArray = new Thread[nWorker];
+            
+            for (int workerCounter = 0 ; workerCounter < nWorker ; workerCounter +=1)
+            {
+                Set<Absorber> currentChunk = new HashSet<>();
+                int currentChunkSize = chunkSize;
+                if (nSupplementaryAbsorber > 0)
+                {
+                    currentChunkSize += 1;
+                    nSupplementaryAbsorber -= 1;
+                }
+                
+                //adding the required number of Absorber to the current chunk
+                for (int eltsCounter = 0 ; eltsCounter < currentChunkSize ; eltsCounter += 1)
+                {
+                    currentChunk.add(absorberListIterator.next());
+                }
+                
+                //starting a thread with the current chunk
+                Thread currentWorker = new Thread(new SimulationWorker(workerCounter+1, p_outputFolder, (HashSet) currentChunk, p_conditions));
+                currentWorker.start();
+                workerArray[workerCounter] = currentWorker;
+            }
+            
+            //waiting for the threads to finish
+            for (int threadWalker = 0 ; threadWalker < nWorker ; threadWalker += 1)
+            {
+                workerArray[threadWalker].join();
+            }
+            
+            
         }
+        catch (DataFormatException ex)
+        {
+            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (FileSystemException ex)
+        {
+            System.err.println("Erreur with the file "+ex.getFile()+": "+ex.getReason());
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (InterruptedException ex)
+        {
+            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         System.out.println("End of simulation!");
     } 
     

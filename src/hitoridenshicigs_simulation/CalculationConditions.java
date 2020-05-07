@@ -123,12 +123,12 @@ public class CalculationConditions
         return m_isZeroAtFront;
     }
     
-    public int getMaxSteps()
+    public synchronized int getMaxSteps()
     {
         return m_maxSteps;
     }
     
-    public PhysicalConstants.UnitsPrefix getAbscissaScale()
+    public synchronized PhysicalConstants.UnitsPrefix getAbscissaScale()
     {
         return m_abscissaUnit;
     }
@@ -149,7 +149,7 @@ public class CalculationConditions
         return m_abscissaUnit.getMultiplier();
     }
     
-    public HashMap<String, BigDecimal> getParticleParameters()
+    public synchronized HashMap<String, BigDecimal> getParticleParameters()
     {
         return new HashMap(m_particleParameters);
     }
@@ -169,12 +169,12 @@ public class CalculationConditions
         return new ArrayList(m_notchPositions);
     }
     
-    public ArrayList<BigDecimal> getStartingPositionList()
+    public synchronized ArrayList<BigDecimal> getStartingPositionList()
     {
         return new ArrayList(m_startingPositons);
     }
     
-    public ArrayList<BigDecimal> getVelocityList()
+    public synchronized ArrayList<BigDecimal> getVelocityList()
     {
         return new ArrayList(m_velocityList);
     }

@@ -229,8 +229,8 @@ public class FXMLParametersWindowController
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
-            HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
-            simu.startSimulation(inputFolderAddress, outputFolderAddress, conditions);
+            Thread simulationThread = new Thread(new HitoriDenshiCIGS_Simulation(inputFolderAddress, outputFolderAddress, conditions));
+            simulationThread.start();
         }
         catch (NumberFormatException ex)
         {

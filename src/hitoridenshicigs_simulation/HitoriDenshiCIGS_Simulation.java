@@ -30,13 +30,24 @@ import java.util.zip.DataFormatException;
  *
  * @author Alban Lafuente
  */
-public class HitoriDenshiCIGS_Simulation 
+public class HitoriDenshiCIGS_Simulation implements Runnable
 {
-    public void startSimulation(String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
+    private final CalculationConditions m_conditions;
+    private final String m_inputFolder;
+    private final String m_outputFolder;
+    
+    public HitoriDenshiCIGS_Simulation (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
     {
-        System.out.println("Starting simulation!\nFolder: " + p_folderElectricFields);
-        System.out.println(p_conditions.getNotchPositionArray());
-        System.out.println(p_conditions.getStartingPositionList());
+        m_conditions = p_conditions;
+        m_inputFolder = p_folderElectricFields;
+        m_outputFolder = p_outputFolder;
+    }
+    
+    public void run()
+    {
+        System.out.println("Starting simulation!\nFolder: " + m_inputFolder);
+        System.out.println(m_conditions.getNotchPositionArray());
+        System.out.println(m_conditions.getStartingPositionList());
         
         
         try
@@ -44,11 +55,11 @@ public class HitoriDenshiCIGS_Simulation
             //preparing the absorbers on which the simulation will be run
             Set<Absorber> absorberList = new HashSet<>();
             //all the values in p_conditions are in SI units
-            for (String bias: p_conditions.getBiasVoltageArray())
+            for (String bias: m_conditions.getBiasVoltageArray())
             {
-                for (BigDecimal notch: p_conditions.getNotchPositionArray())
+                for (BigDecimal notch: m_conditions.getNotchPositionArray())
                 {
-                    absorberList.add(new Absorber(p_folderElectricFields, bias, notch, p_conditions));
+                    absorberList.add(new Absorber(m_inputFolder, bias, notch, m_conditions));
                 }
             }
             
@@ -79,7 +90,7 @@ public class HitoriDenshiCIGS_Simulation
                 }
                 
                 //starting a thread with the current chunk
-                Thread currentWorker = new Thread(new SimulationWorker(workerCounter+1, p_outputFolder, (HashSet) currentChunk, p_conditions));
+                Thread currentWorker = new Thread(new SimulationWorker(workerCounter+1, m_outputFolder, (HashSet) currentChunk, m_conditions));
                 currentWorker.start();
                 workerArray[workerCounter] = currentWorker;
             }

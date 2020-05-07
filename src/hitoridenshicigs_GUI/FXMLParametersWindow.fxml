@@ -26,7 +26,7 @@
     </fx:define>
     
     <HBox styleClass="hbox">
-        <Label styleClass="windowtext" text="Bias voltages (V, separated by ;): "/>
+        <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): "/>
         <TextField styleClass="inputfield" fx:id="biasvoltages" text="0.8" prefWidth="300"/>
     </HBox>
     

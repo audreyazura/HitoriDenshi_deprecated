@@ -19,7 +19,6 @@ package hitoridenshicigs_GUI;
 import hitoridenshicigs_simulation.CalculationConditions;
 import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
 import hitoridenshicigs_simulation.PhysicalConstants;
-import java.lang.IllegalArgumentException;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 
 /**
@@ -175,7 +173,7 @@ public class FXMLParametersWindowController
 	}
 	catch (NullPointerException ex)
 	{
-	    System.err.println("Input folder addfress empty!!!!!!!");
+	    System.err.println("Input folder address empty!!!!!!!");
 	}
     }
     
@@ -202,7 +200,7 @@ public class FXMLParametersWindowController
 	}
 	catch (NullPointerException ex)
 	{
-	    System.err.println("Input folder addfress empty!!!!!!!");
+	    System.err.println("Input folder address empty!!!!!!!");
 	}
     }
     

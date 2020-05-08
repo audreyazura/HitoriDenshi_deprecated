@@ -23,6 +23,7 @@ import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,15 +60,22 @@ public class SimulationWorker implements Runnable
     {
         for (Absorber currentAbsorber: m_absorbers)
         {
-            String currrentNotchPosition = currentAbsorber.getNotchPositionString();
+            BigDecimal notchPosition = currentAbsorber.getNotchPosition();
+            String currrentNotchPositionString = String.valueOf(notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());;
             String currentBias = currentAbsorber.getBias();
             try
             {
-                for (BigDecimal initialPosition: m_startingPositions)
+                List<BigDecimal> initialPositionWithNotch = new ArrayList(m_startingPositions);
+                if (!initialPositionWithNotch.contains(notchPosition))
+                {
+                    initialPositionWithNotch.add(notchPosition);
+                }
+                
+                for (BigDecimal initialPosition: initialPositionWithNotch)
                 {
                     SimulationTracker currentTracker = new SimulationTracker(m_velocities.size());
 
-                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation starts for E_bias = "+currentBias+", x_notch = "+currrentNotchPosition+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation starts for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
 
                     for (BigDecimal velocity: m_velocities)
                     {
@@ -83,8 +91,8 @@ public class SimulationWorker implements Runnable
                         currentTracker.logParticle(currentIndividual);
                     }
 
-                    currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPosition, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
-                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPosition+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPositionString, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
+                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                 }
             }
             catch (FileSystemException ex)

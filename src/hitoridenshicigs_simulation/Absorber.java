@@ -34,10 +34,10 @@ public class Absorber
 {
     private final BigDecimal m_backPosition;
     private final BigDecimal m_frontPosition;
+    private final BigDecimal m_notchPosition;
     private final boolean m_zeroAtFront;
     private final ContinuousFunction m_electricField;
     private final String m_bias;
-    private final String m_notchPositionNanometerString;
     
 //    public Absorber(File p_electricField, double p_unitMultiplier, boolean p_zeroAtFront, double p_bufferWindowSize, double p_sampleSize) throws DifferentArraySizeException, DataFormatException, IOException
 //    {
@@ -58,13 +58,15 @@ public class Absorber
     public Absorber(String p_folderElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
         m_bias = p_bias;
-        m_notchPositionNanometerString = String.valueOf(p_notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());
+        m_notchPosition = p_notchPosition;
+        
         
         Map<String, BigDecimal> bandgaps = new HashMap(p_conditions.getBandgaps());
         BigDecimal frontEffectiveField;
         BigDecimal backEffectiveField;
         
-        ContinuousFunction internalElectricField = ContinuousFunction.createElectricField(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+m_notchPositionNanometerString+"nm.eb"), p_conditions.getAbscissaMultiplier());
+        String notchPositionNanometer = String.valueOf(m_notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());
+        ContinuousFunction internalElectricField = ContinuousFunction.createElectricField(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
         
         m_zeroAtFront = p_conditions.isZeroAtFront();
         //À refactoriser !!!!!!
@@ -73,20 +75,20 @@ public class Absorber
             m_frontPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             m_backPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
             
-            if (p_notchPosition.compareTo(m_frontPosition) == 0)
+            if (m_notchPosition.compareTo(m_frontPosition) == 0)
             {
                 frontEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_notchPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128));
             }
-            else if (p_notchPosition.compareTo(m_backPosition) == 0)
+            else if (m_notchPosition.compareTo(m_backPosition) == 0)
             {
-                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128));
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128));
                 backEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             }
             else
             {
-                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(p_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128));
-                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(p_notchPosition), MathContext.DECIMAL128));
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128));
             }
         }
         else
@@ -94,24 +96,24 @@ public class Absorber
             m_frontPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
             m_backPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             
-            if (p_notchPosition.compareTo(m_backPosition) == 0)
+            if (m_notchPosition.compareTo(m_backPosition) == 0)
             {
-                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_notchPosition), MathContext.DECIMAL128));
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128));
                 backEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
             }
-            else if (p_notchPosition.compareTo(m_frontPosition) == 0)
+            else if (m_notchPosition.compareTo(m_frontPosition) == 0)
             {
                 frontEffectiveField = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128));
             }
             else
             {
-                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(p_notchPosition), MathContext.DECIMAL128));
-                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(p_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128));
+                frontEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128));
+                backEffectiveField = CalculationConditions.formatBigDecimal(bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128));
             }
         }
         
-        ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), p_notchPosition, frontEffectiveField, backEffectiveField);
+        ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), m_notchPosition, frontEffectiveField, backEffectiveField);
         m_electricField = internalElectricField.add(notchEffectiveElectricField);
     }
     
@@ -150,9 +152,9 @@ public class Absorber
         return collection;
     }
     
-    public String getNotchPositionString()
+    public BigDecimal getNotchPosition()
     {
-        return m_notchPositionNanometerString;
+        return m_notchPosition;
     }
     
     public String getBias()

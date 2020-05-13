@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-spacing: 10px;
     -fx-alignment: top-left;
     -fx-fill-width: true;
-    -fx-padding: 50px 25px 25px 25px;
+    -fx-padding: 20px 20px 20px 20px; /*top, right, bottom, left*/
 }
 
 .windowtext
@@ -52,12 +52,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .hbox
 {
-    -fx-spacing: 20px;
+    -fx-spacing: 10px;
     -fx-fill-height: true;
     -fx-alignment: center-left;
+}
+
+.gridpane
+{
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+    -fx-alignment: center-left;
+}
+
+#tophbox
+{
+    -fx-spacing: 75px;
+}
+
+#titlebox
+{
+    -fx-alignment: center;
+    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
+}
+
+#title
+{
+    -fx-text-alignment: center;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+#internalvbox
+{
+    -fx-fillwidth: true;
+    -fx-spacing: 5px;
+    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
+}
+
+#propertyvbox
+{
+    -fx-border-style: solid;
+    -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
+}
+
+#propertytitle
+{
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
 }
 
 #startsimubox
 {
     -fx-alignment: center;
+    -fx-font-family: SourceSansPro;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
 }

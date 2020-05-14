@@ -19,34 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Author     : Alban Lafuente
 */
 
-.vbox
-{
-    -fx-spacing: 10px;
-    -fx-alignment: top-left;
-    -fx-fill-width: true;
-    -fx-padding: 15px 20px 20px 20px; /*top, right, bottom, left*/
-}
-
-.windowtext
-{
-    -fx-font-family: SourceSansPro;
-    -fx-text-alignment: justify;
-}
-
-.label
-{
-    -fx-font-family: SourceSansPro;
-    -fx-text-alignment: justify;
-}
-
 .button
 {
     -fx-alignment: baseline-center;
     -fx-font-family: SourceSansPro;
 }
 
-.inputfield
+.gridpane
 {
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
     -fx-alignment: center-left;
 }
 
@@ -57,29 +39,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-alignment: center-left;
 }
 
-.gridpane
+.inputfield
 {
-    -fx-hgap: 10px;
-    -fx-vgap: 10px;
     -fx-alignment: center-left;
 }
 
-#tophbox
+.label
 {
-    -fx-spacing: 75px;
+    -fx-font-family: SourceSansPro;
+    -fx-text-alignment: justify;
 }
 
-#titlebox
+.vbox
 {
-    -fx-alignment: center;
-    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
+    -fx-spacing: 10px;
+    -fx-alignment: top-left;
+    -fx-fill-width: true;
+    -fx-padding: 15px 20px 20px 20px; /*top, right, bottom, left*/
 }
 
-#title
+.pbar
 {
-    -fx-text-alignment: center;
-    -fx-font-size: 20;
-    -fx-font-weight: bold;
+    -fx-progress-color: #000000;
+}
+
+.windowtext
+{
+    -fx-font-family: SourceSansPro;
+    -fx-text-alignment: justify;
 }
 
 #internalvbox
@@ -89,15 +76,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
 }
 
+#propertytitle
+{
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
 #propertyvbox
 {
     -fx-border-style: solid;
     -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
 }
 
-#propertytitle
+#title
 {
-    -fx-font-size: 14;
+    -fx-text-alignment: center;
+    -fx-font-size: 20;
     -fx-font-weight: bold;
 }
 
@@ -107,4 +101,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font-family: SourceSansPro;
     -fx-font-size: 20;
     -fx-font-weight: bold;
+}
+
+#titlebox
+{
+    -fx-alignment: center;
+    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
+}
+
+#tophbox
+{
+    -fx-spacing: 75px;
 }

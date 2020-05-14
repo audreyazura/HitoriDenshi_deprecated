@@ -19,7 +19,7 @@
       styleClass="mainvbox" fx:id="parameterbox">
     
     <stylesheets>
-        <URL value="@WindowStyle.css" />
+        <URL value="@WindowsStyle.css" />
     </stylesheets>
     
     <fx:define>

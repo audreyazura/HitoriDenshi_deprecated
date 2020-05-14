@@ -46,7 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .internalvbox
 {
-    -fx-spacing: 10px;
     -fx-alignment: top-left;
     -fx-fill-width: true;
     -fx-spacing: 5px;
@@ -117,4 +116,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #tophbox
 {
     -fx-spacing: 75px;
+}
+
+#workerpbarmainbox
+{
+    -fx-spacing: 25px;
 }

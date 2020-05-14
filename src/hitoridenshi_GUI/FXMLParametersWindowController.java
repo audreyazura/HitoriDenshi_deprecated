@@ -17,7 +17,8 @@
 package hitoridenshi_GUI;
 
 import hitoridenshi_simulation.CalculationConditions;
-import hitoridenshi_simulation.HitoriDenshi_SimulationLauncher;
+import hitoridenshi_simulation.GUICallBack;
+import hitoridenshi_simulation.HitoriDenshi_SimulationManager;
 import hitoridenshi_simulation.PhysicalConstants;
 import java.io.File;
 import java.math.BigDecimal;
@@ -229,8 +230,10 @@ public class FXMLParametersWindowController
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
-            Thread simulationThread = new Thread(new HitoriDenshi_SimulationLauncher(inputFolderAddress, outputFolderAddress, conditions));
+            HitoriDenshi_SimulationManager simulationLauncher = new HitoriDenshi_SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (GUICallBack) m_mainApp);
+            Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
+            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker());
         }
         catch (NumberFormatException ex)
         {

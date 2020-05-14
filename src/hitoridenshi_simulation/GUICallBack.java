@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Alban Lafuente
+ * Copyright (C) 2020 audreyazura
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshi_GUI;
-
-import javafx.stage.Stage;
+package hitoridenshi_simulation;
 
 /**
  *
- * @author Alban Lafuente
+ * @author audreyazura
  */
-public interface MainWindowCall
+public interface GUICallBack
 {
-    Stage getMainStage();
-    void launchOnGoingSimulationWindow(int p_workerAmount);
+    public void updateProgress (int p_workerID, double p_workerProgress, double p_globalProgress);
+    public void sendMessage (String p_message);
 }

@@ -16,6 +16,7 @@
  */
 package hitoridenshi_GUI;
 
+import hitoridenshi_simulation.GUICallBack;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,23 +31,10 @@ import javafx.stage.Stage;
  *
  * @author Alban Lafuente
  */
-public class HitoriDenshi_GUI extends Application implements MainWindowCall
+public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUICallBack
 {
     private Stage m_mainStage;
-    
-    /**
-     * Elements to include in the GUI:
-     *  - Field to enter the list of bias voltage
-     *  - Field to enter the list of notch position
-     *  - Field to enter the list of starting positions
-     *  - Field to select the folder with the files in (tell the name formalism)
-     *  - Field for the number of particle
-     *  - Switch electron/holes
-     *  - Switch to select if the position 0 is at the front or back
-     *  - Field to enter the size of the buffer and window
-     *  - Field to enter the size of tExtractVideos_GUIhe absorber
-     *  - Field to enter the number of particle to simulate at each iteration
-     */
+    private SimulationWindowController m_simulationWindowController;
     
     /**
      * @param args the command line arguments
@@ -87,12 +75,41 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall
         {
             Logger.getLogger(HitoriDenshi_GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-//        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
-//        simu.startSimulation(folder, conditions);
-        
-//        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
-//        simu.startSimulation(folder, conditions);
     }
     
+    @Override
+    public void launchOnGoingSimulationWindow(int p_workerAmount)
+    {
+        FXMLLoader simulationTrackerWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLOnGoingSimulationWindow.fxml"));
+        
+        try
+        {
+            Parent simulationWindowFxml = simulationTrackerWindowLoader.load();
+            SimulationWindowController controller = simulationTrackerWindowLoader.getController();
+            m_simulationWindowController = controller;
+            controller.initialize(this, p_workerAmount);
+            int longestColumn = p_workerAmount - p_workerAmount / 2;
+            m_mainStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
+	    m_mainStage.show();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(HitoriDenshi_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void updateProgress (int p_workerID, double p_workerProgress, double p_globalProgress)
+    {
+        m_simulationWindowController.updateProgressIndividual(p_workerID, p_workerProgress, p_globalProgress);
+    }
+    
+    @Override
+    public void sendMessage (String p_message)
+    {
+        if (p_message != null)
+        {
+            m_simulationWindowController.updateMessage(p_message);
+        }
+    }
 }

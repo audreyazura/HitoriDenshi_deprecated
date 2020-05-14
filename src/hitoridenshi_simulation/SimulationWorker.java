@@ -37,27 +37,41 @@ public class SimulationWorker implements Runnable
     private final ArrayList<BigDecimal> m_startingPositions;
     private final ArrayList<BigDecimal> m_velocities;
     private final HashMap<String, BigDecimal> m_particleParameters;
+    private final HitoriDenshi_SimulationManager m_manager;
     private final int m_id;
     private final int m_maxSteps;
     private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
     private final Set<Absorber> m_absorbers;
     private final String m_outputFolder;
     
-    public SimulationWorker (int p_id, String p_outputFolder, HashSet<Absorber> p_chunk, CalculationConditions p_conditions)
+    private int m_numberCalculations;
+    
+    public SimulationWorker (int p_id, String p_outputFolder, HashSet<Absorber> p_chunk, CalculationConditions p_conditions, HitoriDenshi_SimulationManager p_manager)
     {
         m_startingPositions = p_conditions.getStartingPositionList();
         m_velocities = p_conditions.getVelocityList();
         m_particleParameters = p_conditions.getParticleParameters();
+        m_manager = p_manager;
         m_id = p_id;
         m_maxSteps = p_conditions.getMaxSteps();
         m_abscissaUnit = p_conditions.getAbscissaScale();
         m_absorbers = p_chunk;
         m_outputFolder = p_outputFolder;
+        
+        m_numberCalculations = m_absorbers.size()*m_startingPositions.size()*m_velocities.size();
+        for (Absorber absorber: m_absorbers)
+        {
+            if (!m_startingPositions.contains(absorber.getNotchPosition()))
+            {
+                m_numberCalculations += m_velocities.size();
+            }
+        }
     }
     
     @Override
     public void run()
     {
+        double workerProgress = 0;
         for (Absorber currentAbsorber: m_absorbers)
         {
             BigDecimal notchPosition = currentAbsorber.getNotchPosition();
@@ -69,13 +83,12 @@ public class SimulationWorker implements Runnable
                 if (!initialPositionWithNotch.contains(notchPosition))
                 {
                     initialPositionWithNotch.add(notchPosition);
+                    
                 }
                 
                 for (BigDecimal initialPosition: initialPositionWithNotch)
                 {
                     SimulationTracker currentTracker = new SimulationTracker(m_velocities.size());
-
-                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation starts for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
 
                     for (BigDecimal velocity: m_velocities)
                     {
@@ -89,10 +102,12 @@ public class SimulationWorker implements Runnable
                         }
 
                         currentTracker.logParticle(currentIndividual);
+                        workerProgress += 1.0 / m_numberCalculations;
+                        m_manager.sendUpdate(m_id, workerProgress);
                     }
 
                     currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPositionString, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
-                    System.out.println("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                 }
             }
             catch (FileSystemException ex)
@@ -101,8 +116,13 @@ public class SimulationWorker implements Runnable
             }
             catch (IOException ex)
             {
-                Logger.getLogger(HitoriDenshi_SimulationLauncher.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(HitoriDenshi_SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public int getNumberCalculations()
+    {
+        return m_numberCalculations;
     }
 }

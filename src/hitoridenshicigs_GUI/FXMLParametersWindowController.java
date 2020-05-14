@@ -263,13 +263,13 @@ public class FXMLParametersWindowController
     
     private String changeEnteredNumberUnit (String p_numberEntered, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)
     {
-        String conrrectedNumber = new String(p_numberEntered);
+        String correctedNumber = new String(p_numberEntered);
         
-        if (conrrectedNumber.equals(""))
+        if (correctedNumber.equals(""))
         {
-            conrrectedNumber = "0";
+            correctedNumber = "0";
         }
         
-        return new String(String.format("%.4g", (new BigDecimal(conrrectedNumber)).multiply(p_previousMultiplier).divide(p_newMultiplier)));
+        return (new BigDecimal(correctedNumber)).multiply(p_previousMultiplier).divide(p_newMultiplier).stripTrailingZeros().toPlainString();
     }
 }

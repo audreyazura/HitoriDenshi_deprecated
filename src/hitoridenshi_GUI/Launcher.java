@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshicigs_GUI;
-
-import javafx.stage.Stage;
+package hitoridenshi_GUI;
 
 /**
  *
  * @author Alban Lafuente
  */
-public interface MainWindowCall
-{
-    Stage getMainStage();
+public class Launcher {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        HitoriDenshi_GUI guiLaunch = new HitoriDenshi_GUI();
+        guiLaunch.startHitoriGUI(args);
+    }
+    
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshicigs_GUI;
+package hitoridenshi_GUI;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -30,7 +30,7 @@ import javafx.stage.Stage;
  *
  * @author Alban Lafuente
  */
-public class HitoriDenshiCIGS_GUI extends Application implements MainWindowCall
+public class HitoriDenshi_GUI extends Application implements MainWindowCall
 {
     private Stage m_mainStage;
     
@@ -53,7 +53,7 @@ public class HitoriDenshiCIGS_GUI extends Application implements MainWindowCall
      */
     public void startHitoriGUI(String[] args) 
     {
-        Font.loadFont(HitoriDenshiCIGS_GUI.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
+        Font.loadFont(HitoriDenshi_GUI.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
         launch(args);
     }
     
@@ -73,7 +73,7 @@ public class HitoriDenshiCIGS_GUI extends Application implements MainWindowCall
     private void launchParametersWindow()
     {
         
-        FXMLLoader parameterWindowLoader = new FXMLLoader(HitoriDenshiCIGS_GUI.class.getResource("FXMLParametersWindow.fxml"));
+        FXMLLoader parameterWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLParametersWindow.fxml"));
         
         try
         {
@@ -85,8 +85,11 @@ public class HitoriDenshiCIGS_GUI extends Application implements MainWindowCall
         }
         catch (IOException ex)
         {
-            Logger.getLogger(HitoriDenshiCIGS_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HitoriDenshi_GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+//        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
+//        simu.startSimulation(folder, conditions);
         
 //        HitoriDenshiCIGS_Simulation simu = new HitoriDenshiCIGS_Simulation();
 //        simu.startSimulation(folder, conditions);

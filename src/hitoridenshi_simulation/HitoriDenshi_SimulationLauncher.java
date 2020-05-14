@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshicigs_simulation;
+package hitoridenshi_simulation;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -30,19 +30,20 @@ import java.util.zip.DataFormatException;
  *
  * @author Alban Lafuente
  */
-public class HitoriDenshiCIGS_Simulation implements Runnable
+public class HitoriDenshi_SimulationLauncher implements Runnable
 {
     private final CalculationConditions m_conditions;
     private final String m_inputFolder;
     private final String m_outputFolder;
     
-    public HitoriDenshiCIGS_Simulation (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
+    public HitoriDenshi_SimulationLauncher (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions)
     {
         m_conditions = p_conditions;
         m_inputFolder = p_folderElectricFields;
         m_outputFolder = p_outputFolder;
     }
     
+    @Override
     public void run()
     {
         System.out.println("Starting simulation!\nFolder: " + m_inputFolder);
@@ -105,7 +106,7 @@ public class HitoriDenshiCIGS_Simulation implements Runnable
         }
         catch (DataFormatException ex)
         {
-            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HitoriDenshi_SimulationLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (FileSystemException ex)
         {
@@ -113,11 +114,11 @@ public class HitoriDenshiCIGS_Simulation implements Runnable
         }
         catch (IOException ex)
         {
-            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HitoriDenshi_SimulationLauncher.class.getName()).log(Level.SEVERE, null, ex);
         } 
         catch (InterruptedException ex)
         {
-            Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HitoriDenshi_SimulationLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         System.out.println("End of simulation!");

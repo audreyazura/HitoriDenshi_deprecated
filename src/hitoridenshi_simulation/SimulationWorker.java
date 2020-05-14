@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshicigs_simulation;
+package hitoridenshi_simulation;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -101,7 +101,7 @@ public class SimulationWorker implements Runnable
             }
             catch (IOException ex)
             {
-                Logger.getLogger(HitoriDenshiCIGS_Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(HitoriDenshi_SimulationLauncher.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

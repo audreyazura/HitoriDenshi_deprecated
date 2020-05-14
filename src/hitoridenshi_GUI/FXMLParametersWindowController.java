@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshicigs_GUI;
+package hitoridenshi_GUI;
 
-import hitoridenshicigs_simulation.CalculationConditions;
-import hitoridenshicigs_simulation.HitoriDenshiCIGS_Simulation;
-import hitoridenshicigs_simulation.PhysicalConstants;
+import hitoridenshi_simulation.CalculationConditions;
+import hitoridenshi_simulation.HitoriDenshi_SimulationLauncher;
+import hitoridenshi_simulation.PhysicalConstants;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class FXMLParametersWindowController
     private MainWindowCall m_mainApp;
     private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
     
-    void setMainWindow (HitoriDenshiCIGS_GUI p_mainGUI)
+    void setMainWindow (HitoriDenshi_GUI p_mainGUI)
     {
         m_mainApp = p_mainGUI;
     }
@@ -229,7 +229,7 @@ public class FXMLParametersWindowController
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
-            Thread simulationThread = new Thread(new HitoriDenshiCIGS_Simulation(inputFolderAddress, outputFolderAddress, conditions));
+            Thread simulationThread = new Thread(new HitoriDenshi_SimulationLauncher(inputFolderAddress, outputFolderAddress, conditions));
             simulationThread.start();
         }
         catch (NumberFormatException ex)

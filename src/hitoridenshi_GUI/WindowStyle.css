@@ -44,13 +44,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-alignment: center-left;
 }
 
+.internalvbox
+{
+    -fx-spacing: 10px;
+    -fx-alignment: top-left;
+    -fx-fill-width: true;
+    -fx-spacing: 5px;
+    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
+}
+
 .label
 {
     -fx-font-family: SourceSansPro;
     -fx-text-alignment: justify;
 }
 
-.vbox
+.mainvbox
 {
     -fx-spacing: 10px;
     -fx-alignment: top-left;
@@ -63,29 +72,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-progress-color: #000000;
 }
 
+.propertyvbox
+{
+    -fx-spacing: 10px;
+    -fx-alignment: top-left;
+    -fx-fill-width: true;
+    -fx-border-style: solid;
+    -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
+}
+
 .windowtext
 {
     -fx-font-family: SourceSansPro;
     -fx-text-alignment: justify;
 }
 
-#internalvbox
-{
-    -fx-fillwidth: true;
-    -fx-spacing: 5px;
-    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
-}
-
 #propertytitle
 {
     -fx-font-size: 14;
     -fx-font-weight: bold;
-}
-
-#propertyvbox
-{
-    -fx-border-style: solid;
-    -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
 }
 
 #title

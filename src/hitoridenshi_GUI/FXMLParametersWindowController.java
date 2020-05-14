@@ -35,7 +35,7 @@ import javafx.stage.DirectoryChooser;
 
 /**
  *
- * @author audreyazura
+ * @author Alban Lafuente
  */
 public class FXMLParametersWindowController
 {

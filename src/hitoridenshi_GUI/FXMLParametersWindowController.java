@@ -149,7 +149,7 @@ public class FXMLParametersWindowController
     {
         FileChooser browser = new FileChooser();
 	browser.setTitle("Chose the file to write the configuration in");
-        browser.setInitialFileName("ConfigurationFiles/MyConfig.conf");
+        browser.setInitialFileName("ConfigurationFiles/MyConfig.json");
         
         File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
         
@@ -161,7 +161,7 @@ public class FXMLParametersWindowController
     
     @FXML private void makedefault (ActionEvent event)
     {
-        writeConfigToFile(new File("ConfigurationFiles/default.conf"));
+        writeConfigToFile(new File("ConfigurationFiles/default.json"));
     }
     
     @FXML private void changeSelectedParticle(ActionEvent event)
@@ -236,15 +236,15 @@ public class FXMLParametersWindowController
     {
         //temporarily saving current configuration to a file
         String tempDir = System.getProperty("java.io.tmpdir");
-        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.conf");
+        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.json");
         if (tempSave.isFile())
         {
             int i = 1;
-            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
+            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".json");
             while (tempSave.isFile())
             {
                 i += 1;
-                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
+                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".json");
             }
         }
         writeConfigToFile(tempSave);

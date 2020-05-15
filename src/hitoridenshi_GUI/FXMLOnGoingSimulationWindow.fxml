@@ -34,9 +34,15 @@
         </VBox>
     </HBox>
     
-    <HBox styleClass="hbox" fx:id="closebuttonbox" >
-        <Button text="Close" fx:id="closebutton"
+    <HBox styleClass="hbox" >
+        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
+            <Button text="Launch a new simulation" fx:id="closebutton"
+                        onAction="#callparameterswindow" />
+        </VBox>
+        <VBox styleClass="internalvbox" fx:id="closebuttonbox" HBox.hgrow="ALWAYS" >
+            <Button text="Close" fx:id="closebutton"
                     cancelButton="true" onAction="#closeApp" />
+        </VBox>
     </HBox>
     
 </VBox>

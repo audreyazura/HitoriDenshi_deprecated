@@ -16,10 +16,9 @@
  */
 package hitoridenshi_GUI;
 
-import com.sun.javadoc.ProgramElementDoc;
+import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
@@ -96,7 +95,12 @@ public class SimulationWindowController
 	consolewindow.appendText(currentText);
     }
     
-    @FXML void closeApp(ActionEvent event)
+    @FXML void callparameterswindow (ActionEvent event)
+    {
+        m_mainWindow.launchParametersWindow(new File(""));
+    }
+    
+    @FXML void closeApp (ActionEvent event)
     {
 	System.exit(0);
     }

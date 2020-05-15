@@ -16,6 +16,7 @@
  */
 package hitoridenshi_GUI;
 
+import java.io.File;
 import javafx.stage.Stage;
 
 /**
@@ -25,5 +26,6 @@ import javafx.stage.Stage;
 public interface MainWindowCall
 {
     Stage getMainStage();
+    void launchParametersWindow(File p_configurationFile);
     void launchOnGoingSimulationWindow(int p_workerAmount);
 }

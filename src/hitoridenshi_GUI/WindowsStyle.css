@@ -86,6 +86,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-text-alignment: justify;
 }
 
+#closebuttonbox
+{
+    -fx-alignment: top-right;
+}
+
 #propertytitle
 {
     -fx-font-size: 14;

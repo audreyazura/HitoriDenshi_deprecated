@@ -17,6 +17,7 @@
 package hitoridenshi_GUI;
 
 import hitoridenshi_simulation.GUICallBack;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +50,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     public void start(Stage stage)
     {
         m_mainStage = stage;
-        launchParametersWindow();
+        launchParametersWindow(new File(""));
     }
     
     @Override
@@ -58,7 +59,8 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
         return m_mainStage;
     }
     
-    private void launchParametersWindow()
+    @Override
+    public void launchParametersWindow(File p_configurationFile)
     {
         
         FXMLLoader parameterWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLParametersWindow.fxml"));

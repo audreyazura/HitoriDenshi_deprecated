@@ -50,7 +50,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     public void start(Stage stage)
     {
         m_mainStage = stage;
-        launchParametersWindow(new File("ConfigurationFiles/default.json"));
+        launchParametersWindow(new File("ConfigurationFiles/default.conf"));
     }
     
     @Override

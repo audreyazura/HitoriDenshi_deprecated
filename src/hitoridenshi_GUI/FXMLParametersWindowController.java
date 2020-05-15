@@ -135,7 +135,7 @@ public class FXMLParametersWindowController
     {
         FileChooser browser = new FileChooser();
         browser.setInitialDirectory(new File("ConfigurationFiles"));
-	browser.setTitle("Chose the file to load the configuration from");
+        browser.setTitle("Chose the file to load the configuration from");
         
         File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
         
@@ -149,7 +149,7 @@ public class FXMLParametersWindowController
     {
         FileChooser browser = new FileChooser();
 	browser.setTitle("Chose the file to write the configuration in");
-        browser.setInitialFileName("ConfigurationFiles/MyConfig.json");
+        browser.setInitialFileName("ConfigurationFiles/MyConfig.conf");
         
         File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
         
@@ -161,7 +161,7 @@ public class FXMLParametersWindowController
     
     @FXML private void makedefault (ActionEvent event)
     {
-        writeConfigToFile(new File("ConfigurationFiles/default.json"));
+        writeConfigToFile(new File("ConfigurationFiles/default.conf"));
     }
     
     @FXML private void changeSelectedParticle(ActionEvent event)
@@ -236,15 +236,15 @@ public class FXMLParametersWindowController
     {
         //temporarily saving current configuration to a file
         String tempDir = System.getProperty("java.io.tmpdir");
-        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.json");
+        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.conf");
         if (tempSave.isFile())
         {
             int i = 1;
-            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".json");
+            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
             while (tempSave.isFile())
             {
                 i += 1;
-                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".json");
+                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
             }
         }
         writeConfigToFile(tempSave);

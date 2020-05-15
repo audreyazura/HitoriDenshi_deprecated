@@ -214,7 +214,7 @@ public class SimulationTracker
         {
             case FRONT:
                 m_numberFrontExit += 1;
-                this.addMean(ListType.FRONT, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(ListType.FRONT, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberFrontExit == 1)
                 {
@@ -244,7 +244,7 @@ public class SimulationTracker
                 break;
             case BACK:
                 m_numberBackExit += 1;
-                this.addMean(ListType.BACK, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(ListType.BACK, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberBackExit == 1)
                 {
@@ -297,13 +297,13 @@ public class SimulationTracker
             exitFileBuffer.flush();
             exitFileBuffer.close();
             
-            this.writeFile(ListTypeToWrite.GENERALMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovement.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.FRONTFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToFront.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.FRONTSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToFront.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.FRONTMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToFront.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
-            this.writeFile(ListTypeToWrite.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
+            writeFile(ListTypeToWrite.GENERALMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovement.sim")), p_prefix);
+            writeFile(ListTypeToWrite.FRONTFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToFront.sim")), p_prefix);
+            writeFile(ListTypeToWrite.FRONTSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToFront.sim")), p_prefix);
+            writeFile(ListTypeToWrite.FRONTMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToFront.sim")), p_prefix);
+            writeFile(ListTypeToWrite.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
+            writeFile(ListTypeToWrite.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
+            writeFile(ListTypeToWrite.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
         }
         else
         {

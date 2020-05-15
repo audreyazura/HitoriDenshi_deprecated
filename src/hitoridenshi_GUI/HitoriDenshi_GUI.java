@@ -50,7 +50,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     public void start(Stage stage)
     {
         m_mainStage = stage;
-        launchParametersWindow(new File(""));
+        launchParametersWindow(new File("ConfigurationFiles/default.conf"));
     }
     
     @Override
@@ -69,7 +69,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
         {
             Parent windowFxml = parameterWindowLoader.load();
 	    FXMLParametersWindowController controller = parameterWindowLoader.getController();
-	    controller.setMainWindow(this);
+	    controller.initialize(this, p_configurationFile);
             m_mainStage.setScene(new Scene(windowFxml, 800, 800));
 	    m_mainStage.show();
         }
@@ -80,7 +80,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     }
     
     @Override
-    public void launchOnGoingSimulationWindow(int p_workerAmount)
+    public void launchOnGoingSimulationWindow(int p_workerAmount, File p_tempConfigFile)
     {
         FXMLLoader simulationTrackerWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLOnGoingSimulationWindow.fxml"));
         
@@ -89,7 +89,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
             Parent simulationWindowFxml = simulationTrackerWindowLoader.load();
             SimulationWindowController controller = simulationTrackerWindowLoader.getController();
             m_simulationWindowController = controller;
-            controller.initialize(this, p_workerAmount);
+            controller.initialize(p_tempConfigFile, this, p_workerAmount);
             int longestColumn = p_workerAmount - p_workerAmount / 2;
             m_mainStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
 	    m_mainStage.show();

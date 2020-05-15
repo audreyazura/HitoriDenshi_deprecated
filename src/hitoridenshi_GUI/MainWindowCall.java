@@ -27,5 +27,5 @@ public interface MainWindowCall
 {
     Stage getMainStage();
     void launchParametersWindow(File p_configurationFile);
-    void launchOnGoingSimulationWindow(int p_workerAmount);
+    void launchOnGoingSimulationWindow(int p_workerAmount, File p_tempConfigFile);
 }

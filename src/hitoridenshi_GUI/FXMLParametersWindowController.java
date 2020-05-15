@@ -33,6 +33,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 
 /**
  *
@@ -65,11 +66,6 @@ public class FXMLParametersWindowController
     
     private MainWindowCall m_mainApp;
     private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
-    
-    void setMainWindow (HitoriDenshi_GUI p_mainGUI)
-    {
-        m_mainApp = p_mainGUI;
-    }
     
     @FXML private void savePreviousSelection ()
     {
@@ -134,6 +130,39 @@ public class FXMLParametersWindowController
             System.err.println("Select a proper unit!");
         }
     }
+            
+    @FXML private void loadconfig (ActionEvent event)
+    {
+        FileChooser browser = new FileChooser();
+        browser.setInitialDirectory(new File("ConfigurationFiles"));
+	browser.setTitle("Chose the file to load the configuration from");
+        
+        File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
+        
+        if (selectedFile != null)
+        {
+            loadFromFile(selectedFile);
+        }
+    }
+    
+    @FXML private void saveconfig (ActionEvent event)
+    {
+        FileChooser browser = new FileChooser();
+	browser.setTitle("Chose the file to write the configuration in");
+        browser.setInitialFileName("ConfigurationFiles/MyConfig.conf");
+        
+        File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
+        
+        if (toWriteFile != null)
+        {
+            writeConfigToFile(toWriteFile);
+        }
+    }
+    
+    @FXML private void makedefault (ActionEvent event)
+    {
+        writeConfigToFile(new File("ConfigurationFiles/default.conf"));
+    }
     
     @FXML private void changeSelectedParticle(ActionEvent event)
     {
@@ -154,12 +183,11 @@ public class FXMLParametersWindowController
     @FXML private void browsingInput (ActionEvent event)
     {
         DirectoryChooser browser = new DirectoryChooser();
-	
 	browser.setTitle("Chose the folder containing the input files");
-	
+        
+        String fieldText = inputFolder.getText();
 	try
         {
-            String fieldText = inputFolder.getText();
             browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
         }
         catch (NullPointerException ex)
@@ -167,26 +195,25 @@ public class FXMLParametersWindowController
             browser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         
-        try
-	{
-            String adress = browser.showDialog(m_mainApp.getMainStage()).getAbsolutePath();
-            inputFolder.setText(adress);
-	}
-	catch (NullPointerException ex)
-	{
-	    System.err.println("Input folder address empty!!!!!!!");
-	}
+        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
+        if (selectedFolder != null)
+        {
+            inputFolder.setText(selectedFolder.getAbsolutePath());
+        }
+        else
+        {
+            inputFolder.setText(fieldText);
+        }
     }
     
     @FXML private void browsingOutput (ActionEvent event)
     {
         DirectoryChooser browser = new DirectoryChooser();
-	
 	browser.setTitle("Chose the output folder");
-	
-	try
+        
+        String fieldText = outputFolder.getText();
+        try
         {
-            String fieldText = outputFolder.getText();
             browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
         }
         catch (NullPointerException ex)
@@ -194,19 +221,35 @@ public class FXMLParametersWindowController
             browser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         
-        try
-	{
-            String adress = browser.showDialog(m_mainApp.getMainStage()).getAbsolutePath();
-            outputFolder.setText(adress);
-	}
-	catch (NullPointerException ex)
-	{
-	    System.err.println("Input folder address empty!!!!!!!");
-	}
+        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
+        if (selectedFolder != null)
+        {
+            outputFolder.setText(selectedFolder.getAbsolutePath());
+        }
+        else
+        {
+            outputFolder.setText(fieldText);
+        }
     }
     
     @FXML private void startSimulation (ActionEvent event)
     {
+        //temporarily saving current configuration to a file
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.conf");
+        if (tempSave.isFile())
+        {
+            int i = 1;
+            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
+            while (tempSave.isFile())
+            {
+                i += 1;
+                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
+            }
+        }
+        writeConfigToFile(tempSave);
+        
+        //getting all the parameters to configure the simulation
         String biasVoltagesList = biasvoltages.getText();
         String notchesList = notches.getText();
         String initialPositionsList = generationpositions.getText();
@@ -233,7 +276,7 @@ public class FXMLParametersWindowController
             HitoriDenshi_SimulationManager simulationLauncher = new HitoriDenshi_SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (GUICallBack) m_mainApp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
-            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker());
+            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempSave);
         }
         catch (NumberFormatException ex)
         {
@@ -268,11 +311,31 @@ public class FXMLParametersWindowController
     {
         String correctedNumber = new String(p_numberEntered);
         
-        if (correctedNumber.equals(""))
+        if (!correctedNumber.equals(""))
         {
-            correctedNumber = "0";
+            correctedNumber = (new BigDecimal(correctedNumber)).multiply(p_previousMultiplier).divide(p_newMultiplier).stripTrailingZeros().toPlainString();
         }
         
-        return (new BigDecimal(correctedNumber)).multiply(p_previousMultiplier).divide(p_newMultiplier).stripTrailingZeros().toPlainString();
+        return correctedNumber;
+    }
+    
+    private void writeConfigToFile (File p_destinationFile)
+    {
+        
+    }
+    
+    private void loadFromFile (File p_file)
+    {
+        
+    }
+    
+    public void initialize (MainWindowCall p_mainApp, File p_configFile)
+    {
+        m_mainApp = p_mainApp;
+        
+        if (p_configFile.isFile())
+        {
+            loadFromFile(p_configFile);
+        }
     }
 }

@@ -31,8 +31,8 @@
         <Label styleClass="windowtext" fx:id="title" text="Simulation configuration"/>
     </HBox>
     
-    <HBox styleClass="hbox" fx:id="tophbox">        
-        <VBox styleClass="internalvbox" >
+    <HBox styleClass="hbox">        
+        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
             <Label styleClass="windowtext" text="Abscissa unit:" />
             <ChoiceBox fx:id="unitselec" value="μm" onAction="#applyNewUnitSelection" onShowing="#savePreviousSelection">
                 <items>
@@ -44,7 +44,7 @@
             </ChoiceBox>
         </VBox>
         
-        <VBox styleClass="internalvbox" >
+        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
             <Label styleClass="windowtext" text="Material:" />
             <ChoiceBox fx:id="materialselec" value="CIGS">
                 <items>
@@ -54,6 +54,12 @@
                 </items>    
             </ChoiceBox>
         </VBox>
+        
+        <HBox styleClass="hbox">
+            <Button text="Load configuration" styleClass="configbutton" onAction="#loadconfig"/>
+            <Button text="Save configuration" styleClass="configbutton" onAction="#saveconfig"/>
+            <Button text="Use as default configuration" styleClass="configbutton" onAction="#makedefault"/>
+        </HBox>
     </HBox>
     
     <VBox styleClass="propertyvbox">

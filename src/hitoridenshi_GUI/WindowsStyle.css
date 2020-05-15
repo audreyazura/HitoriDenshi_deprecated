@@ -25,6 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font-family: SourceSansPro;
 }
 
+.configbutton
+{
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: SourceSansPro;
+    -fx-wrap-text: true;
+    -fx-pref-width: 130px;
+}
+
 .gridpane
 {
     -fx-hgap: 10px;
@@ -97,13 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font-weight: bold;
 }
 
-#title
-{
-    -fx-text-alignment: center;
-    -fx-font-size: 20;
-    -fx-font-weight: bold;
-}
-
 #startsimubox
 {
     -fx-alignment: center;
@@ -112,15 +114,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font-weight: bold;
 }
 
+#title
+{
+    -fx-text-alignment: center;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
 #titlebox
 {
     -fx-alignment: center;
     -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
-}
-
-#tophbox
-{
-    -fx-spacing: 75px;
 }
 
 #workerpbarmainbox

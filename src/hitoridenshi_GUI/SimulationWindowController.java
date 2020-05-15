@@ -39,11 +39,13 @@ public class SimulationWindowController
     @FXML private VBox workerpbarsleft;
     @FXML private VBox workerpbarsright;
     
+    private File m_tempConfigFile;
     private MainWindowCall m_mainWindow;
     private ProgressBar[] m_workerPBarArray;
     
-    void initialize(MainWindowCall p_mainWindowCall, int p_workerAmount)
+    void initialize(File p_tempConfigFile, MainWindowCall p_mainWindowCall, int p_workerAmount)
     {
+        m_tempConfigFile = p_tempConfigFile;
         m_mainWindow = p_mainWindowCall;
         
         consolewindow.appendText("Launching simulation...\n\n");
@@ -97,7 +99,7 @@ public class SimulationWindowController
     
     @FXML void callparameterswindow (ActionEvent event)
     {
-        m_mainWindow.launchParametersWindow(new File(""));
+        m_mainWindow.launchParametersWindow(m_tempConfigFile);
     }
     
     @FXML void closeApp (ActionEvent event)

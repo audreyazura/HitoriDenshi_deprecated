@@ -41,9 +41,9 @@ class ContinuousFunction
     private final Set<BigDecimal> m_abscissa;
     private final Map<BigDecimal, BigDecimal> m_values;
     
-    static public ContinuousFunction createElectricField(File p_fileValues, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
+    static public ContinuousFunction createElectricFieldFromSCAPS(File p_fileValues, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
-       return new ContinuousFunction(p_fileValues, p_unitMultiplier, "eb", 23, new int[] {1,12});
+       return new ContinuousFunction(p_fileValues, p_unitMultiplier, PhysicalConstants.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
     }
     
     public ContinuousFunction (ContinuousFunction p_passedFunction)
@@ -59,26 +59,33 @@ class ContinuousFunction
         m_values = p_values;
     }
     
-    public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_effectiveField0toNotch, BigDecimal p_effectiveFieldNotchtoEnd)
+    public ContinuousFunction(TreeSet<BigDecimal> p_abscissa, BigDecimal p_notchPosition, BigDecimal p_effectiveField0toNotch, BigDecimal p_effectiveFieldNotchtoEnd, BigDecimal p_end)
     {
         m_values = new HashMap<>();
         
         for (BigDecimal position: p_abscissa)
         {
-            if (position.compareTo(p_notchPosition) < 0)
+            if (position.compareTo(p_end) <= 0)
             {
-                m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveField0toNotch));
+                if (position.compareTo(p_notchPosition) < 0)
+                {
+                    m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveField0toNotch));
+                }
+                else if (position.compareTo(p_notchPosition) > 0)
+                {
+                    m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveFieldNotchtoEnd));
+                }
             }
-            else if (position.compareTo(p_notchPosition) > 0)
+            else
             {
-                m_values.put(CalculationConditions.formatBigDecimal(position), CalculationConditions.formatBigDecimal(p_effectiveFieldNotchtoEnd));
+                m_values.put(CalculationConditions.formatBigDecimal(position), BigDecimal.ZERO);
             }
         }
         
         m_abscissa = new TreeSet(m_values.keySet());
     }
     
-    private ContinuousFunction (File p_fileValues, BigDecimal p_unitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
+    private ContinuousFunction (File p_fileValues, BigDecimal p_abscissaUnitMultiplier, BigDecimal p_valuesUnitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
         m_values = new HashMap<>();
         
@@ -100,17 +107,25 @@ class ContinuousFunction
 	    if(lineSplit.length == p_ncolumn && numberRegex.matcher(lineSplit[0]).matches())
 	    {
 		//we put the abscissa in meter in order to do all calculations in SI
-                BigDecimal currentAbscissa = CalculationConditions.formatBigDecimal((new BigDecimal(lineSplit[p_columnToExtract[0]].strip())).multiply(p_unitMultiplier));
+                BigDecimal currentAbscissa = CalculationConditions.formatBigDecimal((new BigDecimal(lineSplit[p_columnToExtract[0]].strip())).multiply(p_abscissaUnitMultiplier));
                 Set<BigDecimal> abscissaSet = new TreeSet(m_values.keySet());
                 
                 if (!abscissaSet.contains(currentAbscissa))
                 {
-                    m_values.put(currentAbscissa, CalculationConditions.formatBigDecimal(new BigDecimal(lineSplit[p_columnToExtract[1]].strip())));
+                    m_values.put(currentAbscissa, CalculationConditions.formatBigDecimal((new BigDecimal(lineSplit[p_columnToExtract[1]].strip())).divide(p_valuesUnitMultiplier, MathContext.DECIMAL128)));
                 }
 	    }
         }
         
         m_abscissa = new TreeSet(m_values.keySet());
+    }
+    
+    public void print ()
+    {
+        for (BigDecimal abscissa: m_abscissa)
+        {
+            System.out.println(abscissa+"\t"+m_values.get(abscissa));
+        }
     }
     
     public TreeSet<BigDecimal> getAbscissa()

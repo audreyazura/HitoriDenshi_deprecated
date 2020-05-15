@@ -41,7 +41,8 @@ public class PhysicalConstants
     {
         NANO ("1e-9", "n"),  //[SI unit]/[NANO unit]
         MICRO ("1e-6", "μ"), //[SI unit]/[MICRO unit]
-        BASE ("1.0", "");   //[SI unit]/[SI unit]
+        CENTI ("1e-2", "c"), //[SI unit]/[CENTI unit]
+        UNITY ("1.0", "");   //[SI unit]/[SI unit]
         
         private final BigDecimal m_multiplier;
         private final String m_textPrefix;

@@ -64,7 +64,7 @@ public class FXMLParametersWindowController
     @FXML private TextField backbangap;
     
     private MainWindowCall m_mainApp;
-    private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
+    private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
     
     void setMainWindow (HitoriDenshi_GUI p_mainGUI)
     {
@@ -79,19 +79,19 @@ public class FXMLParametersWindowController
         }
         catch (NullPointerException ex)
         {
-            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.BASE;
+            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
         }
     }
     
     @FXML private void applyNewUnitSelection (ActionEvent event)
     {
-        PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.BASE;
+        PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.UNITY;
         try
         {
             String selectedUnit = (String) unitselec.getValue();
             
             currentPrefix = selectPrefix(selectedUnit);
-            if (m_previouslySelectedUnit == PhysicalConstants.UnitsPrefix.BASE)
+            if (m_previouslySelectedUnit == PhysicalConstants.UnitsPrefix.UNITY)
             {
                 m_previouslySelectedUnit = currentPrefix;
             }
@@ -249,7 +249,7 @@ public class FXMLParametersWindowController
     
     private PhysicalConstants.UnitsPrefix selectPrefix (String p_unit)
     {
-        PhysicalConstants.UnitsPrefix unitSelected = PhysicalConstants.UnitsPrefix.BASE;
+        PhysicalConstants.UnitsPrefix unitSelected = PhysicalConstants.UnitsPrefix.UNITY;
         
         switch (p_unit)
         {

@@ -42,7 +42,7 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
     private Stage m_mainStage;
     
     @Override
-    public void startGUI(String[] curratedArguments) 
+    public void startOutput(String[] curratedArguments) 
     {
         Font.loadFont(GUIManager.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
         launch(curratedArguments);

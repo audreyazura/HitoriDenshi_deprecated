@@ -48,8 +48,6 @@ public class SimulationWindowController
         m_tempConfigProp = p_tempConfigProperties;
         m_mainWindow = p_mainWindowCall;
         
-        consolewindow.appendText("Launching simulation...\n\n");
-        
         mainpbar.prefWidthProperty().bind(mainpbarbox.widthProperty());
         
         int numberRightWorker = p_workerAmount / 2;

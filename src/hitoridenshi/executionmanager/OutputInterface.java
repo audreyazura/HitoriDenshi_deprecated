@@ -24,5 +24,5 @@ import hitoridenshi.simulationmanager.ProgressNotifierInterface;
  */
 public interface OutputInterface extends ProgressNotifierInterface
 {
-    public void startGUI(String[] args);
+    public void startOutput(String[] args);
 }

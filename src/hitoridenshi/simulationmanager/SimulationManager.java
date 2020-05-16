@@ -75,6 +75,7 @@ public class SimulationManager implements Runnable
     @Override
     public void run()
     {      
+        sendMessage("Launching simulation...\n");
         try
         {
             //preparing the absorbers on which the simulation will be run

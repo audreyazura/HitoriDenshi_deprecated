@@ -16,13 +16,15 @@
  */
 package hitoridenshi.guimanager;
 
-import hitoridenshi.launcher.LauncherGUIManager;
+import hitoridenshi.executionmanager.LauncherGUIManager;
 import hitoridenshi.simulationmanager.GUICallBack;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,9 +59,9 @@ public class GUIManager extends Application implements MainWindowCall, GUICallBa
         File propertiesFile = new File(getParameters().getNamed().get("file"));
         try
         {
-            InputStream fileStream = new FileInputStream(propertiesFile);
+            Reader fileReader = new FileReader(propertiesFile);
             OrderedProperties properties = new OrderedProperties();
-            properties.load(fileStream);
+            properties.load(fileReader);
             launchParametersWindow(properties);
         }
         catch (FileNotFoundException ex)

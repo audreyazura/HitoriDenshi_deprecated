@@ -24,9 +24,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -153,9 +157,9 @@ public class FXMLParametersWindowController
         {
             try
             {
-                InputStream inputFileStream = new FileInputStream(selectedFile);
+                Reader inputReader = new FileReader(selectedFile);
                 OrderedProperties selectedProperties = new OrderedProperties();
-                selectedProperties.load(inputFileStream);
+                selectedProperties.load(inputReader);
                 loadProperties(selectedProperties);
             }
             catch (FileNotFoundException ex)
@@ -173,7 +177,8 @@ public class FXMLParametersWindowController
     {
         FileChooser browser = new FileChooser();
 	browser.setTitle("Chose the file to write the configuration in");
-        browser.setInitialFileName("ConfigurationFiles/MyConfig.conf");
+        browser.setInitialDirectory(new File("ConfigurationFiles"));
+        browser.setInitialFileName("MyConfig.conf");
         
         File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
         
@@ -333,10 +338,19 @@ public class FXMLParametersWindowController
     
     private void writeConfigToFile (File p_file)
     {
+        if (p_file.isFile())
+        {
+            p_file.delete();
+        }
+        if (p_file.isDirectory())
+        {
+            //throw error
+        }
+        
         try
         {
-            OutputStream outStream = new FileOutputStream(p_file);
-            writeConfigToProperties().store(outStream, null);
+            Writer fileWriter = new FileWriter(p_file);
+            writeConfigToProperties().store(fileWriter, null);
         }
         catch (FileNotFoundException ex)
         {

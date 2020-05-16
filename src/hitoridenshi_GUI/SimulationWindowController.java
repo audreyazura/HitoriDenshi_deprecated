@@ -25,6 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import nu.studer.java.util.OrderedProperties;
 
 /**
  *
@@ -39,13 +40,13 @@ public class SimulationWindowController
     @FXML private VBox workerpbarsleft;
     @FXML private VBox workerpbarsright;
     
-    private File m_tempConfigFile;
+    private OrderedProperties m_tempConfigProp;
     private MainWindowCall m_mainWindow;
     private ProgressBar[] m_workerPBarArray;
     
-    void initialize(File p_tempConfigFile, MainWindowCall p_mainWindowCall, int p_workerAmount)
+    void initialize(OrderedProperties p_tempConfigProperties, MainWindowCall p_mainWindowCall, int p_workerAmount)
     {
-        m_tempConfigFile = p_tempConfigFile;
+        m_tempConfigProp = p_tempConfigProperties;
         m_mainWindow = p_mainWindowCall;
         
         consolewindow.appendText("Launching simulation...\n\n");
@@ -99,7 +100,7 @@ public class SimulationWindowController
     
     @FXML void callparameterswindow (ActionEvent event)
     {
-        m_mainWindow.launchParametersWindow(m_tempConfigFile);
+        m_mainWindow.launchParametersWindow(m_tempConfigProp);
     }
     
     @FXML void closeApp (ActionEvent event)

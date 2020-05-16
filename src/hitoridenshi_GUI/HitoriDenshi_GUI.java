@@ -27,6 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import nu.studer.java.util.OrderedProperties;
 
 /**
  *
@@ -40,17 +41,18 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     /**
      * @param args the command line arguments
      */
-    public void startHitoriGUI(String[] args) 
+    public void startHitoriGUI(OrderedProperties p_initialProperties) 
     {
         Font.loadFont(HitoriDenshi_GUI.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
-        launch(args);
+        launch();
+        
+        launchParametersWindow(p_initialProperties);
     }
     
     @Override
     public void start(Stage stage)
     {
         m_mainStage = stage;
-        launchParametersWindow(new File("ConfigurationFiles/default.conf"));
     }
     
     @Override
@@ -60,7 +62,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     }
     
     @Override
-    public void launchParametersWindow(File p_configurationFile)
+    public void launchParametersWindow(OrderedProperties p_configurationProperties)
     {
         
         FXMLLoader parameterWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLParametersWindow.fxml"));
@@ -69,7 +71,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
         {
             Parent windowFxml = parameterWindowLoader.load();
 	    FXMLParametersWindowController controller = parameterWindowLoader.getController();
-	    controller.initialize(this, p_configurationFile);
+	    controller.initialize(this, p_configurationProperties);
             m_mainStage.setScene(new Scene(windowFxml, 800, 800));
 	    m_mainStage.show();
         }
@@ -80,7 +82,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
     }
     
     @Override
-    public void launchOnGoingSimulationWindow(int p_workerAmount, File p_tempConfigFile)
+    public void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties)
     {
         FXMLLoader simulationTrackerWindowLoader = new FXMLLoader(HitoriDenshi_GUI.class.getResource("FXMLOnGoingSimulationWindow.fxml"));
         
@@ -89,7 +91,7 @@ public class HitoriDenshi_GUI extends Application implements MainWindowCall, GUI
             Parent simulationWindowFxml = simulationTrackerWindowLoader.load();
             SimulationWindowController controller = simulationTrackerWindowLoader.getController();
             m_simulationWindowController = controller;
-            controller.initialize(p_tempConfigFile, this, p_workerAmount);
+            controller.initialize(p_tempConfigProperties, this, p_workerAmount);
             int longestColumn = p_workerAmount - p_workerAmount / 2;
             m_mainStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
 	    m_mainStage.show();

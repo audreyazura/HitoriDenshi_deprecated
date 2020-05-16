@@ -20,12 +20,24 @@ import hitoridenshi_simulation.CalculationConditions;
 import hitoridenshi_simulation.GUICallBack;
 import hitoridenshi_simulation.HitoriDenshi_SimulationManager;
 import hitoridenshi_simulation.PhysicalConstants;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -34,6 +46,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import nu.studer.java.util.OrderedProperties;
 
 /**
  *
@@ -41,28 +54,29 @@ import javafx.stage.FileChooser;
  */
 public class FXMLParametersWindowController
 {
-    
     @FXML private ChoiceBox unitselec;
+    @FXML private ChoiceBox materialselec;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
+    @FXML private RadioButton zeroatfront;
+    @FXML private RadioButton zeroatback;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton holeselection;
-    @FXML private RadioButton zeroatfront;
     @FXML private TextField biasvoltages;
     @FXML private TextField notches;
     @FXML private TextField generationpositions;
-    @FXML private TextField bufferwindowwidth;
     @FXML private TextField samplewidth;
+    @FXML private TextField bufferwindowwidth;
+    @FXML private TextField frontbangap;
+    @FXML private TextField notchbandgap;
+    @FXML private TextField backbangap;
     @FXML private TextField effectivemass;
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
-    @FXML private TextField frontbangap;
-    @FXML private TextField notchbandgap;
-    @FXML private TextField backbangap;
     
     private MainWindowCall m_mainApp;
     private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
@@ -141,7 +155,21 @@ public class FXMLParametersWindowController
         
         if (selectedFile != null)
         {
-            loadFromFile(selectedFile);
+            try
+            {
+                InputStream inputFileStream = new FileInputStream(selectedFile);
+                OrderedProperties selectedProperties = new OrderedProperties();
+                selectedProperties.load(inputFileStream);
+                loadProperties(selectedProperties);
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.getLogger(FXMLParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(FXMLParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -234,20 +262,8 @@ public class FXMLParametersWindowController
     
     @FXML private void startSimulation (ActionEvent event)
     {
-        //temporarily saving current configuration to a file
-        String tempDir = System.getProperty("java.io.tmpdir");
-        File tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig.conf");
-        if (tempSave.isFile())
-        {
-            int i = 1;
-            tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
-            while (tempSave.isFile())
-            {
-                i += 1;
-                tempSave = new File(tempDir+"/HitoriDenshiTempSaveConfig-"+i+".conf");
-            }
-        }
-        writeConfigToFile(tempSave);
+        //temporarily saving current configuration in Properties
+        OrderedProperties tempProp = writeConfigToProperties();
         
         //getting all the parameters to configure the simulation
         String biasVoltagesList = biasvoltages.getText();
@@ -276,7 +292,7 @@ public class FXMLParametersWindowController
             HitoriDenshi_SimulationManager simulationLauncher = new HitoriDenshi_SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (GUICallBack) m_mainApp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
-            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempSave);
+            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
         }
         catch (NumberFormatException ex)
         {
@@ -319,23 +335,95 @@ public class FXMLParametersWindowController
         return correctedNumber;
     }
     
-    private void writeConfigToFile (File p_destinationFile)
+    private void writeConfigToFile (File p_file)
     {
-        
+        try
+        {
+            OutputStream outStream = new FileOutputStream(p_file);
+            writeConfigToProperties().store(outStream, null);
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(FXMLParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(FXMLParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    private void loadFromFile (File p_file)
+    private OrderedProperties writeConfigToProperties ()
     {
+        OrderedProperties extractedProperties = new OrderedProperties();
+                
+        extractedProperties.setProperty("abscissa unit", ((String) unitselec.getValue()));
+        extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
+        extractedProperties.setProperty("bias voltages",  biasvoltages.getText());
+        extractedProperties.setProperty("notch positions",  notches.getText());
+        extractedProperties.setProperty("generation positions",  generationpositions.getText());
+        extractedProperties.setProperty("zero position",  (zeroatfront.isSelected() ? "front" : "back"));
+        extractedProperties.setProperty("sample width",  samplewidth.getText());
+        extractedProperties.setProperty("buffer+window width",  bufferwindowwidth.getText());
+        extractedProperties.setProperty("front bandgap",  frontbangap.getText());
+        extractedProperties.setProperty("minimum bandgap",  notchbandgap.getText());
+        extractedProperties.setProperty("back bandgap",  backbangap.getText());
+        extractedProperties.setProperty("simulated particle",  (electronselection.isSelected() ? "electron" : "hole"));
+        extractedProperties.setProperty("effective mass",  effectivemass.getText());
+        extractedProperties.setProperty("lifetime",  lifetime.getText());
+        extractedProperties.setProperty("numbre of simulated particles",  numbersimulated.getText());
+        extractedProperties.setProperty("input folder",  inputFolder.getText());
+        extractedProperties.setProperty("output folder",  outputFolder.getText());
         
+        return extractedProperties;
     }
     
-    public void initialize (MainWindowCall p_mainApp, File p_configFile)
+    private void loadProperties (OrderedProperties p_properties)
+    {
+        unitselec.setValue(p_properties.getProperty("abscissa unit"));
+        materialselec.setValue(p_properties.getProperty("material"));
+
+        biasvoltages.setText(p_properties.getProperty("bias voltages"));
+        notches.setText(p_properties.getProperty("notch positions"));
+        generationpositions.setText(p_properties.getProperty("generation positions"));
+        samplewidth.setText(p_properties.getProperty("sample width"));
+        bufferwindowwidth.setText(p_properties.getProperty("buffer+window width"));
+        frontbangap.setText(p_properties.getProperty("front bandgap"));
+        notchbandgap.setText(p_properties.getProperty("minimum bandgap"));
+        backbangap.setText(p_properties.getProperty("back bandgap"));
+        effectivemass.setText(p_properties.getProperty("effective mass"));
+        lifetime.setText(p_properties.getProperty("lifetime"));
+        numbersimulated.setText(p_properties.getProperty("numbre of simulated particles"));
+        inputFolder.setText(p_properties.getProperty("input folder"));
+        outputFolder.setText(p_properties.getProperty("output folder"));
+
+        switch (p_properties.getProperty("zero position"))
+        {
+            case "front":
+                zeroatfront.setSelected(true);
+                break;
+            case "back":
+                zeroatback.setSelected(true);
+                break;
+            default:
+                //throw exception, bad value
+        }
+
+        switch (p_properties.getProperty("simulated particle"))
+        {
+            case "electron":
+                electronselection.setSelected(true);
+                break;
+            case "hole":
+                holeselection.setSelected(true);
+                break;
+            default:
+                //throw exception, bad value
+        }
+    }
+    
+    public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;
-        
-        if (p_configFile.isFile())
-        {
-            loadFromFile(p_configFile);
-        }
+        loadProperties(p_configProperties);
     }
 }

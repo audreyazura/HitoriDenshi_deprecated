@@ -18,6 +18,7 @@ package hitoridenshi_GUI;
 
 import java.io.File;
 import javafx.stage.Stage;
+import nu.studer.java.util.OrderedProperties;
 
 /**
  *
@@ -26,6 +27,6 @@ import javafx.stage.Stage;
 public interface MainWindowCall
 {
     Stage getMainStage();
-    void launchParametersWindow(File p_configurationFile);
-    void launchOnGoingSimulationWindow(int p_workerAmount, File p_tempConfigFile);
+    void launchParametersWindow(OrderedProperties p_configurationProperties);
+    void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties);
 }

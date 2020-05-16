@@ -30,7 +30,7 @@ public class Launcher {
     public static void main(String[] args)
     {
         String[] arguments = {"--file=ConfigurationFiles/default.conf"};
-        LauncherGUIManager guiLaunch = new GUIManager();
+        GUILauncher guiLaunch = new GUIManager();
         guiLaunch.startGUI(arguments);
     }
     

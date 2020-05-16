@@ -20,7 +20,7 @@ package hitoridenshi.simulationmanager;
  *
  * @author audreyazura
  */
-public interface GUICallBack
+public interface ProgressNotifierInterface
 {
     public void updateProgress (int p_workerID, double p_workerProgress, double p_globalProgress);
     public void sendMessage (String p_message);

@@ -16,16 +16,11 @@
  */
 package hitoridenshi.guimanager;
 
-import hitoridenshi.executionmanager.LauncherGUIManager;
-import hitoridenshi.simulationmanager.GUICallBack;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -35,12 +30,14 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
+import hitoridenshi.executionmanager.GUILauncher;
+import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 
 /**
  *
  * @author Alban Lafuente
  */
-public class GUIManager extends Application implements MainWindowCall, GUICallBack, LauncherGUIManager
+public class GUIManager extends Application implements MainWindowCall, ProgressNotifierInterface, GUILauncher
 {
     private SimulationWindowController m_simulationWindowController;
     private Stage m_mainStage;

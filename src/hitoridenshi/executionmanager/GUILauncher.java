@@ -16,13 +16,11 @@
  */
 package hitoridenshi.executionmanager;
 
-import nu.studer.java.util.OrderedProperties;
-
 /**
  *
  * @author audreyazura
  */
-public interface LauncherGUIManager
+public interface GUILauncher
 {
     public void startGUI(String[] args);
 }

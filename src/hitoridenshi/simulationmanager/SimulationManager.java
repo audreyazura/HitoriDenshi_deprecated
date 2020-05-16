@@ -34,7 +34,7 @@ import java.util.zip.DataFormatException;
 public class SimulationManager implements Runnable
 {
     private final CalculationConditions m_conditions;
-    private final GUICallBack m_guiApp;
+    private final ProgressNotifierInterface m_guiApp;
     private final int m_numberOfWorker;
     private final List<BigDecimal> m_notchPositions;
     private final String m_inputFolder;
@@ -45,7 +45,7 @@ public class SimulationManager implements Runnable
     private int m_totalCalculations = 0;
     
     
-    public SimulationManager (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions, GUICallBack p_guiApp)
+    public SimulationManager (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions, ProgressNotifierInterface p_guiApp)
     {
         m_conditions = p_conditions;
         m_biasVoltages = m_conditions.getBiasVoltageArray();

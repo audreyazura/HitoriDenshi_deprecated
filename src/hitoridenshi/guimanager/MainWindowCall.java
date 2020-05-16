@@ -16,7 +16,6 @@
  */
 package hitoridenshi.guimanager;
 
-import java.io.File;
 import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
 

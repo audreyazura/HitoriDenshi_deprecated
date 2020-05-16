@@ -17,18 +17,13 @@
 package hitoridenshi.guimanager;
 
 import hitoridenshi.simulationmanager.CalculationConditions;
-import hitoridenshi.simulationmanager.GUICallBack;
 import hitoridenshi.simulationmanager.SimulationManager;
 import hitoridenshi.simulationmanager.PhysicalConstants;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -47,6 +42,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
+import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 
 /**
  *
@@ -290,7 +286,7 @@ public class FXMLParametersWindowController
             PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
-            SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (GUICallBack) m_mainApp);
+            SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (ProgressNotifierInterface) m_mainApp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);

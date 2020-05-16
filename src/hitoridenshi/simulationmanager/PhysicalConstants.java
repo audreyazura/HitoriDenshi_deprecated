@@ -17,7 +17,6 @@
 package hitoridenshi.simulationmanager;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  *

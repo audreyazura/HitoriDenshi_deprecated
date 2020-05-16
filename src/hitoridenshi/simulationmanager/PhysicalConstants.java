@@ -61,5 +61,28 @@ public class PhysicalConstants
         {
             return m_textPrefix;
         }
+        
+        static public PhysicalConstants.UnitsPrefix selectPrefix (String p_unit)
+        {
+            PhysicalConstants.UnitsPrefix prefixSelected;
+
+            switch (p_unit.charAt(0))
+            {
+                case 'n':
+                    prefixSelected = PhysicalConstants.UnitsPrefix.NANO;
+                    break;
+                case 'μ':
+                    prefixSelected = PhysicalConstants.UnitsPrefix.MICRO;
+                    break;
+                case 'c':
+                    prefixSelected = PhysicalConstants.UnitsPrefix.CENTI;
+                    break;
+                default:
+                    prefixSelected = PhysicalConstants.UnitsPrefix.UNITY;
+                    break;
+            }
+
+            return prefixSelected;
+        }
     }
 }

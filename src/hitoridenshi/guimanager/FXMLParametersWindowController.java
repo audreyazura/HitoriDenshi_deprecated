@@ -81,9 +81,9 @@ public class FXMLParametersWindowController
     {
         try
         {
-            m_previouslySelectedUnit = selectPrefix((String) unitselec.getValue());
+            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.selectPrefix((String) unitselec.getValue());
         }
-        catch (NullPointerException ex)
+        catch (NullPointerException|StringIndexOutOfBoundsException ex)
         {
             m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
         }
@@ -96,7 +96,10 @@ public class FXMLParametersWindowController
         {
             String selectedUnit = (String) unitselec.getValue();
             
-            currentPrefix = selectPrefix(selectedUnit);
+            if (!selectedUnit.isEmpty())
+            {
+                currentPrefix = PhysicalConstants.UnitsPrefix.selectPrefix(selectedUnit);
+            }
             if (m_previouslySelectedUnit == PhysicalConstants.UnitsPrefix.UNITY)
             {
                 m_previouslySelectedUnit = currentPrefix;
@@ -283,7 +286,7 @@ public class FXMLParametersWindowController
             BigDecimal backBangapNumber = new BigDecimal(backbangap.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
             
-            PhysicalConstants.UnitsPrefix passedUnit = selectPrefix((String) unitselec.getValue());
+            PhysicalConstants.UnitsPrefix passedUnit = PhysicalConstants.UnitsPrefix.selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
             SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (ProgressNotifierInterface) m_mainApp);
@@ -301,23 +304,6 @@ public class FXMLParametersWindowController
             System.err.println("Verify that each field is properly filled.");
 //            ex.printStackTrace();
         }
-    }
-    
-    private PhysicalConstants.UnitsPrefix selectPrefix (String p_unit)
-    {
-        PhysicalConstants.UnitsPrefix unitSelected = PhysicalConstants.UnitsPrefix.UNITY;
-        
-        switch (p_unit)
-        {
-            case "nm":
-                unitSelected = PhysicalConstants.UnitsPrefix.NANO;
-                break;
-            case "μm":
-                unitSelected = PhysicalConstants.UnitsPrefix.MICRO;
-                break;
-        }
-        
-        return unitSelected;
     }
     
     private String changeEnteredNumberUnit (String p_numberEntered, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)

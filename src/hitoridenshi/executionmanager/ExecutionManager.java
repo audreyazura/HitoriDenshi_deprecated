@@ -16,6 +16,7 @@
  */
 package hitoridenshi.executionmanager;
 
+import hitoridenshi.consolemanager.ConsoleManager;
 import hitoridenshi.guimanager.GUIManager;
 import net.opentsdb.tools.ArgP;
 
@@ -37,11 +38,10 @@ public class ExecutionManager {
         argParser.addOption("-c", "eq. to --console-mode");
         argParser.addOption("-f", "eq. to --file");
         
-        //for test, to be replaced by just the args coming as parameters
-        String[] arguments = {"-f=ConfigurationFiles/default.conf"};
+        //parsing the args to get the options passed to the program
         try
 	{
-	    args = argParser.parse(arguments);
+	    args = argParser.parse(args);
 	}
 	catch (IllegalArgumentException e)
 	{
@@ -57,14 +57,14 @@ public class ExecutionManager {
         }
         else
         {
-            String[] curratedArgument = new String[0];
+            String[] curratedArgument = new String[1];
             if (argParser.has("--file"))
             {
                 curratedArgument[0] = argParser.get("--file");
             }
             else if (argParser.has("-f"))
             {
-                curratedArgument[0] = argParser.get("-file");
+                curratedArgument[0] = argParser.get("-f");
             }
             else
             {
@@ -74,13 +74,13 @@ public class ExecutionManager {
             OutputInterface appToLaunch;
             if (argParser.has("--console-mode") || argParser.has("-c"))
             {
-                //appToLaunch start the console manager
+                appToLaunch = new ConsoleManager();
             }
             else
             {
                 appToLaunch = new GUIManager();
             }
-            appToLaunch.startGUI(arguments);
+            appToLaunch.startOutput(curratedArgument);
         }
     }
     

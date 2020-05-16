@@ -290,9 +290,9 @@ public class FXMLParametersWindowController
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
             SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (ProgressNotifierInterface) m_mainApp);
+            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
-            m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
         }
         catch (NumberFormatException ex)
         {

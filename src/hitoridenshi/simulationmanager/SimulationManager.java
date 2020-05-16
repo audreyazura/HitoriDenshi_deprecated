@@ -74,12 +74,7 @@ public class SimulationManager implements Runnable
     
     @Override
     public void run()
-    {
-        System.out.println("Starting simulation!\nFolder: " + m_inputFolder);
-        System.out.println(m_notchPositions);
-        System.out.println(m_conditions.getStartingPositionList());
-        
-        
+    {      
         try
         {
             //preparing the absorbers on which the simulation will be run

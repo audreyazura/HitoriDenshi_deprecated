@@ -16,9 +16,14 @@
  */
 package hitoridenshi.guimanager;
 
+import hitoridenshi.launcher.LauncherGUIManager;
 import hitoridenshi.simulationmanager.GUICallBack;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -33,26 +38,38 @@ import nu.studer.java.util.OrderedProperties;
  *
  * @author Alban Lafuente
  */
-public class GUIManager extends Application implements MainWindowCall, GUICallBack
+public class GUIManager extends Application implements MainWindowCall, GUICallBack, LauncherGUIManager
 {
-    private Stage m_mainStage;
     private SimulationWindowController m_simulationWindowController;
+    private Stage m_mainStage;
     
-    /**
-     * @param args the command line arguments
-     */
-    public void startHitoriGUI(OrderedProperties p_initialProperties) 
+    @Override
+    public void startGUI(String[] args) 
     {
         Font.loadFont(GUIManager.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
-        launch();
-        
-        launchParametersWindow(p_initialProperties);
+        launch(args);
     }
     
     @Override
     public void start(Stage stage)
     {
         m_mainStage = stage;
+        File propertiesFile = new File(getParameters().getNamed().get("file"));
+        try
+        {
+            InputStream fileStream = new FileInputStream(propertiesFile);
+            OrderedProperties properties = new OrderedProperties();
+            properties.load(fileStream);
+            launchParametersWindow(properties);
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(GUIManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(GUIManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
@@ -64,7 +81,6 @@ public class GUIManager extends Application implements MainWindowCall, GUICallBa
     @Override
     public void launchParametersWindow(OrderedProperties p_configurationProperties)
     {
-        
         FXMLLoader parameterWindowLoader = new FXMLLoader(GUIManager.class.getResource("FXMLParametersWindow.fxml"));
         
         try

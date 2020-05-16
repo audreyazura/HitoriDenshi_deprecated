@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:controller="hitoridenshi_GUI.SimulationWindowController" xmlns:fx="http://javafx.com/fxml/1"
+<VBox fx:controller="hitoridenshi.guimanager.SimulationWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="mainvbox">
         
     <stylesheets>

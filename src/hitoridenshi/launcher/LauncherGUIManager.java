@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshi_simulation;
+package hitoridenshi.launcher;
+
+import nu.studer.java.util.OrderedProperties;
 
 /**
  *
  * @author audreyazura
  */
-public interface GUICallBack
+public interface LauncherGUIManager
 {
-    public void updateProgress (int p_workerID, double p_workerProgress, double p_globalProgress);
-    public void sendMessage (String p_message);
+    public void startGUI(String[] args);
 }

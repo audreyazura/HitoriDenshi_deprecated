@@ -15,7 +15,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.RadioButton?>
 
-<VBox fx:controller="hitoridenshi_GUI.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
+<VBox fx:controller="hitoridenshi.guimanager.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="mainvbox" fx:id="parameterbox">
     
     <stylesheets>

@@ -14,19 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hitoridenshi_GUI;
+package hitoridenshi.launcher;
 
-import java.io.File;
-import javafx.stage.Stage;
-import nu.studer.java.util.OrderedProperties;
+import hitoridenshi.guimanager.GUIManager;
 
 /**
  *
  * @author Alban Lafuente
  */
-public interface MainWindowCall
-{
-    Stage getMainStage();
-    void launchParametersWindow(OrderedProperties p_configurationProperties);
-    void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties);
+public class Launcher {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args)
+    {
+        String[] arguments = {"--file=ConfigurationFiles/default.conf"};
+        LauncherGUIManager guiLaunch = new GUIManager();
+        guiLaunch.startGUI(arguments);
+    }
+    
 }

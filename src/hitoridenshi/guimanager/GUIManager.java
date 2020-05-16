@@ -30,30 +30,29 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
-import hitoridenshi.executionmanager.GUILauncher;
-import hitoridenshi.simulationmanager.ProgressNotifierInterface;
+import hitoridenshi.executionmanager.OutputInterface;
 
 /**
  *
  * @author Alban Lafuente
  */
-public class GUIManager extends Application implements MainWindowCall, ProgressNotifierInterface, GUILauncher
+public class GUIManager extends Application implements MainWindowCall, OutputInterface
 {
     private SimulationWindowController m_simulationWindowController;
     private Stage m_mainStage;
     
     @Override
-    public void startGUI(String[] args) 
+    public void startGUI(String[] curratedArguments) 
     {
         Font.loadFont(GUIManager.class.getResource("SourceSansPro-Regular.ttf").toExternalForm(), 10);
-        launch(args);
+        launch(curratedArguments);
     }
     
     @Override
     public void start(Stage stage)
     {
         m_mainStage = stage;
-        File propertiesFile = new File(getParameters().getNamed().get("file"));
+        File propertiesFile = new File(getParameters().getRaw().get(0));
         try
         {
             Reader fileReader = new FileReader(propertiesFile);

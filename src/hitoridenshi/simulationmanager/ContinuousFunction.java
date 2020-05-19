@@ -26,6 +26,7 @@ import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -44,6 +45,31 @@ class ContinuousFunction
     static public ContinuousFunction createElectricFieldFromSCAPS(File p_fileValues, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
        return new ContinuousFunction(p_fileValues, p_unitMultiplier, PhysicalConstants.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        boolean result = this.getClass().equals(o.getClass());
+        
+        if (result)
+        {
+            result = m_values.equals(((ContinuousFunction) o).getValues());
+        }
+        
+        return result;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(m_values);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return m_values.toString();
     }
     
     public ContinuousFunction (ContinuousFunction p_passedFunction)

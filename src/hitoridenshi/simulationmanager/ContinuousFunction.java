@@ -69,7 +69,14 @@ class ContinuousFunction
     @Override
     public String toString()
     {
-        return m_values.toString();
+        String result = new String("");
+        
+        for (BigDecimal abscissa: m_abscissa)
+        {
+            result = result.concat(abscissa+"\t=> "+m_values.get(abscissa)+"\n");
+        }
+        
+        return result;
     }
     
     public ContinuousFunction (ContinuousFunction p_passedFunction)

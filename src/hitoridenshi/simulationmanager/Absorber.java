@@ -67,57 +67,69 @@ public class Absorber
         BigDecimal fieldNotchtoEnd;
         
         String notchPositionNanometer = String.valueOf(m_notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());
-        ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
         
         m_zeroAtFront = p_conditions.isZeroAtFront();
-        //À refactoriser !!!!!!
         if(m_zeroAtFront)
         {
-            m_frontPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+            m_frontPosition = CalculationConditions.formatBigDecimal(BigDecimal.ZERO);
             m_backPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
             absorberEnd = m_backPosition;
-            
-            if (m_notchPosition.compareTo(m_frontPosition) == 0)
-            {
-                field0toNotch = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-            }
-            else if (m_notchPosition.compareTo(m_backPosition) == 0)
-            {
-                field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-            }
-            else
-            {
-                field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-            }
         }
         else
         {
             m_frontPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
-            m_backPosition = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+            m_backPosition = CalculationConditions.formatBigDecimal(BigDecimal.ZERO);
             absorberEnd = m_frontPosition;
-            
-            if (m_notchPosition.compareTo(m_backPosition) == 0)
+        }
+        
+        if (p_conditions.isElectron())
+        {
+            ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
+            //À refactoriser !!!!!!
+            if(m_zeroAtFront)
             {
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                field0toNotch = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-            }
-            else if (m_notchPosition.compareTo(m_frontPosition) == 0)
-            {
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
-                field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                if (m_notchPosition.compareTo(m_frontPosition) == 0)
+                {
+                    field0toNotch = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                }
+                else if (m_notchPosition.compareTo(m_backPosition) == 0)
+                {
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                }
+                else
+                {
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                }
             }
             else
             {
-                fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                if (m_notchPosition.compareTo(m_frontPosition) == 0)
+                {
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                }
+                else if (m_notchPosition.compareTo(m_backPosition) == 0)
+                {   
+                    field0toNotch = CalculationConditions.formatBigDecimal(new BigDecimal("0"));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                }
+                else
+                {
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                }
             }
+
+            ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), m_notchPosition, field0toNotch, fieldNotchtoEnd, absorberEnd);
+            m_electricField = internalElectricField.add(notchEffectiveElectricField);
         }
-        
-        ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), m_notchPosition, field0toNotch, fieldNotchtoEnd, absorberEnd);
-        m_electricField = internalElectricField.add(notchEffectiveElectricField);
+        else
+        {
+            m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
+        }
     }
     
     public ContinuousFunction getElectricField()

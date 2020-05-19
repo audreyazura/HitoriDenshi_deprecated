@@ -118,6 +118,11 @@ public class CalculationConditions
         return (ArrayList<BigDecimal>) returnList;
     }
     
+    public boolean isElectron()
+    {
+        return m_particleParameters.get("charge").compareTo(BigDecimal.ZERO) < 0;
+    }
+    
     public boolean isZeroAtFront()
     {
         return m_isZeroAtFront;

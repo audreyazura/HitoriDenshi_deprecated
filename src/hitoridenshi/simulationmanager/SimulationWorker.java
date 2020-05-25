@@ -101,7 +101,7 @@ public class SimulationWorker implements Runnable
                             numberOfSteps += 1;
                         }
 
-                        currentTracker.logParticle(currentIndividual);
+                        currentTracker.logParticle(currentIndividual, currentAbsorber);
                         workerProgress += 1.0 / m_numberCalculations;
                         m_manager.sendUpdate(m_id, workerProgress);
                     }

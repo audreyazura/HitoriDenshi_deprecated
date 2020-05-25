@@ -176,4 +176,14 @@ public class Absorber
     {
         return m_bias;
     }
+    
+    public BigDecimal getFrontPosition()
+    {
+        return m_frontPosition;
+    }
+    
+    public BigDecimal getBackPosition()
+    {
+        return m_backPosition;
+    }
 }

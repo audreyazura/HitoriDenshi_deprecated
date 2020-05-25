@@ -76,11 +76,12 @@ public class SimulationTracker
         m_numberNotExited = 0;
     }
     
-    synchronized private void addMean (ListType p_type, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
+    synchronized private void addMean (ListType p_type, Absorber p_absorber, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
     {
         List<BigDecimal> trackerTrajectoryArray = new ArrayList<BigDecimal>();
         List<BigDecimal> trackerVelocityArray = new ArrayList<BigDecimal>();
         List<BigDecimal> trackerAccelerationArray = new ArrayList<BigDecimal>();
+        BigDecimal toAddIfLongerList = BigDecimal.ZERO;
         
         switch(p_type)
         {
@@ -93,11 +94,13 @@ public class SimulationTracker
                 trackerTrajectoryArray = m_meanFrontTrajectory;
                 trackerVelocityArray = m_meanFrontVelocity;
                 trackerAccelerationArray = m_meanFrontAcceleration;
+                toAddIfLongerList = CalculationConditions.formatBigDecimal(new BigDecimal(m_numberFrontExit*p_absorber.getFrontPosition().doubleValue()));
                 break;
             case BACK:
                 trackerTrajectoryArray = m_meanBackTrajectory;
                 trackerVelocityArray = m_meanBackVelocity;
                 trackerAccelerationArray = m_meanBackAcceleration;
+                toAddIfLongerList = CalculationConditions.formatBigDecimal(new BigDecimal(m_numberBackExit*p_absorber.getBackPosition().doubleValue()));
                 break;
         }
         
@@ -118,7 +121,7 @@ public class SimulationTracker
             }
             else
             {
-                trackerTrajectoryArray.add(p_particleTrajectoryArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
+                trackerTrajectoryArray.add((p_particleTrajectoryArray.get(i).add(toAddIfLongerList)).divide(m_numberParticle, MathContext.DECIMAL128));
                 trackerVelocityArray.add(p_particleVelocityArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
                 if (i < particleArraySize -1)
                 {
@@ -202,19 +205,19 @@ public class SimulationTracker
         GENERALMEAN, FRONTMEAN, FRONTFAST, FRONTSLOW, BACKMEAN, BACKFAST, BACKSLOW;
     }
     
-    synchronized public void logParticle (Particle p_particle)
+    synchronized public void logParticle (Particle p_particle, Absorber p_absorber)
     {
         ArrayList<BigDecimal> particleTrajectory = p_particle.getTrajectory();
         ArrayList<BigDecimal> particleVelocities = p_particle.getVelocityList();
         ArrayList<BigDecimal> particleAccelerations = p_particle.getAccelerationList();
         
-        this.addMean(ListType.GENERAL, particleTrajectory, particleVelocities, particleAccelerations);
+        this.addMean(ListType.GENERAL, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
         
         switch (p_particle.getCollection())
         {
             case FRONT:
                 m_numberFrontExit += 1;
-                addMean(ListType.FRONT, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(ListType.FRONT, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberFrontExit == 1)
                 {
@@ -244,7 +247,7 @@ public class SimulationTracker
                 break;
             case BACK:
                 m_numberBackExit += 1;
-                addMean(ListType.BACK, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(ListType.BACK, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberBackExit == 1)
                 {

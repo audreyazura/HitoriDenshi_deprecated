@@ -25,19 +25,21 @@ import java.math.BigDecimal;
 public class PhysicalConstants
 {
     //Boltzman constant in J/K
-    static final public BigDecimal KB = CalculationConditions.formatBigDecimal(new BigDecimal("1.380649e-23"));
+    static final public BigDecimal KB = new BigDecimal("1.380649e-23");
     //electron mass in kg
-    static final public BigDecimal ME = CalculationConditions.formatBigDecimal(new BigDecimal("9.10938188e-31"));
+    static final public BigDecimal ME = new BigDecimal("9.10938188e-31");
     //elementary charge in C
-    static final public BigDecimal Q = CalculationConditions.formatBigDecimal(new BigDecimal("1.60217733e-19"));
+    static final public BigDecimal Q = new BigDecimal("1.60217733e-19");
     //definition of the electronVolt in J
-    static final public BigDecimal EV = CalculationConditions.formatBigDecimal(new BigDecimal("1.602176634e-19"));
+    static final public BigDecimal EV = new BigDecimal("1.602176634e-19");
     
     //contains the possible units multiplier
     static public enum UnitsPrefix
     {
+        FEMTO ("1e-12", "f"),  //[SI unit]/[FEMTO unit]
         NANO ("1e-9", "n"),  //[SI unit]/[NANO unit]
         MICRO ("1e-6", "μ"), //[SI unit]/[MICRO unit]
+        MILLI ("1e-3", "m"), //[SI unit]/[MILLI unit]
         CENTI ("1e-2", "c"), //[SI unit]/[CENTI unit]
         UNITY ("1.0", "");   //[SI unit]/[SI unit]
         
@@ -46,7 +48,7 @@ public class PhysicalConstants
 
         UnitsPrefix(String p_multiplier, String p_prefix)
         {
-            m_multiplier = CalculationConditions.formatBigDecimal(new BigDecimal(p_multiplier));
+            m_multiplier = new BigDecimal(p_multiplier);
             m_textPrefix = new String(p_prefix);
         }
         
@@ -66,11 +68,17 @@ public class PhysicalConstants
 
             switch (p_unit.charAt(0))
             {
+                case 'f':
+                    prefixSelected = PhysicalConstants.UnitsPrefix.FEMTO;
+                    break;
                 case 'n':
                     prefixSelected = PhysicalConstants.UnitsPrefix.NANO;
                     break;
                 case 'μ':
                     prefixSelected = PhysicalConstants.UnitsPrefix.MICRO;
+                    break;
+                case 'm':
+                    prefixSelected = PhysicalConstants.UnitsPrefix.MILLI;
                     break;
                 case 'c':
                     prefixSelected = PhysicalConstants.UnitsPrefix.CENTI;

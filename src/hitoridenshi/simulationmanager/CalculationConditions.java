@@ -35,7 +35,7 @@ public class CalculationConditions
     //Temperature in K
     static final BigDecimal T = CalculationConditions.formatBigDecimal(new BigDecimal("300"));
     //calculation step, chosen as one each femtosecond
-    static final BigDecimal DT = CalculationConditions.formatBigDecimal(new BigDecimal("1e-12"));
+    static final BigDecimal DT = CalculationConditions.formatBigDecimal(PhysicalConstants.UnitsPrefix.FEMTO.getMultiplier());
 
     private final boolean m_isZeroAtFront;
     private final int m_maxSteps;
@@ -71,16 +71,16 @@ public class CalculationConditions
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         
-        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, m_abscissaUnit.getMultiplier());
-        m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, m_abscissaUnit.getMultiplier());
+        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, CalculationConditions.formatBigDecimal(m_abscissaUnit.getMultiplier()));
+        m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, CalculationConditions.formatBigDecimal(m_abscissaUnit.getMultiplier()));
         
         if(p_isElectron)
         {
-            m_particleParameters.put("charge", PhysicalConstants.Q.negate());
+            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicalConstants.Q.negate()));
         }
         else
         {
-            m_particleParameters.put("charge", PhysicalConstants.Q);
+            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicalConstants.Q));
         }
         
         /**

@@ -184,7 +184,7 @@ public class SimulationTracker
         for (int i = 0 ; i < trajectoryToWrite.size() ; i++)
         {
             p_writer.newLine();
-            toBeWritten = (new BigDecimal(i)).multiply(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).divide(CalculationConditions.DT)+"\t"+trajectoryToWrite.get(i).divide(multiplier, MathContext.DECIMAL32)+"\t"+velocitiesToWrite.get(i).round(MathContext.DECIMAL32);
+            toBeWritten = (new BigDecimal(i)).divide(CalculationConditions.DT)+"\t"+trajectoryToWrite.get(i).divide(multiplier, MathContext.DECIMAL32)+"\t"+velocitiesToWrite.get(i).round(MathContext.DECIMAL32);
             toBeWritten += i < accelerationsToWrite.size() ? "\t"+accelerationsToWrite.get(i).round(MathContext.DECIMAL32):"";
             p_writer.write(toBeWritten);
         }

@@ -47,38 +47,6 @@ class ContinuousFunction
        return new ContinuousFunction(p_fileValues, p_unitMultiplier, PhysicalConstants.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
     }
     
-    @Override
-    public boolean equals(Object o)
-    {
-        boolean result = this.getClass().equals(o.getClass());
-        
-        if (result)
-        {
-            result = m_values.equals(((ContinuousFunction) o).getValues());
-        }
-        
-        return result;
-    }
-    
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(m_values);
-    }
-    
-    @Override
-    public String toString()
-    {
-        String result = new String("");
-        
-        for (BigDecimal abscissa: m_abscissa)
-        {
-            result = result.concat(abscissa+"\t=> "+m_values.get(abscissa)+"\n");
-        }
-        
-        return result;
-    }
-    
     public ContinuousFunction (ContinuousFunction p_passedFunction)
     {
         m_values = p_passedFunction.getValues();
@@ -151,6 +119,38 @@ class ContinuousFunction
         }
         
         m_abscissa = new TreeSet(m_values.keySet());
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        boolean result = this.getClass().equals(o.getClass());
+        
+        if (result)
+        {
+            result = m_values.equals(((ContinuousFunction) o).getValues());
+        }
+        
+        return result;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(m_values);
+    }
+    
+    @Override
+    public String toString()
+    {
+        String result = new String("");
+        
+        for (BigDecimal abscissa: m_abscissa)
+        {
+            result = result.concat(abscissa+"\t=> "+m_values.get(abscissa)+"\n");
+        }
+        
+        return result;
     }
     
     public void print ()

@@ -24,8 +24,6 @@ import java.math.BigDecimal;
  */
 public class PhysicalConstants
 {
-    //USE BIGDECIMAL INSTEAD OF DOUBLE, OR SEARCH MORE PRECISE METHOD
-    
     //Boltzman constant in J/K
     static final public BigDecimal KB = CalculationConditions.formatBigDecimal(new BigDecimal("1.380649e-23"));
     //electron mass in kg

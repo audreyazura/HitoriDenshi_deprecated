@@ -16,6 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
+import commonutils.PhysicalConstants;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
 import java.io.File;
 import java.io.IOException;

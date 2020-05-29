@@ -19,7 +19,7 @@ package hitoridenshi.consolemanager;
 import hitoridenshi.executionmanager.OutputInterface;
 import hitoridenshi.guimanager.GUIManager;
 import hitoridenshi.simulationmanager.CalculationConditions;
-import hitoridenshi.simulationmanager.PhysicalConstants;
+import commonutils.PhysicalConstants;
 import hitoridenshi.simulationmanager.SimulationManager;
 import java.io.File;
 import java.io.FileNotFoundException;

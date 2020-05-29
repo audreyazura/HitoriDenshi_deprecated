@@ -18,7 +18,7 @@ package hitoridenshi.guimanager;
 
 import hitoridenshi.simulationmanager.CalculationConditions;
 import hitoridenshi.simulationmanager.SimulationManager;
-import hitoridenshi.simulationmanager.PhysicalConstants;
+import commonutils.PhysicalConstants;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

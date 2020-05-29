@@ -16,6 +16,8 @@
  */
 package hitoridenshi.simulationmanager;
 
+import commonutils.PCGGenerator;
+import commonutils.PhysicalConstants;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 
 /**
@@ -88,7 +89,7 @@ public class CalculationConditions
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
         BigDecimal vth = CalculationConditions.formatBigDecimal((PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
-        Random randomGenerator = new Random(0);
+        PCGGenerator randomGenerator = new PCGGenerator(0);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
             m_velocityList.add(CalculationConditions.formatBigDecimal((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth)));

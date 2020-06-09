@@ -56,7 +56,7 @@ public class Absorber
 //        }
 //    }
     
-    public Absorber(String p_folderElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
+    public Absorber(String p_fileElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
         m_bias = p_bias;
         m_notchPosition = p_notchPosition;
@@ -85,7 +85,7 @@ public class Absorber
         
         if (p_conditions.isElectron())
         {
-            ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
+            ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
             //À refactoriser !!!!!!
             if(m_zeroAtFront)
             {
@@ -129,7 +129,7 @@ public class Absorber
         }
         else
         {
-            m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_folderElectricFields+"/E"+p_bias+"V_N"+notchPositionNanometer+"nm.eb"), p_conditions.getAbscissaMultiplier());
+            m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
         }
     }
     

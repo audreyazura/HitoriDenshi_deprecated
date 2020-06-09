@@ -39,23 +39,23 @@ public class ConsoleManager implements OutputInterface
 {
     private CalculationConditions getCalculationConditions(OrderedProperties p_properties) throws StringIndexOutOfBoundsException, NumberFormatException 
     {
-        boolean isElectron = (p_properties.getProperty("simulated particle") == "electron");
-        boolean zeroAtFront = (p_properties.getProperty("zero position") == "front");
+        boolean isElectron = (p_properties.getProperty("simulated_particle") == "electron");
+        boolean zeroAtFront = (p_properties.getProperty("zero_position") == "front");
         
-        String biasVoltagesList = p_properties.getProperty("bias voltages");
-        String notchesList = p_properties.getProperty("notch positions");
-        String initialPositionsList = p_properties.getProperty("generation positions");
+        String biasVoltagesList = p_properties.getProperty("bias_voltages");
+        String notchesList = p_properties.getProperty("notch_positions");
+        String initialPositionsList = p_properties.getProperty("generation_positions");
         
-        PhysicalConstants.UnitsPrefix unitPrefix = PhysicalConstants.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa unit"));
+        PhysicalConstants.UnitsPrefix unitPrefix = PhysicalConstants.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa_unit"));
             
-        BigDecimal totalSampleWidth = new BigDecimal(p_properties.getProperty("sample width"));
-        BigDecimal bufferWindowSize = new BigDecimal(p_properties.getProperty("buffer+window width"));
-        BigDecimal effectiveMassDouble = new BigDecimal(p_properties.getProperty("effective mass"));
+        BigDecimal totalSampleWidth = new BigDecimal(p_properties.getProperty("sample_width"));
+        BigDecimal bufferWindowSize = new BigDecimal(p_properties.getProperty("bufferwindow width"));
+        BigDecimal effectiveMassDouble = new BigDecimal(p_properties.getProperty("effective_mass"));
         BigDecimal lifetimeNumber = new BigDecimal(p_properties.getProperty("lifetime"));
-        BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front bandgap"));
-        BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum bandgap"));
-        BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back bandgap"));
-        int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("numbre of simulated particles"));
+        BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front_bandgap"));
+        BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum_bandgap"));
+        BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back_bandgap"));
+        int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("number_of_simulated_particles"));
 
         return new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, minimumBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
     }
@@ -71,8 +71,8 @@ public class ConsoleManager implements OutputInterface
             properties.load(fileReader);
             
             CalculationConditions conditions = getCalculationConditions(properties);
-            String inputFolderAddress = properties.getProperty("input folder");
-            String outputFolderAddress = properties.getProperty("output folder");
+            String inputFolderAddress = properties.getProperty("input_folder");
+            String outputFolderAddress = properties.getProperty("output_folder");
             
             SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, this);
             Thread simulationThread = new Thread(simulationLauncher);

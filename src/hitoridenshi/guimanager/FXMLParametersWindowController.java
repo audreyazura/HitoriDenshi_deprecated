@@ -348,47 +348,47 @@ public class FXMLParametersWindowController
     {
         OrderedProperties extractedProperties = new OrderedProperties();
                 
-        extractedProperties.setProperty("abscissa unit", ((String) unitselec.getValue()));
+        extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
         extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
-        extractedProperties.setProperty("bias voltages",  biasvoltages.getText());
-        extractedProperties.setProperty("notch positions",  notches.getText());
-        extractedProperties.setProperty("generation positions",  generationpositions.getText());
-        extractedProperties.setProperty("zero position",  (zeroatfront.isSelected() ? "front" : "back"));
-        extractedProperties.setProperty("sample width",  samplewidth.getText());
-        extractedProperties.setProperty("buffer+window width",  bufferwindowwidth.getText());
-        extractedProperties.setProperty("front bandgap",  frontbangap.getText());
-        extractedProperties.setProperty("minimum bandgap",  notchbandgap.getText());
-        extractedProperties.setProperty("back bandgap",  backbangap.getText());
-        extractedProperties.setProperty("simulated particle",  (electronselection.isSelected() ? "electron" : "hole"));
-        extractedProperties.setProperty("effective mass",  effectivemass.getText());
+        extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
+        extractedProperties.setProperty("notch_positions",  notches.getText());
+        extractedProperties.setProperty("generation_positions",  generationpositions.getText());
+        extractedProperties.setProperty("zero_position",  (zeroatfront.isSelected() ? "front" : "back"));
+        extractedProperties.setProperty("sample_width",  samplewidth.getText());
+        extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
+        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
+        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
+        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
+        extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
+        extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
-        extractedProperties.setProperty("numbre of simulated particles",  numbersimulated.getText());
-        extractedProperties.setProperty("input folder",  inputFolder.getText());
-        extractedProperties.setProperty("output folder",  outputFolder.getText());
+        extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
+        extractedProperties.setProperty("input_folder",  inputFolder.getText());
+        extractedProperties.setProperty("output_folder",  outputFolder.getText());
         
         return extractedProperties;
     }
     
     private void loadProperties (OrderedProperties p_properties)
     {
-        unitselec.setValue(p_properties.getProperty("abscissa unit"));
+        unitselec.setValue(p_properties.getProperty("abscissa_unit"));
         materialselec.setValue(p_properties.getProperty("material"));
 
-        biasvoltages.setText(p_properties.getProperty("bias voltages"));
-        notches.setText(p_properties.getProperty("notch positions"));
-        generationpositions.setText(p_properties.getProperty("generation positions"));
-        samplewidth.setText(p_properties.getProperty("sample width"));
-        bufferwindowwidth.setText(p_properties.getProperty("buffer+window width"));
-        frontbangap.setText(p_properties.getProperty("front bandgap"));
-        notchbandgap.setText(p_properties.getProperty("minimum bandgap"));
-        backbangap.setText(p_properties.getProperty("back bandgap"));
-        effectivemass.setText(p_properties.getProperty("effective mass"));
+        biasvoltages.setText(p_properties.getProperty("bias_voltages"));
+        notches.setText(p_properties.getProperty("notch_positions"));
+        generationpositions.setText(p_properties.getProperty("generation_positions"));
+        samplewidth.setText(p_properties.getProperty("sample_width"));
+        bufferwindowwidth.setText(p_properties.getProperty("bufferwindow_width"));
+        frontbangap.setText(p_properties.getProperty("front_bandgap"));
+        notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
+        backbangap.setText(p_properties.getProperty("back_bandgap"));
+        effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
-        numbersimulated.setText(p_properties.getProperty("numbre of simulated particles"));
-        inputFolder.setText(p_properties.getProperty("input folder"));
-        outputFolder.setText(p_properties.getProperty("output folder"));
+        numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
+        inputFolder.setText(p_properties.getProperty("input_folder"));
+        outputFolder.setText(p_properties.getProperty("output_folder"));
 
-        switch (p_properties.getProperty("zero position"))
+        switch (p_properties.getProperty("zero_position"))
         {
             case "front":
                 zeroatfront.setSelected(true);
@@ -400,7 +400,7 @@ public class FXMLParametersWindowController
                 //throw exception, bad value
         }
 
-        switch (p_properties.getProperty("simulated particle"))
+        switch (p_properties.getProperty("simulated_particle"))
         {
             case "electron":
                 electronselection.setSelected(true);

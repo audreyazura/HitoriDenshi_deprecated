@@ -34,6 +34,6 @@ output_folder=
 
 An example is given in the file ConfigurationFiles/default.conf
 
-# Depedency
+# Depedencies
 
-In order to build this software, you will need my [CommonUtils library package](https://github.com/audreyazura/CommonUtils).
+In order to build this software, you will need Java 11, JavaFX 11 and my [CommonUtils library package](https://github.com/audreyazura/CommonUtils).

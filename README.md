@@ -7,4 +7,4 @@ This software aim at simulating single electron in a solar cell absorber with a 
 
 # Depedency
 
-In order to build this software, you will need my [CommonUtils library](https://github.com/audreyazura/CommonUtils).
+In order to build this software, you will need my [CommonUtils library package](https://github.com/audreyazura/CommonUtils).

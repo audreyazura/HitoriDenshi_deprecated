@@ -11,7 +11,7 @@ As of now, only the CIGS is implemented and the material choice at the top has n
 
 As of now, the input files have to be named with the norm `E[V]V_N[notch]nm.eb` with "V" the applied bias voltage in Volt and "notch" the notch position in nanometers. Future version may allow more liberties on the naming of the files.
 
-The different configuration fields can be filled automatically by using a properties file. Such properties file have to contain the following fields:
+The different configuration fields can be filled automatically by using a properties file. The available fields are:
 ```properties
 abscissa_unit=[nm,μm]
 material=[effect not yet implemented, put CIGS by default]

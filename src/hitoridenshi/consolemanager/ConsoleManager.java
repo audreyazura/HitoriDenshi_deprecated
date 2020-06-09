@@ -39,8 +39,8 @@ public class ConsoleManager implements OutputInterface
 {
     private CalculationConditions getCalculationConditions(OrderedProperties p_properties) throws StringIndexOutOfBoundsException, NumberFormatException 
     {
-        boolean isElectron = (p_properties.getProperty("simulated_particle") == "electron");
-        boolean zeroAtFront = (p_properties.getProperty("zero_position") == "front");
+        boolean isElectron = (p_properties.getProperty("simulated_particle").equals("electron"));
+        boolean zeroAtFront = (p_properties.getProperty("zero_position").equals("front"));
         
         String biasVoltagesList = p_properties.getProperty("bias_voltages");
         String notchesList = p_properties.getProperty("notch_positions");

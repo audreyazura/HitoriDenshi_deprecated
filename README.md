@@ -4,3 +4,7 @@ This software aim at simulating single electron in a solar cell absorber with a 
 - band grading (default at the moment)
 - quantum dots (to be added)
 - more to come
+
+# Depedency
+
+In order to build this software, you will need my [CommonUtils library](https://github.com/audreyazura/CommonUtils).

@@ -138,6 +138,11 @@ public class Absorber
         return new ContinuousFunction(m_electricField);
     }
     
+    /**
+     * Tell if a particle has been collected or not, and if it has been collected at the back or front 
+     * @param p_position the position of the particle
+     * @return the collection state of the particle
+     */
     public CollectionState giveCollection(BigDecimal p_position)
     {
         CollectionState collection = CollectionState.NOTCOLLECTED;

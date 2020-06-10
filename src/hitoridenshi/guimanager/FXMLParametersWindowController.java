@@ -159,6 +159,7 @@ public class FXMLParametersWindowController
         FileChooser browser = new FileChooser();
         browser.setInitialDirectory(new File("ConfigurationFiles"));
         browser.setTitle("Chose the file to load the configuration from");
+        browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Configuration files (*.conf)", "*.conf"), new FileChooser.ExtensionFilter("Properties files (*.properties)", "*.properties"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
         
         File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
         

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -45,7 +44,7 @@ import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 
 /**
- *
+ * 
  * @author Alban Lafuente
  */
 public class FXMLParametersWindowController

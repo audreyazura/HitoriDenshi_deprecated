@@ -16,10 +16,10 @@
  */
 package hitoridenshi.consolemanager;
 
+import commonutils.PhysicalConstants;
 import hitoridenshi.executionmanager.OutputInterface;
 import hitoridenshi.guimanager.GUIManager;
 import hitoridenshi.simulationmanager.CalculationConditions;
-import commonutils.PhysicalConstants;
 import hitoridenshi.simulationmanager.SimulationManager;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,11 +32,18 @@ import java.util.logging.Logger;
 import nu.studer.java.util.OrderedProperties;
 
 /**
- *
+ * Manage the information passed to the software user when executing in a terminal
  * @author audreyazura
  */
 public class ConsoleManager implements OutputInterface
 {
+    /**
+     * Creates a CalculationCondition object from passed properties
+     * @param p_properties the properly formatted properties
+     * @return the created calculation conditions
+     * @throws StringIndexOutOfBoundsException
+     * @throws NumberFormatException 
+     */    
     private CalculationConditions getCalculationConditions(OrderedProperties p_properties) throws StringIndexOutOfBoundsException, NumberFormatException 
     {
         boolean isElectron = (p_properties.getProperty("simulated_particle").equals("electron"));
@@ -55,6 +62,7 @@ public class ConsoleManager implements OutputInterface
         BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front_bandgap"));
         BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum_bandgap"));
         BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back_bandgap"));
+        
         int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("number_of_simulated_particles"));
 
         return new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, minimumBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
@@ -93,8 +101,7 @@ public class ConsoleManager implements OutputInterface
         }
         catch (NumberFormatException ex)
         {
-            System.err.println("Verify you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
-//            ex.printStackTrace();
+            System.err.println("Verify you have written a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
             System.exit(0);
         }
     }

@@ -77,6 +77,9 @@ public class FXMLParametersWindowController
     private MainWindowCall m_mainApp;
     private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
     
+    /**
+     * Save the previously selected unit in the unitselec field to apply changes later
+     */
     @FXML private void savePreviousSelection ()
     {
         try
@@ -89,7 +92,10 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void applyNewUnitSelection (ActionEvent event)
+    /**
+     * convert the distance and position entered in the interface to the newly selected unit
+     */
+    @FXML private void applyNewUnitSelection ()
     {
         PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.UNITY;
         try
@@ -144,7 +150,11 @@ public class FXMLParametersWindowController
         }
     }
             
-    @FXML private void loadconfig (ActionEvent event)
+    /**
+     * launch a FileChooser to select a configuration file (properties file) 
+     * load software configuration from the selected properties file
+     */
+    @FXML private void loadconfig ()
     {
         FileChooser browser = new FileChooser();
         browser.setInitialDirectory(new File("ConfigurationFiles"));
@@ -172,7 +182,12 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void saveconfig (ActionEvent event)
+    
+    /**
+     * launch a FileChooser to select the file in which the configuration will be saved
+     * save the configuration to said file
+     */
+    @FXML private void saveconfig ()
     {
         FileChooser browser = new FileChooser();
 	browser.setTitle("Chose the file to write the configuration in");
@@ -187,12 +202,19 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void makedefault (ActionEvent event)
+    /**
+     * save the current configuration as the default configuration, in the file default.conf
+     */
+    @FXML private void makedefault ()
     {
         writeConfigToFile(new File("ConfigurationFiles/default.conf"));
     }
     
-    @FXML private void changeSelectedParticle(ActionEvent event)
+    /**
+     * automatically changes the particle dependent parameters after the particle selection
+     * to be refactored once different material are introduce. Materials will be listed in PhysicalConstant.
+     */
+    @FXML private void changeSelectedParticle()
     {
         if (electronselection.isSelected())
         {
@@ -208,13 +230,16 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void browsingInput (ActionEvent event)
+    /**
+     * launch a DirectoryChooser to select the input directory and write its address in the field inputFolder
+     */
+    @FXML private void browsingInput ()
     {
         DirectoryChooser browser = new DirectoryChooser();
 	browser.setTitle("Chose the folder containing the input files");
         
         String fieldText = inputFolder.getText();
-	try
+        try
         {
             browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
         }
@@ -234,7 +259,10 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void browsingOutput (ActionEvent event)
+    /**
+     * launch a DirectoryChooser to select the output directory and write its address in the field inputFolder
+     */
+    @FXML private void browsingOutput ()
     {
         DirectoryChooser browser = new DirectoryChooser();
 	browser.setTitle("Chose the output folder");
@@ -260,7 +288,12 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void startSimulation (ActionEvent event)
+    /**
+     * save the current configuration to an OrderedProperties for future use (when reloading the paramater windows)
+     * create a CalculationCondition object from the parameters of the window and start a simulation with it
+     * call the window tracking the ongoing simulation
+     */
+    @FXML private void startSimulation ()
     {
         //temporarily saving current configuration in Properties
         OrderedProperties tempProp = writeConfigToProperties();
@@ -306,6 +339,13 @@ public class FXMLParametersWindowController
         }
     }
     
+    /**
+     * take a number as a string, as well as the multiplier of its previous unit and of its new unit in order to convert it to the new unit
+     * @param p_numberEntered the number as string
+     * @param p_previousMultiplier the multiplier of the previous unit
+     * @param p_newMultiplier the multiplier of the new unit
+     * @return the converted number as string
+     */
     private String changeEnteredNumberUnit (String p_numberEntered, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)
     {
         String correctedNumber = new String(p_numberEntered);
@@ -318,6 +358,10 @@ public class FXMLParametersWindowController
         return correctedNumber;
     }
     
+    /**
+     * write the current configuration to the file passed
+     * @param p_file the file to write the configuration to
+     */
     private void writeConfigToFile (File p_file)
     {
         if (p_file.isFile())
@@ -344,6 +388,10 @@ public class FXMLParametersWindowController
         }
     }
     
+    /**
+     * create an OrderedProperties from the current configuration
+     * @return an OrderedProperties containing the current configuration
+     */
     private OrderedProperties writeConfigToProperties ()
     {
         OrderedProperties extractedProperties = new OrderedProperties();
@@ -369,6 +417,11 @@ public class FXMLParametersWindowController
         return extractedProperties;
     }
     
+    /**
+     * fill the configuration fields from the passed OrderedProperties
+     * to be refactored
+     * @param p_properties an OrderedProperties containing the configuration fields
+     */
     private void loadProperties (OrderedProperties p_properties)
     {
         unitselec.setValue(p_properties.getProperty("abscissa_unit"));
@@ -413,6 +466,11 @@ public class FXMLParametersWindowController
         }
     }
     
+    /**
+     * Initialize the controller of the configuration window
+     * @param p_mainApp the main application for callback
+     * @param p_configProperties an OrderedProperties with the contents of the different fields
+     */
     public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;

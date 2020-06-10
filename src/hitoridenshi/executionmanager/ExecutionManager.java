@@ -34,7 +34,7 @@ public class ExecutionManager {
         final ArgP argParser = new ArgP();
         argParser.addOption("--console-mode", "To execute in console, without loading the GUI.");
         argParser.addOption("--file", "To give a properties file to load. As priority over -f.");
-        argParser.addOption("--help", "This help.");
+        argParser.addOption("--help", "The command you just used.");
         argParser.addOption("-c", "eq. to --console-mode");
         argParser.addOption("-f", "eq. to --file");
         

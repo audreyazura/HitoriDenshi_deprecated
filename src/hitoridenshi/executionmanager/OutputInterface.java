@@ -24,5 +24,9 @@ import hitoridenshi.simulationmanager.ProgressNotifierInterface;
  */
 public interface OutputInterface extends ProgressNotifierInterface
 {
+    /**
+     * used to start the output terminal, be it a console or a GUI 
+     * @param args the currated arguments passed in parameters to configure the execution
+     */
     public void startOutput(String[] args);
 }

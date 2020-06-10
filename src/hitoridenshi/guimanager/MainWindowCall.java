@@ -20,12 +20,23 @@ import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
 
 /**
- *
+ * an interface for the GUI manager
  * @author Alban Lafuente
  */
 public interface MainWindowCall
 {
     Stage getMainStage();
+    
+    /**
+     * put the configuration window of the simulation on the stage
+     * @param p_configurationProperties an OrderedProperties to fill the configuration window
+     */
     void launchParametersWindow(OrderedProperties p_configurationProperties);
+    
+    /**
+     * launch the window to track the simulation
+     * @param p_workerAmount the number of core used by the simulation
+     * @param p_tempConfigProperties a properties with the parameters of the simulation just launched
+     */
     void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties);
 }

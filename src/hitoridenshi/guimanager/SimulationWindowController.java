@@ -16,7 +16,6 @@
  */
 package hitoridenshi.guimanager;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -43,6 +42,13 @@ public class SimulationWindowController
     private MainWindowCall m_mainWindow;
     private ProgressBar[] m_workerPBarArray;
     
+    /**
+     * initialize the window tracking the ongoing simulation and its controller
+     * creates as many sub-progress bar as there are core used
+     * @param p_tempConfigProperties properties containing the parameter window fields, for the callback
+     * @param p_mainWindowCall the main stage, for callback
+     * @param p_workerAmount the number of core used
+     */
     void initialize(OrderedProperties p_tempConfigProperties, MainWindowCall p_mainWindowCall, int p_workerAmount)
     {
         m_tempConfigProp = p_tempConfigProperties;
@@ -83,24 +89,37 @@ public class SimulationWindowController
         }
     }
     
+    /**
+     * Update the progress of one of the core (worker) once it finished one of its calculation
+     * @param p_workerID the id of the worker who finished the calculation
+     * @param p_workerProgress the progress of said worker
+     * @param p_globalProgress the general progress in the whole simulation
+     */
     void updateProgressIndividual (int p_workerID, double p_workerProgress, double p_globalProgress)
     {
         mainpbar.setProgress(p_globalProgress);
         m_workerPBarArray[p_workerID].setProgress(p_workerProgress);
     }
     
+    /**
+     * Write a message in the TextArea of the window
+     * @param p_message the message to be written
+     */
     void updateMessage (String p_message)
     {
 	String currentText = p_message+"\n";
 	consolewindow.appendText(currentText);
     }
     
-    @FXML void callparameterswindow (ActionEvent event)
+    /**
+     * set the stage to the configuration window, with the configuration saved previously
+     */
+    @FXML void callparameterswindow ()
     {
         m_mainWindow.launchParametersWindow(m_tempConfigProp);
     }
     
-    @FXML void closeApp (ActionEvent event)
+    @FXML void closeApp ()
     {
 	System.exit(0);
     }

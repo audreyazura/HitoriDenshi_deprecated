@@ -40,6 +40,42 @@ public class Absorber
     private final ContinuousFunction m_electricField;
     private final String m_bias;
     
+    /**
+     * Constructor for an absorber without special feature (such as a notch)
+     * @param p_electricField the *.eb file given from SCAPS
+     * @param p_bias the bias voltage applied on the absorber
+     * @param p_condition the condition of calculation
+     * @throws DataFormatException
+     * @throws IOException 
+     */
+    public Absorber(File p_electricField, String p_bias, CalculationConditions p_condition) throws DataFormatException, IOException
+    {
+        m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
+        m_bias = p_bias;
+        m_notchPosition = null;
+        m_zeroAtFront = p_condition.isZeroAtFront();
+        if(m_zeroAtFront)
+        {
+            m_frontPosition = BigDecimal.ZERO;
+            m_backPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
+        }
+        else
+        {
+            m_frontPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
+            m_backPosition = BigDecimal.ZERO;
+        }
+    }
+    
+    /**
+     * Constructor for an absorber with a notch
+     * Calculate the notch-created effective electric field and add it to the internal electric field given by SCAPS
+     * @param p_fileElectricFields the *.eb file given from SCAPS
+     * @param p_bias the bias voltage applied on the absorber
+     * @param p_notchPosition the position of the notch in the absorber
+     * @param p_conditions the condition of calculation
+     * @throws DataFormatException
+     * @throws IOException 
+     */
     public Absorber(String p_fileElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
         m_bias = p_bias;
@@ -68,7 +104,7 @@ public class Absorber
         if (p_conditions.isElectron())
         {
             ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
-            //À refactoriser !!!!!!
+            //À refactoriser ?
             if(m_zeroAtFront)
             {
                 if (m_notchPosition.compareTo(m_frontPosition) == 0)

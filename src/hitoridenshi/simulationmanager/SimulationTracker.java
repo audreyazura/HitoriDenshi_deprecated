@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Track an ongoing simulation, remembering the fastest and slowest particle speed and trajectory, as well as the mean trajectory and speed of the particle generated 
  * @author Alban Lafuente
  */
 public class SimulationTracker
@@ -39,30 +39,37 @@ public class SimulationTracker
     private int m_numberBackExit;
     private int m_numberNotExited;
     
+    //save for the overall mean trajectory, velocity and acceleration
     private List<BigDecimal> m_meanTrajectory = new ArrayList<>();
     private List<BigDecimal> m_meanVelocity= new ArrayList<>();
     private List<BigDecimal> m_meanAcceleration = new ArrayList<>();
     
+    //save the trajectory, speed and acceleration history of the particle that reached the front the fastest
     private List<BigDecimal> m_fastestFrontTrajectory = new ArrayList<>();
     private List<BigDecimal> m_fastestFrontVelocity= new ArrayList<>();
     private List<BigDecimal> m_fastestFrontAcceleration = new ArrayList<>();
     
+    //save the trajectory, speed and acceleration history of the particle that reached the front the slowest
     private List<BigDecimal> m_slowestFrontTrajectory = new ArrayList<>();
     private List<BigDecimal> m_slowestFrontVelocity= new ArrayList<>();
     private List<BigDecimal> m_slowestFrontAcceleration = new ArrayList<>();
     
+    //save the mean trajectory, speed and acceleration history of the particle that reached the front
     private List<BigDecimal> m_meanFrontTrajectory = new ArrayList<>();
     private List<BigDecimal> m_meanFrontVelocity= new ArrayList<>();
     private List<BigDecimal> m_meanFrontAcceleration = new ArrayList<>();
     
+    //save the trajectory, speed and acceleration history of the particle that reached the back the fastest
     private List<BigDecimal> m_fastestBackTrajectory = new ArrayList<>();
     private List<BigDecimal> m_fastestBackVelocity= new ArrayList<>();
     private List<BigDecimal> m_fastestBackAcceleration = new ArrayList<>();
     
+    //save the trajectory, speed and acceleration history of the particle that reached the back the slowest
     private List<BigDecimal> m_slowestBackTrajectory = new ArrayList<>();
     private List<BigDecimal> m_slowestBackVelocity= new ArrayList<>();
     private List<BigDecimal> m_slowestBackAcceleration = new ArrayList<>();
     
+    //save the mean trajectory, speed and acceleration history of the particle that reached the back
     private List<BigDecimal> m_meanBackTrajectory = new ArrayList<>();
     private List<BigDecimal> m_meanBackVelocity= new ArrayList<>();
     private List<BigDecimal> m_meanBackAcceleration = new ArrayList<>();
@@ -77,7 +84,15 @@ public class SimulationTracker
         m_numberNotExited = 0;
     }
     
-    synchronized private void addMean (ListType p_type, Absorber p_absorber, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
+    /**
+     * Add the current particle to the given category of mean trajectory, speed and acceleration
+     * @param p_type the type of list to which the mean have to be added.
+     * @param p_absorber the absorber in which the absorber was.
+     * @param p_particleTrajectoryArray the array containing the position history of the particle
+     * @param p_particleVelocityArray the array containing the speed history of the particle
+     * @param p_particleAccelerationArray the array containing the acceleration history of the particle
+     */
+    synchronized private void addMean(MeanType p_type, Absorber p_absorber, ArrayList<BigDecimal> p_particleTrajectoryArray, ArrayList<BigDecimal> p_particleVelocityArray, ArrayList<BigDecimal> p_particleAccelerationArray)
     {
         List<BigDecimal> trackerTrajectoryArray = new ArrayList<BigDecimal>();
         List<BigDecimal> trackerVelocityArray = new ArrayList<BigDecimal>();
@@ -132,7 +147,14 @@ public class SimulationTracker
         }
     }
     
-    private void writeFile(ListTypeToWrite p_listType, BufferedWriter p_writer, PhysicalConstants.UnitsPrefix p_prefix) throws IOException
+    /**
+     * Write the list designated by the given list type to the given BufferedWriter
+     * @param p_listType the type of the list to write
+     * @param p_writer the BufferedWriter in which to write the lists
+     * @param p_prefix the SI prefix of the distance unit
+     * @throws IOException 
+     */
+    private void writeFile(ListType p_listType, BufferedWriter p_writer, PhysicalConstants.UnitsPrefix p_prefix) throws IOException
     {
         BigDecimal multiplier = p_prefix.getMultiplier();
         String toBeWritten = new String();
@@ -196,29 +218,50 @@ public class SimulationTracker
         p_writer.close();
     }
     
-    private enum ListType
+    /**
+     * The different type of mean lists, used to identify where to write each particle
+     * GENERAL: the list containing the mean for all the particle
+     * FRONT: the list for the particle collected at the front
+     * BACK: the list for the particle collected at the back
+     */
+    private enum MeanType
     {
         GENERAL, FRONT, BACK;
     }
     
-    private enum ListTypeToWrite
+    /**
+     * Used to identify the type of list to write.
+     * GENERALMEAN: the mean lists of all the particles
+     * FRONTMEAN: the mean lists of the particles having exited at the front
+     * FRONTFAST: the lists of the fastest particle having exited to the front
+     * FRONTSLOW: the lists of the slowest particle having exited to the front
+     * BACKMEAN: the mean lists of the particles having exited at the back
+     * BACKFAST: the lists of the fastest particle having exited to the back
+     * BACKSLOW: the lists of the slowest particle having exited to the back
+     */
+    private enum ListType
     {
         GENERALMEAN, FRONTMEAN, FRONTFAST, FRONTSLOW, BACKMEAN, BACKFAST, BACKSLOW;
     }
     
-    synchronized public void logParticle (Particle p_particle, Absorber p_absorber)
+    /**
+     * Register a particle to the tracker
+     * @param p_particle the particle to be registered
+     * @param p_absorber the absorber that particle was in
+     */
+    synchronized public void logParticle(Particle p_particle, Absorber p_absorber)
     {
         ArrayList<BigDecimal> particleTrajectory = p_particle.getTrajectory();
         ArrayList<BigDecimal> particleVelocities = p_particle.getVelocityList();
         ArrayList<BigDecimal> particleAccelerations = p_particle.getAccelerationList();
         
-        this.addMean(ListType.GENERAL, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
+        this.addMean(MeanType.GENERAL, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
         
         switch (p_particle.getCollection())
         {
             case FRONT:
                 m_numberFrontExit += 1;
-                addMean(ListType.FRONT, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(MeanType.FRONT, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberFrontExit == 1)
                 {
@@ -248,7 +291,7 @@ public class SimulationTracker
                 break;
             case BACK:
                 m_numberBackExit += 1;
-                addMean(ListType.BACK, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
+                addMean(MeanType.BACK, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
                 if (m_numberBackExit == 1)
                 {
@@ -282,7 +325,17 @@ public class SimulationTracker
         }
     }
     
-    synchronized public void saveToFile (String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicalConstants.UnitsPrefix p_prefix) throws FileSystemException, IOException
+    /**
+     * Save the registered data to a file
+     * @param p_generalOutputFolder the address of the folder in which to write the files
+     * @param p_biasVoltage the applied bias voltage, used to name the file
+     * @param p_notchPosition the position of the notch in the absorber, used to name the file
+     * @param p_initialPosition the initial position of the electrons, used to name the file
+     * @param p_prefix the SI prefix of the abscissa unit
+     * @throws FileSystemException
+     * @throws IOException 
+     */
+    synchronized public void saveToFile(String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicalConstants.UnitsPrefix p_prefix) throws FileSystemException, IOException
     {
         String initialPositionString = String.valueOf(p_initialPosition.intValue());
         
@@ -301,13 +354,13 @@ public class SimulationTracker
             exitFileBuffer.flush();
             exitFileBuffer.close();
             
-            writeFile(ListTypeToWrite.GENERALMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovement.sim")), p_prefix);
-            writeFile(ListTypeToWrite.FRONTFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToFront.sim")), p_prefix);
-            writeFile(ListTypeToWrite.FRONTSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToFront.sim")), p_prefix);
-            writeFile(ListTypeToWrite.FRONTMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToFront.sim")), p_prefix);
-            writeFile(ListTypeToWrite.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
-            writeFile(ListTypeToWrite.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
-            writeFile(ListTypeToWrite.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
+            writeFile(ListType.GENERALMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovement.sim")), p_prefix);
+            writeFile(ListType.FRONTFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToFront.sim")), p_prefix);
+            writeFile(ListType.FRONTSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToFront.sim")), p_prefix);
+            writeFile(ListType.FRONTMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToFront.sim")), p_prefix);
+            writeFile(ListType.BACKFAST, new BufferedWriter(new FileWriter(currenOutputFolder + "/FastestMovementToBack.sim")), p_prefix);
+            writeFile(ListType.BACKSLOW, new BufferedWriter(new FileWriter(currenOutputFolder + "/SlowestMovementToBack.sim")), p_prefix);
+            writeFile(ListType.BACKMEAN, new BufferedWriter(new FileWriter(currenOutputFolder + "/MeanMovementToBack.sim")), p_prefix);
         }
         else
         {

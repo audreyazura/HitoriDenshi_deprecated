@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * A worker calculating on a single processor core to execute the simulation
  * @author Alban Lafuente
  */
 public class SimulationWorker implements Runnable

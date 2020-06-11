@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- *
+ * Represents the necessary parameters of the calculation, correctly converted and formatted
  * @author Alban Lafuente
  */
 public class CalculationConditions
@@ -96,12 +96,22 @@ public class CalculationConditions
         }
     }
     
+    /**
+     * format a BigDecimal so it can be properly used for the simulation.
+     * @param p_toBeFormatted
+     * @return the formatted BigDecimal
+     */
     static public BigDecimal formatBigDecimal(BigDecimal p_toBeFormatted)
     {
         return p_toBeFormatted.stripTrailingZeros();
     }
     
-    //splits the passed string and converts each element to BigDecimal to before returning the list created this way
+    /**
+     * splits the passed string and converts each element to BigDecimal to before returning the list created this way
+     * @param p_values the string containing the values to be converted
+     * @param p_multiplier the multiplier to convert the values in the string to SI unit
+     * @return a ArrayList of BigDecimal with the converted value in SI, correctly formatted for the calculation
+     */
     private ArrayList<BigDecimal> getBigDecimalArrayFromString(String p_values, BigDecimal p_multiplier)
     {
         List<BigDecimal> returnList = new ArrayList<>();

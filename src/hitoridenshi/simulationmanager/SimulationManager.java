@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 
 /**
- *
+ * The class managing the whole simulation
  * @author Alban Lafuente
  */
 public class SimulationManager implements Runnable
@@ -61,6 +61,11 @@ public class SimulationManager implements Runnable
         m_numberOfWorker = (nAvailableCore < nIndependantCalculation) ? nAvailableCore : nIndependantCalculation;
     }
     
+    /**
+     * Function for the class of the package to send an update on their progress to the terminal chosen for the execution
+     * @param p_workerID the ID of the worker sending the message
+     * @param p_workerProgress the progress of the worker
+     */
     void sendUpdate (int p_workerID, double p_workerProgress)
     {
         m_progress += 1.0 / m_totalCalculations;
@@ -68,11 +73,16 @@ public class SimulationManager implements Runnable
         m_guiApp.updateProgress(p_workerID, p_workerProgress, m_progress);
     }
     
+    /**
+     * Function for the class of the package to send a message to the chosen terminal
+     * @param p_message the message to be printed
+     */
     void sendMessage (String p_message)
     {
         m_guiApp.sendMessage(p_message);
     }
     
+    //put more of this into the constructor (such as the creation of the absorber, and possibly the one of the worker too
     @Override
     public void run()
     {      

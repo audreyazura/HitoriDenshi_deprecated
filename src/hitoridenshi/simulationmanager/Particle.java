@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
+ * Represent a particle with its current position and velocity, as well as its movement history
  * @author Alban Lafuente
  */
 public class Particle 
@@ -49,6 +49,12 @@ public class Particle
         m_velocityList.add(m_velocity);
     }
     
+    /**
+     * Create a particle from a Hashmap containing its charge and mass, as given by CalculationCondiction
+     * @param p_parameters the hashmap containing the particle mass and charge
+     * @param p_position
+     * @param p_velocity 
+     */
     public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
     {
         m_charge = CalculationConditions.formatBigDecimal(p_parameters.get("charge"));
@@ -60,6 +66,11 @@ public class Particle
         m_velocityList.add(m_velocity);
     }
     
+    /**
+     * Move the particle by calculating the effect of an external electric field
+     * @param p_absorber the absorber the particle is in
+     * @param p_timeStep the time step of the simulation
+     */
     public void applyExteriorFields(Absorber p_absorber, BigDecimal p_timeStep)
     {
         BigDecimal electricFieldValueAtPosition = CalculationConditions.formatBigDecimal(p_absorber.getElectricField().getValueAtPosition(m_position));
@@ -111,6 +122,12 @@ public class Particle
         return m_collectionState;
     }
     
+    /**
+     * An enumeration of the different possible collection state of the particle
+     * FRONT: collected at the front
+     * BACK: collected at the back
+     * NOTCOLLECTED: not yet collected
+     */
     public enum CollectionState
     {
         BACK, FRONT, NOTCOLLECTED

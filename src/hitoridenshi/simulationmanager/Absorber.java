@@ -40,22 +40,6 @@ public class Absorber
     private final ContinuousFunction m_electricField;
     private final String m_bias;
     
-//    public Absorber(File p_electricField, double p_unitMultiplier, boolean p_zeroAtFront, double p_bufferWindowSize, double p_sampleSize) throws DifferentArraySizeException, DataFormatException, IOException
-//    {
-//        m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(p_electricField, p_unitMultiplier);
-//        m_zeroAtFront = p_zeroAtFront;
-//        if(m_zeroAtFront)
-//        {
-//            m_frontPosition = 0;
-//            m_backPosition = p_sampleSize-p_bufferWindowSize;
-//        }
-//        else
-//        {
-//            m_frontPosition = p_sampleSize-p_bufferWindowSize;
-//            m_backPosition = 0;
-//        }
-//    }
-    
     public Absorber(String p_fileElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
         m_bias = p_bias;
@@ -66,8 +50,6 @@ public class Absorber
         BigDecimal absorberEnd;
         BigDecimal field0toNotch;
         BigDecimal fieldNotchtoEnd;
-        
-        String notchPositionNanometer = String.valueOf(m_notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());
         
         m_zeroAtFront = p_conditions.isZeroAtFront();
         if(m_zeroAtFront)

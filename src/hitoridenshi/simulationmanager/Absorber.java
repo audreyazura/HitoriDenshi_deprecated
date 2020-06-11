@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
 import java.io.File;
 import java.io.IOException;
@@ -109,36 +109,36 @@ public class Absorber
             {
                 if (m_notchPosition.compareTo(m_frontPosition) == 0)
                 {
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     field0toNotch = fieldNotchtoEnd;
                 }
                 else if (m_notchPosition.compareTo(m_backPosition) == 0)
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     fieldNotchtoEnd = field0toNotch;
                 }
                 else
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                 }
             }
             else
             {
                 if (m_notchPosition.compareTo(m_frontPosition) == 0)
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     fieldNotchtoEnd = field0toNotch;
                 }
                 else if (m_notchPosition.compareTo(m_backPosition) == 0)
                 {   
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     field0toNotch = fieldNotchtoEnd;
                 }
                 else
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicalConstants.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                 }
             }
 

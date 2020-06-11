@@ -17,7 +17,7 @@
 package hitoridenshi.simulationmanager;
 
 import commonutils.PCGGenerator;
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class CalculationConditions
     //Temperature in K
     static final BigDecimal T = CalculationConditions.formatBigDecimal(new BigDecimal("300"));
     //calculation step, chosen as one each femtosecond
-    static final BigDecimal DT = CalculationConditions.formatBigDecimal(PhysicalConstants.UnitsPrefix.FEMTO.getMultiplier());
+    static final BigDecimal DT = CalculationConditions.formatBigDecimal(PhysicsTools.UnitsPrefix.FEMTO.getMultiplier());
 
     private final boolean m_isZeroAtFront;
     private final int m_maxSteps;
@@ -44,7 +44,7 @@ public class CalculationConditions
     //All the following numbers have to be stocked with SI units
     private final BigDecimal m_bufferWindowSize;
     private final BigDecimal m_sampleSize;
-    private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
+    private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
     private final List<BigDecimal> m_notchPositions;
     private final List<BigDecimal> m_startingPositons;
@@ -52,7 +52,7 @@ public class CalculationConditions
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicalConstants.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
@@ -61,11 +61,11 @@ public class CalculationConditions
         m_bufferWindowSize = CalculationConditions.formatBigDecimal(p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier()));
         m_sampleSize = CalculationConditions.formatBigDecimal(p_sampleSize.multiply(m_abscissaUnit.getMultiplier()));
         
-        m_bandgaps.put("front", CalculationConditions.formatBigDecimal(p_frontBandgap.multiply(PhysicalConstants.EV)));
-        m_bandgaps.put("notch", CalculationConditions.formatBigDecimal(p_notchBandgap.multiply(PhysicalConstants.EV)));
-        m_bandgaps.put("back", CalculationConditions.formatBigDecimal(p_backBandgap.multiply(PhysicalConstants.EV)));
+        m_bandgaps.put("front", CalculationConditions.formatBigDecimal(p_frontBandgap.multiply(PhysicsTools.EV)));
+        m_bandgaps.put("notch", CalculationConditions.formatBigDecimal(p_notchBandgap.multiply(PhysicsTools.EV)));
+        m_bandgaps.put("back", CalculationConditions.formatBigDecimal(p_backBandgap.multiply(PhysicsTools.EV)));
         
-        BigDecimal particleEffectiveMass = CalculationConditions.formatBigDecimal(p_effectiveMass.multiply(PhysicalConstants.ME));
+        BigDecimal particleEffectiveMass = CalculationConditions.formatBigDecimal(p_effectiveMass.multiply(PhysicsTools.ME));
         m_particleParameters.put("mass", particleEffectiveMass);
         //lifetime is given in nanosecond, and we have to convert it into step, with a step every DT
         m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT, MathContext.DECIMAL128)).intValue();
@@ -77,18 +77,18 @@ public class CalculationConditions
         
         if(p_isElectron)
         {
-            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicalConstants.Q.negate()));
+            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicsTools.Q.negate()));
         }
         else
         {
-            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicalConstants.Q));
+            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicsTools.Q));
         }
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
-        BigDecimal vth = CalculationConditions.formatBigDecimal((PhysicalConstants.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
+        BigDecimal vth = CalculationConditions.formatBigDecimal((PhysicsTools.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
         PCGGenerator randomGenerator = new PCGGenerator(42);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
@@ -144,7 +144,7 @@ public class CalculationConditions
         return m_maxSteps;
     }
     
-    public synchronized PhysicalConstants.UnitsPrefix getAbscissaScale()
+    public synchronized PhysicsTools.UnitsPrefix getAbscissaScale()
     {
         return m_abscissaUnit;
     }

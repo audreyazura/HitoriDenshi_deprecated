@@ -18,7 +18,7 @@ package hitoridenshi.guimanager;
 
 import hitoridenshi.simulationmanager.CalculationConditions;
 import hitoridenshi.simulationmanager.SimulationManager;
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -74,7 +74,7 @@ public class FXMLParametersWindowController
     @FXML private TextField outputFolder;
     
     private MainWindowCall m_mainApp;
-    private PhysicalConstants.UnitsPrefix m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
+    private PhysicsTools.UnitsPrefix m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
     /**
      * Save the previously selected unit in the unitselec field to apply changes later
@@ -83,11 +83,11 @@ public class FXMLParametersWindowController
     {
         try
         {
-            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.selectPrefix((String) unitselec.getValue());
+            m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
         }
         catch (NullPointerException|StringIndexOutOfBoundsException ex)
         {
-            m_previouslySelectedUnit = PhysicalConstants.UnitsPrefix.UNITY;
+            m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
         }
     }
     
@@ -96,16 +96,16 @@ public class FXMLParametersWindowController
      */
     @FXML private void applyNewUnitSelection ()
     {
-        PhysicalConstants.UnitsPrefix currentPrefix = PhysicalConstants.UnitsPrefix.UNITY;
+        PhysicsTools.UnitsPrefix currentPrefix = PhysicsTools.UnitsPrefix.UNITY;
         try
         {
             String selectedUnit = (String) unitselec.getValue();
             
             if (!selectedUnit.isEmpty())
             {
-                currentPrefix = PhysicalConstants.UnitsPrefix.selectPrefix(selectedUnit);
+                currentPrefix = PhysicsTools.UnitsPrefix.selectPrefix(selectedUnit);
             }
-            if (m_previouslySelectedUnit == PhysicalConstants.UnitsPrefix.UNITY)
+            if (m_previouslySelectedUnit == PhysicsTools.UnitsPrefix.UNITY)
             {
                 m_previouslySelectedUnit = currentPrefix;
             }
@@ -319,7 +319,7 @@ public class FXMLParametersWindowController
             BigDecimal backBangapNumber = new BigDecimal(backbangap.getText());
             int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
             
-            PhysicalConstants.UnitsPrefix passedUnit = PhysicalConstants.UnitsPrefix.selectPrefix((String) unitselec.getValue());
+            PhysicsTools.UnitsPrefix passedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
         
             CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
             SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (ProgressNotifierInterface) m_mainApp);

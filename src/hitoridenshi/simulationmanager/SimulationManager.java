@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.FileSystemException;
@@ -96,7 +96,7 @@ public class SimulationManager implements Runnable
             {
                 for (BigDecimal notch: m_notchPositions)
                 {
-                    String notchPositionNanometer = String.valueOf(notch.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());
+                    String notchPositionNanometer = String.valueOf(notch.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier()).intValue());
                     absorberList.add(new Absorber(m_inputFolder+"/E"+bias+"V_N"+notchPositionNanometer+"nm.eb", bias, notch, m_conditions));
                 }
             }

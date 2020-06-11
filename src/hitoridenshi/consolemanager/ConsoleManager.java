@@ -16,7 +16,7 @@
  */
 package hitoridenshi.consolemanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import hitoridenshi.executionmanager.OutputInterface;
 import hitoridenshi.guimanager.GUIManager;
 import hitoridenshi.simulationmanager.CalculationConditions;
@@ -53,7 +53,7 @@ public class ConsoleManager implements OutputInterface
         String notchesList = p_properties.getProperty("notch_positions");
         String initialPositionsList = p_properties.getProperty("generation_positions");
         
-        PhysicalConstants.UnitsPrefix unitPrefix = PhysicalConstants.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa_unit"));
+        PhysicsTools.UnitsPrefix unitPrefix = PhysicsTools.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa_unit"));
             
         BigDecimal totalSampleWidth = new BigDecimal(p_properties.getProperty("sample_width"));
         BigDecimal bufferWindowSize = new BigDecimal(p_properties.getProperty("bufferwindow width"));

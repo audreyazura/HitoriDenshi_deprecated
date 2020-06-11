@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -41,7 +41,7 @@ public class SimulationWorker implements Runnable
     private final SimulationManager m_manager;
     private final int m_id;
     private final int m_maxSteps;
-    private final PhysicalConstants.UnitsPrefix m_abscissaUnit;
+    private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final Set<Absorber> m_absorbers;
     private final String m_outputFolder;
     
@@ -76,7 +76,7 @@ public class SimulationWorker implements Runnable
         for (Absorber currentAbsorber: m_absorbers)
         {
             BigDecimal notchPosition = currentAbsorber.getNotchPosition();
-            String currrentNotchPositionString = String.valueOf(notchPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier()).intValue());;
+            String currrentNotchPositionString = String.valueOf(notchPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier()).intValue());;
             String currentBias = currentAbsorber.getBias();
             try
             {
@@ -107,8 +107,8 @@ public class SimulationWorker implements Runnable
                         m_manager.sendUpdate(m_id, workerProgress);
                     }
 
-                    currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPositionString, initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
-                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPositionString, initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
+                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                 }
             }
             catch (FileSystemException ex)

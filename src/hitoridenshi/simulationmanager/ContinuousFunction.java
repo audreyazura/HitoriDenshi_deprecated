@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,7 +55,7 @@ class ContinuousFunction
      */
     static public ContinuousFunction createElectricFieldFromSCAPS(File p_inputFile, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
-       return new ContinuousFunction(p_inputFile, p_unitMultiplier, PhysicalConstants.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
+       return new ContinuousFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
     }
     
     public ContinuousFunction (ContinuousFunction p_passedFunction)

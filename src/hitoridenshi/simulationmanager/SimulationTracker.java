@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PhysicalConstants;
+import commonutils.PhysicsTools;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -154,7 +154,7 @@ public class SimulationTracker
      * @param p_prefix the SI prefix of the distance unit
      * @throws IOException 
      */
-    private void writeFile(ListType p_listType, BufferedWriter p_writer, PhysicalConstants.UnitsPrefix p_prefix) throws IOException
+    private void writeFile(ListType p_listType, BufferedWriter p_writer, PhysicsTools.UnitsPrefix p_prefix) throws IOException
     {
         BigDecimal multiplier = p_prefix.getMultiplier();
         String toBeWritten = new String();
@@ -210,7 +210,7 @@ public class SimulationTracker
         for (int i = 0 ; i < trajectoryToWrite.size() ; i++)
         {
             p_writer.newLine();
-            toBeWritten = (new BigDecimal(i)).multiply(CalculationConditions.DT).divide(PhysicalConstants.UnitsPrefix.NANO.getMultiplier())+"\t"+trajectoryToWrite.get(i).divide(multiplier, MathContext.DECIMAL32)+"\t"+velocitiesToWrite.get(i).round(MathContext.DECIMAL32);
+            toBeWritten = (new BigDecimal(i)).multiply(CalculationConditions.DT).divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier())+"\t"+trajectoryToWrite.get(i).divide(multiplier, MathContext.DECIMAL32)+"\t"+velocitiesToWrite.get(i).round(MathContext.DECIMAL32);
             toBeWritten += i < accelerationsToWrite.size() ? "\t"+accelerationsToWrite.get(i).round(MathContext.DECIMAL32):"";
             p_writer.write(toBeWritten);
         }
@@ -335,7 +335,7 @@ public class SimulationTracker
      * @throws FileSystemException
      * @throws IOException 
      */
-    synchronized public void saveToFile(String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicalConstants.UnitsPrefix p_prefix) throws FileSystemException, IOException
+    synchronized public void saveToFile(String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicsTools.UnitsPrefix p_prefix) throws FileSystemException, IOException
     {
         String initialPositionString = String.valueOf(p_initialPosition.intValue());
         

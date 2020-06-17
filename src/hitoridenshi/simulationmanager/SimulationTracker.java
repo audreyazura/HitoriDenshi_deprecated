@@ -123,28 +123,35 @@ public class SimulationTracker
         int trackerArraySize = trackerTrajectoryArray.size(); 
         int particleArraySize = p_particleTrajectoryArray.size();
         int shortestAcceleration = Math.min(trackerAccelerationArray.size(), p_particleAccelerationArray.size());
+        int index;
         
-        for(int i = 0 ; i < particleArraySize ; i += 1)
+        for(index = 0 ; index < particleArraySize ; index += 1)
         {
-            if (i < trackerArraySize)
+            if (index < trackerArraySize)
             {
-                trackerTrajectoryArray.set(i, trackerTrajectoryArray.get(i).add(p_particleTrajectoryArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
-                trackerVelocityArray.set(i, trackerVelocityArray.get(i).add(p_particleVelocityArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
-                if (i < shortestAcceleration)
+                trackerTrajectoryArray.set(index, trackerTrajectoryArray.get(index).add(p_particleTrajectoryArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128)));
+                trackerVelocityArray.set(index, trackerVelocityArray.get(index).add(p_particleVelocityArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128)));
+                if (index < shortestAcceleration)
                 {
-                    trackerAccelerationArray.set(i, trackerAccelerationArray.get(i).add(p_particleAccelerationArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128)));
+                    trackerAccelerationArray.set(index, trackerAccelerationArray.get(index).add(p_particleAccelerationArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128)));
                 }
             }
             else
             {
-                trackerTrajectoryArray.add((p_particleTrajectoryArray.get(i).add(toAddIfLongerList)).divide(m_numberParticle, MathContext.DECIMAL128));
-                trackerVelocityArray.add(p_particleVelocityArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
-                if (i < particleArraySize -1)
+                if (p_type.equals(MeanType.GENERAL) && m_numberBackExit + m_numberFrontExit + m_numberNotExited > 1)
                 {
-                    trackerAccelerationArray.add(p_particleAccelerationArray.get(i).divide(m_numberParticle, MathContext.DECIMAL128));
+                    toAddIfLongerList = trackerTrajectoryArray.get(index-1);
+                }
+                trackerTrajectoryArray.add((p_particleTrajectoryArray.get(index).add(toAddIfLongerList)).divide(m_numberParticle, MathContext.DECIMAL128));
+                trackerVelocityArray.add(p_particleVelocityArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128));
+                if (index < particleArraySize -1)
+                {
+                    trackerAccelerationArray.add(p_particleAccelerationArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128));
                 }
             }
         }
+        
+        //make an if statement to check if we have gone through all of trackerArray
     }
     
     /**

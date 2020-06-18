@@ -151,7 +151,18 @@ public class SimulationTracker
             }
         }
         
-        //make an if statement to check if we have gone through all of trackerArray
+        //if the tracker mean arrays are longer than the particle arrays, we add the end position of the particle to the mean until reaching the end of the array
+        while (index < trackerArraySize)
+        {
+            trackerTrajectoryArray.set(index, trackerTrajectoryArray.get(index).add(p_particleTrajectoryArray.get(particleArraySize-1).divide(m_numberParticle, MathContext.DECIMAL128)));
+            trackerVelocityArray.set(index, trackerVelocityArray.get(index).add(p_particleVelocityArray.get(particleArraySize-1).divide(m_numberParticle, MathContext.DECIMAL128)));
+            if (index < shortestAcceleration)
+            {
+                trackerAccelerationArray.set(index, trackerAccelerationArray.get(index).add(p_particleAccelerationArray.get(particleArraySize-1).divide(m_numberParticle, MathContext.DECIMAL128)));
+            }
+            
+            index += 1;
+        }
     }
     
     /**

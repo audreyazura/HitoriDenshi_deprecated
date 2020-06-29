@@ -43,9 +43,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .hbox
 {
-    -fx-spacing: 20px;
+    -fx-spacing: 5px;
     -fx-fill-height: true;
     -fx-alignment: center-left;
+}
+
+.headervbox
+{
+    -fx-spacing: 10px;
+    -fx-alignment: top-left;
+    -fx-fill-width: true;
+    -fx-padding: 0px 0px 5px 0px; /*top, right, bottom, left*/
 }
 
 .inputfield

@@ -33,48 +33,54 @@
     </HBox>
     
     <HBox styleClass="hbox">        
-        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
-            <Label styleClass="windowtext" text="Abscissa unit:" />
-            <ChoiceBox fx:id="unitselec" onAction="#applyNewUnitSelection" onShowing="#savePreviousSelection">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="μm" />
-                        <String fx:value="nm" />
-                    </FXCollections>
-                </items>    
-            </ChoiceBox>
+        <VBox styleClass="headervbox" HBox.hgrow="ALWAYS" >
+            <HBox styleClass="hbox" VBox.vgrow="ALWAYS">
+                <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
+                    <Label styleClass="windowtext" text="Abscissa unit:" />
+                    <ChoiceBox fx:id="unitselec" onAction="#applyNewUnitSelection" onShowing="#savePreviousSelection">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="μm" />
+                                <String fx:value="nm" />
+                            </FXCollections>
+                        </items>    
+                    </ChoiceBox>
+                </VBox>
+
+                <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
+                    <Label styleClass="windowtext" text="Material:" />
+                    <ChoiceBox fx:id="materialselec">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="CIGS" />
+                            </FXCollections>
+                        </items>    
+                    </ChoiceBox>
+                </VBox>
+            </HBox>
+            
+            <HBox styleClass="hbox" VBox.vgrow="ALWAYS">
+                <Label styleClass="windowtext" text="Include:" />
+
+                <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
+                    <CheckBox fx:id="includegrading" allowIndeterminate="false" selected="false" onAction="#showgrading" />
+                    <Label styleClass="windowtext" text="Band grading" />
+                </HBox>
+
+                <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
+                    <CheckBox fx:id="includeqds" allowIndeterminate="false" selected="false" onAction="#showqds" />
+                    <Label styleClass="windowtext" text="Quantum dots" />
+                </HBox>
+            </HBox>
         </VBox>
         
-        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
-            <Label styleClass="windowtext" text="Material:" />
-            <ChoiceBox fx:id="materialselec">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="CIGS" />
-                    </FXCollections>
-                </items>    
-            </ChoiceBox>
+        <VBox styleClass="headervbox">
+            <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS" >
+                <Button text="Load configuration" styleClass="configbutton" onAction="#loadconfig"/>
+                <Button text="Save configuration" styleClass="configbutton" onAction="#saveconfig"/>
+                <Button text="Use as default configuration" styleClass="configbutton" onAction="#makedefault"/>
+            </HBox>
         </VBox>
-        
-        <HBox styleClass="internalhbox">
-            <Button text="Load configuration" styleClass="configbutton" onAction="#loadconfig"/>
-            <Button text="Save configuration" styleClass="configbutton" onAction="#saveconfig"/>
-            <Button text="Use as default configuration" styleClass="configbutton" onAction="#makedefault"/>
-        </HBox>
-    </HBox>
-    
-    <HBox styleClass="hbox" spacing="50">
-        <Label styleClass="windowtext" text="Include:" />
-        
-        <HBox styleClass="internalhbox">
-            <CheckBox fx:id="includegrading" allowIndeterminate="false" selected="false" onAction="#showgrading" />
-            <Label styleClass="windowtext" text="Band grading" />
-        </HBox>
-        
-        <HBox styleClass="internalhbox">
-            <CheckBox fx:id="includeqds" allowIndeterminate="false" selected="false" onAction="#showqds" />
-            <Label styleClass="windowtext" text="Quantum dots" />
-        </HBox>
     </HBox>
     
     <VBox styleClass="propertyvbox">

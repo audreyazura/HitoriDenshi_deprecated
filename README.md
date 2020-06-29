@@ -5,7 +5,7 @@ This software aim at simulating single electron in a solar cell absorber with a 
 - quantum dots (to be added)
 - more to come
 
-As of now, only the CIGS is implemented and the material choice at the top has no consequence on the simulation.
+As of now, only the CIGS is implemented and the material choice at the top has no consequence on the simulation. Similarly, the checkboxes at the top do not affect any parameters.
 
 # Input files
 

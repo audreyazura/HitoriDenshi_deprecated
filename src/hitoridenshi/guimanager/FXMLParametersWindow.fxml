@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -55,15 +56,29 @@
             </ChoiceBox>
         </VBox>
         
-        <HBox styleClass="hbox">
+        <HBox styleClass="internalhbox">
             <Button text="Load configuration" styleClass="configbutton" onAction="#loadconfig"/>
             <Button text="Save configuration" styleClass="configbutton" onAction="#saveconfig"/>
             <Button text="Use as default configuration" styleClass="configbutton" onAction="#makedefault"/>
         </HBox>
     </HBox>
     
+    <HBox styleClass="hbox" spacing="50">
+        <Label styleClass="windowtext" text="Include:" />
+        
+        <HBox styleClass="internalhbox">
+            <CheckBox fx:id="includegrading" allowIndeterminate="false" selected="false" onAction="#showgrading" />
+            <Label styleClass="windowtext" text="Band grading" />
+        </HBox>
+        
+        <HBox styleClass="internalhbox">
+            <CheckBox fx:id="includeqds" allowIndeterminate="false" selected="false" onAction="#showqds" />
+            <Label styleClass="windowtext" text="Quantum dots" />
+        </HBox>
+    </HBox>
+    
     <VBox styleClass="propertyvbox">
-        <Label styleClass="windowtext" fx:id="propertytitle" text="Variable parameters"/>
+        <Label styleClass="titlelabel" text="Variable parameters"/>
         
         <GridPane styleClass="gridpane">
             <columnConstraints>
@@ -82,7 +97,7 @@
     </VBox>
     
     <VBox styleClass="propertyvbox">
-        <Label styleClass="windowtext" fx:id="propertytitle" text="Sample parameters"/>
+        <Label styleClass="titlelabel" text="Sample parameters"/>
         
         <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
             <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of x = 0:"/>
@@ -110,7 +125,7 @@
     </VBox>
     
     <VBox styleClass="propertyvbox">
-        <Label styleClass="windowtext" fx:id="propertytitle" text="Particles parameters"/>
+        <Label styleClass="titlelabel" text="Particles parameters"/>
         
         <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
             <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Chose the simulated particle:"/>
@@ -135,7 +150,7 @@
     </VBox>
     
     <VBox styleClass="propertyvbox">
-        <Label styleClass="windowtext" fx:id="propertytitle" text="Files configuration"/>
+        <Label styleClass="titlelabel" text="Files configuration"/>
         
         <GridPane styleClass="gridpane">
             <columnConstraints>

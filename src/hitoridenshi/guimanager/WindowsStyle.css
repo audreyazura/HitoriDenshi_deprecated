@@ -43,13 +43,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .hbox
 {
-    -fx-spacing: 10px;
+    -fx-spacing: 20px;
     -fx-fill-height: true;
     -fx-alignment: center-left;
 }
 
 .inputfield
 {
+    -fx-alignment: center-left;
+}
+
+.internalhbox
+{
+    -fx-spacing: 5px;
+    -fx-fill-height: true;
     -fx-alignment: center-left;
 }
 
@@ -89,6 +96,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
 }
 
+.titlelabel
+{
+    -fx-font-family: SourceSansPro;
+    -fx-text-alignment: justify;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
 .windowtext
 {
     -fx-font-family: SourceSansPro;
@@ -98,12 +113,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #closebuttonbox
 {
     -fx-alignment: top-right;
-}
-
-#propertytitle
-{
-    -fx-font-size: 14;
-    -fx-font-weight: bold;
 }
 
 #startsimubox

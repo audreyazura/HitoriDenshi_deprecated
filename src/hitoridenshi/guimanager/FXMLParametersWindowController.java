@@ -34,10 +34,13 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
@@ -49,8 +52,12 @@ import hitoridenshi.simulationmanager.ProgressNotifierInterface;
  */
 public class FXMLParametersWindowController
 {
+    @FXML private CheckBox includegrading;
+    @FXML private CheckBox includeqds;
+    @FXML private CheckBox includetraps;
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
+    @FXML private HBox gradingbox;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
@@ -72,6 +79,7 @@ public class FXMLParametersWindowController
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
+    @FXML private VBox parameterbox;
     
     private MainWindowCall m_mainApp;
     private PhysicsTools.UnitsPrefix m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
@@ -205,9 +213,47 @@ public class FXMLParametersWindowController
     /**
      * save the current configuration as the default configuration, in the file default.conf
      */
-    @FXML private void makedefault ()
+    @FXML private void makedefault()
     {
         writeConfigToFile(new File("ConfigurationFiles/default.conf"));
+    }
+    
+    @FXML private void showgrading()
+    {
+        if(includegrading.isSelected())
+        {
+            System.out.println("Grading selected!");
+            parameterbox.getChildren().add(3, gradingbox);
+        }
+        else
+        {
+            System.out.println("Grading unselected!");
+            parameterbox.getChildren().remove(gradingbox);
+        }
+    }
+    
+    @FXML private void showtraps()
+    {
+        if(includetraps.isSelected())
+        {
+            System.out.println("Traps selected!");
+        }
+        else
+        {
+            System.out.println("Traps unselected!");
+        }
+    }
+    
+    @FXML private void showqds()
+    {
+        if(includeqds.isSelected())
+        {
+            System.out.println("QDs selected!");
+        }
+        else
+        {
+            System.out.println("QDs unselected!");
+        }
     }
     
     /**

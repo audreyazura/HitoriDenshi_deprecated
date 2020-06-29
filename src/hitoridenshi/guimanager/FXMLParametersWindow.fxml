@@ -153,7 +153,7 @@
             
             <HBox styleClass="internalhbox" fx:id="qdsubbox" >
                 <Label styleClass="windowtext" text="QD span in the layer growth direction: " fx:id="qdspan" />
-                <TextField styleClass="inputfield" fx:id="trapcapture" prefWidth="100" />
+                <TextField styleClass="inputfield" fx:id="qdsize" prefWidth="100" />
             </HBox>
         </HBox>
     </VBox>

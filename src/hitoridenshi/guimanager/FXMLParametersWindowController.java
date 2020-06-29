@@ -82,6 +82,8 @@ public class FXMLParametersWindowController
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
+    @FXML private TextField trapcapture;
+    @FXML private TextField qdsize;
     @FXML private VBox parameterbox;
     
     private MainWindowCall m_mainApp;
@@ -281,15 +283,17 @@ public class FXMLParametersWindowController
      */
     @FXML private void changeSelectedParticle()
     {
+        PhysicsTools.Materials material = PhysicsTools.Materials.getMaterialFromString((String) materialselec.getValue());
+        
         if (electronselection.isSelected())
         {
-            effectivemass.setText("0.089");
+            effectivemass.setText(material.getElectronEffectiveMass().stripTrailingZeros().toPlainString());
             lifetime.setText("100");
             numbersimulated.setText("10000");
         }
         else if (holeselection.isSelected())
         {
-            effectivemass.setText("0.693");
+            effectivemass.setText(material.getHoleEffectiveMass().stripTrailingZeros().toPlainString());
             lifetime.setText("50");
             numbersimulated.setText("5000");
         }
@@ -469,9 +473,14 @@ public class FXMLParametersWindowController
         extractedProperties.setProperty("zero_position",  (zeroatfront.isSelected() ? "front" : "back"));
         extractedProperties.setProperty("sample_width",  samplewidth.getText());
         extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
+        extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
         extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
         extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
         extractedProperties.setProperty("back_bandgap",  backbangap.getText());
+        extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
+        extractedProperties.setProperty("has_qds", includeqds.isSelected() ? "true":"false");
+        extractedProperties.setProperty("cross_section",  trapcapture.getText());
+        extractedProperties.setProperty("QD_size", qdsize.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
@@ -500,6 +509,8 @@ public class FXMLParametersWindowController
         frontbangap.setText(p_properties.getProperty("front_bandgap"));
         notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
         backbangap.setText(p_properties.getProperty("back_bandgap"));
+        trapcapture.setText(p_properties.getProperty("cross_section"));
+        qdsize.setText(p_properties.getProperty("QD_size"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
@@ -528,6 +539,65 @@ public class FXMLParametersWindowController
                 break;
             default:
                 //throw exception, bad value
+        }
+        
+        switch (p_properties.getProperty("has_grading"))
+        {
+            case "true":
+                if (!includegrading.isSelected())
+                {
+                    includegrading.fire();
+                }
+                break;
+            case "false":
+                if (includegrading.isSelected())
+                {
+                    includegrading.fire();
+                }
+                break;
+            default:
+                //send exception, bad value
+        }
+        
+        switch (p_properties.getProperty("has_traps"))
+        {
+            case "true":
+                if (!includetraps.isSelected())
+                {
+                    includetraps.fire();
+                }
+                break;
+            case "false":
+                if (includetraps.isSelected())
+                {
+                    includetraps.fire();
+                }
+                if (includeqds.isSelected())
+                {
+                    includeqds.fire();
+                }
+                includeqds.setDisable(true);
+                break;
+            default:
+                //send exception, bad value
+        }
+        
+        switch (p_properties.getProperty("has_qds"))
+        {
+            case "true":
+                if (!includeqds.isSelected() && includetraps.isSelected())
+                {
+                    includeqds.fire();
+                }
+                break;
+            case "false":
+                if (includeqds.isSelected())
+                {
+                    includeqds.fire();
+                }
+                break;
+            default:
+                //send exception, bad value
         }
     }
     

@@ -58,10 +58,13 @@ public class FXMLParametersWindowController
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
     @FXML private HBox gradingbox;
+    @FXML private HBox trapbox;
+    @FXML private HBox qdsubbox;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
+    @FXML private Label qdspan;
     @FXML private RadioButton zeroatfront;
     @FXML private RadioButton zeroatback;
     @FXML private RadioButton electronselection;
@@ -122,6 +125,7 @@ public class FXMLParametersWindowController
             generationlabel.setText("Generation positions ("+selectedUnit+", separated by ';'):");
             samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
+            qdspan.setText("QD span in the layer growth direction ("+selectedUnit+"): ");
             
             BigDecimal previousMultiplier = m_previouslySelectedUnit.getMultiplier();
             BigDecimal currentMultiplier = currentPrefix.getMultiplier();
@@ -222,12 +226,11 @@ public class FXMLParametersWindowController
     {
         if(includegrading.isSelected())
         {
-            System.out.println("Grading selected!");
             parameterbox.getChildren().add(3, gradingbox);
+            
         }
         else
         {
-            System.out.println("Grading unselected!");
             parameterbox.getChildren().remove(gradingbox);
         }
     }
@@ -236,11 +239,24 @@ public class FXMLParametersWindowController
     {
         if(includetraps.isSelected())
         {
-            System.out.println("Traps selected!");
+            includeqds.setDisable(false);
+            if (parameterbox.getChildren().size() >= 4)
+            {
+                parameterbox.getChildren().add(4, trapbox);
+            }
+            else
+            {
+                parameterbox.getChildren().add(parameterbox.getChildren().size(), trapbox);
+            }
         }
         else
         {
-            System.out.println("Traps unselected!");
+            parameterbox.getChildren().remove(trapbox);
+            if (includeqds.isSelected())
+            {
+                includeqds.fire();
+            }
+            includeqds.setDisable(true);
         }
     }
     
@@ -248,11 +264,11 @@ public class FXMLParametersWindowController
     {
         if(includeqds.isSelected())
         {
-            System.out.println("QDs selected!");
+            trapbox.getChildren().add(trapbox.getChildren().size(), qdsubbox);
         }
         else
         {
-            System.out.println("QDs unselected!");
+            trapbox.getChildren().remove(qdsubbox);
         }
     }
     
@@ -520,6 +536,8 @@ public class FXMLParametersWindowController
     public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;
+        trapbox.getChildren().remove(qdsubbox);
+        parameterbox.getChildren().removeAll(gradingbox, trapbox);
         loadProperties(p_configProperties);
     }
 }

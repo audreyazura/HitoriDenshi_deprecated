@@ -227,11 +227,12 @@ public class FXMLParametersWindowController
         if(includegrading.isSelected())
         {
             parameterbox.getChildren().add(3, gradingbox);
-            
+            m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
             parameterbox.getChildren().remove(gradingbox);
+            m_mainApp.getMainStage().sizeToScene();
         }
     }
     
@@ -248,10 +249,12 @@ public class FXMLParametersWindowController
             {
                 parameterbox.getChildren().add(parameterbox.getChildren().size(), trapbox);
             }
+            m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
             parameterbox.getChildren().remove(trapbox);
+            m_mainApp.getMainStage().sizeToScene();
             if (includeqds.isSelected())
             {
                 includeqds.fire();

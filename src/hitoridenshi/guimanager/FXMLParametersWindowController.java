@@ -65,8 +65,8 @@ public class FXMLParametersWindowController
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
     @FXML private Label qdspan;
-    @FXML private RadioButton zeroatfront;
-    @FXML private RadioButton zeroatback;
+    @FXML private RadioButton originatfront;
+    @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton holeselection;
     @FXML private TextField biasvoltages;
@@ -375,7 +375,7 @@ public class FXMLParametersWindowController
         String outputFolderAddress = outputFolder.getText();
         
         boolean isElectron = electronselection.isSelected();
-        boolean zeroFront = zeroatfront.isSelected();
+        boolean zeroFront = originatfront.isSelected();
         
         try
         {
@@ -470,7 +470,7 @@ public class FXMLParametersWindowController
         extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
         extractedProperties.setProperty("notch_positions",  notches.getText());
         extractedProperties.setProperty("generation_positions",  generationpositions.getText());
-        extractedProperties.setProperty("zero_position",  (zeroatfront.isSelected() ? "front" : "back"));
+        extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
         extractedProperties.setProperty("sample_width",  samplewidth.getText());
         extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
         extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
@@ -517,16 +517,18 @@ public class FXMLParametersWindowController
         inputFolder.setText(p_properties.getProperty("input_folder"));
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
-        switch (p_properties.getProperty("zero_position"))
+        switch (p_properties.getProperty("origin_position"))
         {
             case "front":
-                zeroatfront.setSelected(true);
+                originatfront.setSelected(true);
                 break;
             case "back":
-                zeroatback.setSelected(true);
+                originatback.setSelected(true);
+                break;
+            case "":
                 break;
             default:
-                //throw exception, bad value
+                throw new RuntimeException("Invalid origin position: "+p_properties.getProperty("zero_position")+". Should be front, back or nothing.");
         }
 
         switch (p_properties.getProperty("simulated_particle"))
@@ -537,8 +539,10 @@ public class FXMLParametersWindowController
             case "hole":
                 holeselection.setSelected(true);
                 break;
+            case "":
+                break;
             default:
-                //throw exception, bad value
+                throw new RuntimeException("Invalid particle: "+p_properties.getProperty("simulated_particle")+". Should be electron, hole or nothing.");
         }
         
         switch (p_properties.getProperty("has_grading"))
@@ -556,7 +560,7 @@ public class FXMLParametersWindowController
                 }
                 break;
             default:
-                //send exception, bad value
+                throw new RuntimeException("Invalid grading property: "+p_properties.getProperty("has_grading")+". Should be either true or false.");
         }
         
         switch (p_properties.getProperty("has_traps"))
@@ -579,7 +583,7 @@ public class FXMLParametersWindowController
                 includeqds.setDisable(true);
                 break;
             default:
-                //send exception, bad value
+                throw new RuntimeException("Invalid traps property: "+p_properties.getProperty("has_traps")+". Should be either true or false.");
         }
         
         switch (p_properties.getProperty("has_qds"))
@@ -597,7 +601,7 @@ public class FXMLParametersWindowController
                 }
                 break;
             default:
-                //send exception, bad value
+                throw new RuntimeException("Invalid QDs property: "+p_properties.getProperty("has_qds")+". Should be either true or false.");
         }
     }
     

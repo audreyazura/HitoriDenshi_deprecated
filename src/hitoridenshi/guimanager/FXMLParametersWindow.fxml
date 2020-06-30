@@ -109,10 +109,10 @@
         <Label styleClass="titlelabel" text="Sample parameters"/>
         
         <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
-            <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of x = 0:"/>
+            <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of origin (x = 0):"/>
             <HBox styleClass="hbox" HBox.hgrow="ALWAYS">
-                <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="zeroatfront" />
-                <RadioButton toggleGroup="$zeroselection" text="Back" fx:id="zeroatback" />
+                <RadioButton toggleGroup="$zeroselection" text="Front" fx:id="originatfront" />
+                <RadioButton toggleGroup="$zeroselection" text="Back" fx:id="originatback" />
             </HBox>
         </VBox> 
         

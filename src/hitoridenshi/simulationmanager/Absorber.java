@@ -39,6 +39,8 @@ public class Absorber
     private final boolean m_zeroAtFront;
     private final ContinuousFunction m_electricField;
     private final String m_bias;
+    private final Map<String, BigDecimal> m_qds;
+    private final Map<String, BigDecimal> m_traps;
     
     /**
      * Constructor for an absorber without special feature (such as a notch)
@@ -53,6 +55,8 @@ public class Absorber
         m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
         m_bias = p_bias;
         m_notchPosition = null;
+        m_qds = p_condition.getQDsParameters();
+        m_traps = p_condition.getTrapsParameters();
         m_zeroAtFront = p_condition.isZeroAtFront();
         if(m_zeroAtFront)
         {
@@ -80,9 +84,10 @@ public class Absorber
     {
         m_bias = p_bias;
         m_notchPosition = p_notchPosition;
+        m_qds = p_conditions.getQDsParameters();
+        m_traps = p_conditions.getTrapsParameters();
         
-        
-        Map<String, BigDecimal> bandgaps = new HashMap(p_conditions.getBandgaps());
+        Map<String, BigDecimal> bandgaps = p_conditions.getBandgaps();
         BigDecimal absorberEnd;
         BigDecimal field0toNotch;
         BigDecimal fieldNotchtoEnd;
@@ -101,7 +106,7 @@ public class Absorber
             absorberEnd = m_frontPosition;
         }
         
-        if (p_conditions.isElectron())
+        if (p_conditions.isElectron() && p_conditions.includesGrading())
         {
             ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
             //À refactoriser ?

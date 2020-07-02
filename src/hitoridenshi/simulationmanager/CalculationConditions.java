@@ -39,6 +39,9 @@ public class CalculationConditions
     static final BigDecimal DT = CalculationConditions.formatBigDecimal(PhysicsTools.UnitsPrefix.FEMTO.getMultiplier());
 
     private final boolean m_isZeroAtFront;
+    private boolean m_hasGrading = false;
+    private boolean m_hasQDs = false;
+    private boolean m_hasTraps = false;
     private final int m_maxSteps;
     
     //All the following numbers have to be stocked with SI units
@@ -51,48 +54,46 @@ public class CalculationConditions
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
+    private final Map<String, BigDecimal> m_qds = new HashMap<>();
+    private final Map<String, BigDecimal> m_traps = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
         
         m_isZeroAtFront = p_isZeroAtFront;
-        m_bufferWindowSize = CalculationConditions.formatBigDecimal(p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier()));
-        m_sampleSize = CalculationConditions.formatBigDecimal(p_sampleSize.multiply(m_abscissaUnit.getMultiplier()));
+        m_bufferWindowSize = formatBigDecimal(p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier()));
+        m_sampleSize = formatBigDecimal(p_sampleSize.multiply(m_abscissaUnit.getMultiplier()));
         
-        m_bandgaps.put("front", CalculationConditions.formatBigDecimal(p_frontBandgap.multiply(PhysicsTools.EV)));
-        m_bandgaps.put("notch", CalculationConditions.formatBigDecimal(p_notchBandgap.multiply(PhysicsTools.EV)));
-        m_bandgaps.put("back", CalculationConditions.formatBigDecimal(p_backBandgap.multiply(PhysicsTools.EV)));
-        
-        BigDecimal particleEffectiveMass = CalculationConditions.formatBigDecimal(p_effectiveMass.multiply(PhysicsTools.ME));
+        BigDecimal particleEffectiveMass = formatBigDecimal(p_effectiveMass.multiply(PhysicsTools.ME));
         m_particleParameters.put("mass", particleEffectiveMass);
         //lifetime is given in nanosecond, and we have to convert it into step, with a step every DT
         m_maxSteps = (p_lifeTime.multiply(new BigDecimal("1e-9")).divide(DT, MathContext.DECIMAL128)).intValue();
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         
-        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, CalculationConditions.formatBigDecimal(m_abscissaUnit.getMultiplier()));
-        m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, CalculationConditions.formatBigDecimal(m_abscissaUnit.getMultiplier()));
+        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, formatBigDecimal(m_abscissaUnit.getMultiplier()));
+        m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, formatBigDecimal(m_abscissaUnit.getMultiplier()));
         
         if(p_isElectron)
         {
-            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicsTools.Q.negate()));
+            m_particleParameters.put("charge", formatBigDecimal(PhysicsTools.Q.negate()));
         }
         else
         {
-            m_particleParameters.put("charge", CalculationConditions.formatBigDecimal(PhysicsTools.Q));
+            m_particleParameters.put("charge", formatBigDecimal(PhysicsTools.Q));
         }
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
-        BigDecimal vth = CalculationConditions.formatBigDecimal((PhysicsTools.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
+        BigDecimal vth = formatBigDecimal((PhysicsTools.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
         PCGGenerator randomGenerator = new PCGGenerator(42);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
-            m_velocityList.add(CalculationConditions.formatBigDecimal((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth)));
+            m_velocityList.add(formatBigDecimal((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth)));
         }
     }
     
@@ -122,11 +123,34 @@ public class CalculationConditions
             public void accept(String position)
             {
                 //the starting positions are entered in nm, they have to be converted back to m
-                returnList.add(CalculationConditions.formatBigDecimal((new BigDecimal(position)).multiply(p_multiplier)));
+                returnList.add(formatBigDecimal((new BigDecimal(position)).multiply(p_multiplier)));
             }
         });
         
         return (ArrayList<BigDecimal>) returnList;
+    }
+    
+    public void addGrading (BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap)
+    {
+        m_bandgaps.put("front", formatBigDecimal(p_frontBandgap.multiply(PhysicsTools.EV)));
+        m_bandgaps.put("notch", formatBigDecimal(p_notchBandgap.multiply(PhysicsTools.EV)));
+        m_bandgaps.put("back", formatBigDecimal(p_backBandgap.multiply(PhysicsTools.EV)));
+        m_hasGrading = true;
+    }
+    
+    public void addQDs (BigDecimal p_depth, BigDecimal p_density, BigDecimal p_crossSection)
+    {
+        m_qds.put("depth", formatBigDecimal(p_depth.multiply(PhysicsTools.EV)));
+        m_qds.put("density", formatBigDecimal(p_density.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-3, MathContext.DECIMAL128))));
+        m_qds.put("crosssection", formatBigDecimal(p_crossSection.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-1, MathContext.DECIMAL128))));
+        m_hasQDs = true;
+    }
+    
+    public void addTraps(BigDecimal p_density, BigDecimal p_crossSection)
+    {
+        m_traps.put("density", formatBigDecimal(p_density.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-3, MathContext.DECIMAL128))));
+        m_traps.put("crosssection", formatBigDecimal(p_crossSection.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-1, MathContext.DECIMAL128))));
+        m_hasTraps = true;
     }
     
     public boolean isElectron()
@@ -137,6 +161,21 @@ public class CalculationConditions
     public boolean isZeroAtFront()
     {
         return m_isZeroAtFront;
+    }
+    
+    public boolean includesGrading()
+    {
+        return m_hasGrading;
+    }
+    
+    public boolean includesQDs()
+    {
+        return m_hasQDs;
+    }
+    
+    public boolean includesTraps()
+    {
+        return m_hasTraps;
     }
     
     public synchronized int getMaxSteps()
@@ -173,6 +212,16 @@ public class CalculationConditions
     public HashMap<String, BigDecimal> getBandgaps()
     {
         return new HashMap(m_bandgaps);
+    }
+    
+    public HashMap<String, BigDecimal> getQDsParameters()
+    {
+        return new HashMap(m_qds);
+    }
+    
+    public HashMap<String, BigDecimal> getTrapsParameters()
+    {
+        return new HashMap(m_traps);
     }
     
     public String[] getBiasVoltageArray()

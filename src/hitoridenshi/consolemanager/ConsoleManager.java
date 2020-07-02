@@ -59,13 +59,20 @@ public class ConsoleManager implements OutputInterface
         BigDecimal bufferWindowSize = new BigDecimal(p_properties.getProperty("bufferwindow width"));
         BigDecimal effectiveMassDouble = new BigDecimal(p_properties.getProperty("effective_mass"));
         BigDecimal lifetimeNumber = new BigDecimal(p_properties.getProperty("lifetime"));
-        BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front_bandgap"));
-        BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum_bandgap"));
-        BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back_bandgap"));
         
         int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("number_of_simulated_particles"));
 
-        return new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, minimumBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
+        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
+        
+        if (p_properties.getProperty("has_grading").equals("true"))
+        {
+            BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front_bandgap"));
+            BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum_bandgap"));
+            BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back_bandgap"));
+            conditions.addGrading(frontBangapNumber, minimumBandgapNumber, backBangapNumber);
+        }
+        
+        return conditions;
     }
     
     @Override

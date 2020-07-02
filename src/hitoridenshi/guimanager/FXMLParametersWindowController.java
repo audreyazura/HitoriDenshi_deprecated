@@ -59,12 +59,11 @@ public class FXMLParametersWindowController
     @FXML private ChoiceBox materialselec;
     @FXML private HBox gradingbox;
     @FXML private HBox trapbox;
-    @FXML private HBox qdsubbox;
+    @FXML private HBox qdbox;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
-    @FXML private Label qdspan;
     @FXML private RadioButton originatfront;
     @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
@@ -83,8 +82,10 @@ public class FXMLParametersWindowController
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
     @FXML private TextField trapcapture;
-    @FXML private TextField qdsize;
-    @FXML private VBox parameterbox;
+    @FXML private TextField trapdensity;
+    @FXML private TextField qdcapture;
+    @FXML private TextField qddepth;
+    @FXML private TextField qddensity;
     
     private MainWindowCall m_mainApp;
     private PhysicsTools.UnitsPrefix m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
@@ -110,6 +111,7 @@ public class FXMLParametersWindowController
     @FXML private void applyNewUnitSelection ()
     {
         PhysicsTools.UnitsPrefix currentPrefix = PhysicsTools.UnitsPrefix.UNITY;
+        
         try
         {
             String selectedUnit = (String) unitselec.getValue();
@@ -127,7 +129,6 @@ public class FXMLParametersWindowController
             generationlabel.setText("Generation positions ("+selectedUnit+", separated by ';'):");
             samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
-            qdspan.setText("QD span in the layer growth direction ("+selectedUnit+"): ");
             
             BigDecimal previousMultiplier = m_previouslySelectedUnit.getMultiplier();
             BigDecimal currentMultiplier = currentPrefix.getMultiplier();
@@ -228,12 +229,14 @@ public class FXMLParametersWindowController
     {
         if(includegrading.isSelected())
         {
-            parameterbox.getChildren().add(3, gradingbox);
+            gradingbox.setVisible(true);
+            gradingbox.setManaged(true);
             m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
-            parameterbox.getChildren().remove(gradingbox);
+            gradingbox.setVisible(false);
+            gradingbox.setManaged(false);
             m_mainApp.getMainStage().sizeToScene();
         }
     }
@@ -242,26 +245,15 @@ public class FXMLParametersWindowController
     {
         if(includetraps.isSelected())
         {
-            includeqds.setDisable(false);
-            if (parameterbox.getChildren().size() >= 4)
-            {
-                parameterbox.getChildren().add(4, trapbox);
-            }
-            else
-            {
-                parameterbox.getChildren().add(parameterbox.getChildren().size(), trapbox);
-            }
+            trapbox.setVisible(true);
+            trapbox.setManaged(true);
             m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
-            parameterbox.getChildren().remove(trapbox);
+            trapbox.setVisible(false);
+            trapbox.setManaged(false);
             m_mainApp.getMainStage().sizeToScene();
-            if (includeqds.isSelected())
-            {
-                includeqds.fire();
-            }
-            includeqds.setDisable(true);
         }
     }
     
@@ -269,11 +261,15 @@ public class FXMLParametersWindowController
     {
         if(includeqds.isSelected())
         {
-            trapbox.getChildren().add(trapbox.getChildren().size(), qdsubbox);
+            qdbox.setVisible(true);
+            qdbox.setManaged(true);
+            m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
-            trapbox.getChildren().remove(qdsubbox);
+            qdbox.setVisible(false);
+            qdbox.setManaged(false);
+            m_mainApp.getMainStage().sizeToScene();
         }
     }
     
@@ -367,38 +363,34 @@ public class FXMLParametersWindowController
         //temporarily saving current configuration in Properties
         OrderedProperties tempProp = writeConfigToProperties();
         
-        //getting all the parameters to configure the simulation
-        String biasVoltagesList = biasvoltages.getText();
-        String notchesList = notches.getText();
-        String initialPositionsList = generationpositions.getText();
-        String inputFolderAddress = inputFolder.getText();
-        String outputFolderAddress = outputFolder.getText();
-        
-        boolean isElectron = electronselection.isSelected();
-        boolean zeroFront = originatfront.isSelected();
-        
+        //configuring the simulation and launching it
         try
         {
-            BigDecimal totalSampleWidth = new BigDecimal(samplewidth.getText());
-            BigDecimal bufferWindowSize = new BigDecimal(bufferwindowwidth.getText());
-            BigDecimal effectiveMassDouble = new BigDecimal(effectivemass.getText());
-            BigDecimal lifetimeNumber = new BigDecimal(lifetime.getText());
-            BigDecimal frontBangapNumber = new BigDecimal(frontbangap.getText());
-            BigDecimal notchBandgapNumber = new BigDecimal(notchbandgap.getText());
-            BigDecimal backBangapNumber = new BigDecimal(backbangap.getText());
-            int numberSimulatedParticle = Integer.parseInt(numbersimulated.getText());
+            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), notches.getText(), generationpositions.getText());
             
-            PhysicsTools.UnitsPrefix passedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
-        
-            CalculationConditions conditions = new CalculationConditions(isElectron, zeroFront, passedUnit, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, frontBangapNumber, notchBandgapNumber, backBangapNumber, biasVoltagesList, notchesList, initialPositionsList);
-            SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, (ProgressNotifierInterface) m_mainApp);
+            if (includegrading.isSelected())
+            {
+                conditions.addGrading(new BigDecimal(frontbangap.getText()), new BigDecimal(notchbandgap.getText()), new BigDecimal(backbangap.getText()));
+            }
+            
+            if (includetraps.isSelected())
+            {
+                conditions.addTraps(new BigDecimal(trapdensity.getText()), new BigDecimal(trapcapture.getText()));
+            }
+            
+            if (includeqds.isSelected())
+            {
+                conditions.addQDs(new BigDecimal(qddepth.getText()), new BigDecimal(qddensity.getText()), new BigDecimal(qdcapture.getText()));
+            }
+            
+            SimulationManager simulationLauncher = new SimulationManager(inputFolder.getText(), outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
         }
         catch (NumberFormatException ex)
         {
-            System.err.println("Verify you have writtem a number in the sample size field, the buffer+window size field and the number of simulated particle field.");
+            System.err.println("Verify you have written numbers in the given fields.");
 //            ex.printStackTrace();
         }
         catch (NullPointerException ex)
@@ -478,9 +470,12 @@ public class FXMLParametersWindowController
         extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
         extractedProperties.setProperty("back_bandgap",  backbangap.getText());
         extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
-        extractedProperties.setProperty("has_qds", includeqds.isSelected() ? "true":"false");
-        extractedProperties.setProperty("cross_section",  trapcapture.getText());
-        extractedProperties.setProperty("QD_size", qdsize.getText());
+        extractedProperties.setProperty("trap_density", trapdensity.getText());
+        extractedProperties.setProperty("trap_cross_section",  trapcapture.getText());
+        extractedProperties.setProperty("has_QDs", includeqds.isSelected() ? "true":"false");
+        extractedProperties.setProperty("QD_depth", qddepth.getText());
+        extractedProperties.setProperty("QD_density", qddensity.getText());
+        extractedProperties.setProperty("QD_cross_section", qdcapture.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
@@ -509,8 +504,11 @@ public class FXMLParametersWindowController
         frontbangap.setText(p_properties.getProperty("front_bandgap"));
         notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
         backbangap.setText(p_properties.getProperty("back_bandgap"));
-        trapcapture.setText(p_properties.getProperty("cross_section"));
-        qdsize.setText(p_properties.getProperty("QD_size"));
+        trapdensity.setText(p_properties.getProperty("trap_density"));
+        trapcapture.setText(p_properties.getProperty("trap_cross_section"));
+        qddepth.setText(p_properties.getProperty("QD_depth"));
+        qddensity.setText(p_properties.getProperty("QD_density"));
+        qdcapture.setText(p_properties.getProperty("QD_cross_section"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
@@ -576,20 +574,15 @@ public class FXMLParametersWindowController
                 {
                     includetraps.fire();
                 }
-                if (includeqds.isSelected())
-                {
-                    includeqds.fire();
-                }
-                includeqds.setDisable(true);
                 break;
             default:
                 throw new RuntimeException("Invalid traps property: "+p_properties.getProperty("has_traps")+". Should be either true or false.");
         }
         
-        switch (p_properties.getProperty("has_qds"))
+        switch (p_properties.getProperty("has_QDs"))
         {
             case "true":
-                if (!includeqds.isSelected() && includetraps.isSelected())
+                if (!includeqds.isSelected())
                 {
                     includeqds.fire();
                 }
@@ -613,8 +606,12 @@ public class FXMLParametersWindowController
     public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;
-        trapbox.getChildren().remove(qdsubbox);
-        parameterbox.getChildren().removeAll(gradingbox, trapbox);
+        gradingbox.setVisible(false);
+        gradingbox.setManaged(false);
+        trapbox.setVisible(false);
+        trapbox.setManaged(false);
+        qdbox.setVisible(false);
+        qdbox.setManaged(false);
         loadProperties(p_configProperties);
     }
 }

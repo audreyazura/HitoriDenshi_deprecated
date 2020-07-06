@@ -152,7 +152,7 @@
             </HBox>
             
             <HBox styleClass="internalhbox" fx:id="trapcapturebox" >
-                <Label styleClass="windowtext" text="Traps capture cross-section (cm⁻¹): "/>
+                <Label styleClass="windowtext" text="Traps capture cross-section (cm⁻²): "/>
                 <TextField styleClass="inputfield" fx:id="trapcapture" prefWidth="100" />
             </HBox>
         </HBox>
@@ -169,7 +169,7 @@
             </HBox>
             
             <HBox styleClass="internalhbox" fx:id="qdcapturebox" >
-                <Label styleClass="windowtext" text="QD capture cross-section (cm⁻1): " />
+                <Label styleClass="windowtext" text="QD capture cross-section (cm⁻²): " />
                 <TextField styleClass="inputfield" fx:id="qdcapture" prefWidth="100" />
             </HBox>
         </HBox>

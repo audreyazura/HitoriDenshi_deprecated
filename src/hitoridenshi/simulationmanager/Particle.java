@@ -37,6 +37,7 @@ public class Particle
     private List<BigDecimal> m_accelerationList = new ArrayList<>();
     
     private CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
+    private CapturedState m_captured = CapturedState.FREE;
     
     public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
     {
@@ -90,6 +91,7 @@ public class Particle
         m_trajectory.add(m_position);
         
         m_collectionState = p_absorber.giveCollection(m_position);
+        m_captured = p_absorber.giveCapture(this);
     }
     
     public boolean isCollected()
@@ -124,12 +126,17 @@ public class Particle
     
     /**
      * An enumeration of the different possible collection state of the particle
-     * FRONT: collected at the front
-     * BACK: collected at the back
-     * NOTCOLLECTED: not yet collected
+        FRONTCOLLECTED: collected at the front
+        BACKCOLLECTED: collected at the back
+        NOTCOLLECTED: not yet collected
      */
     public enum CollectionState
     {
-        BACK, FRONT, NOTCOLLECTED
+        BACKCOLLECTED, FRONTCOLLECTED, NOTCOLLECTED
+    }
+    
+    public enum CapturedState
+    {
+        TRAPCAPTURED, QDCAPTURED, FREE
     }
 }

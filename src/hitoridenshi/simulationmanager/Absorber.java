@@ -17,6 +17,7 @@
 package hitoridenshi.simulationmanager;
 
 import commonutils.PhysicsTools;
+import hitoridenshi.simulationmanager.Particle.CapturedState;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
 import java.io.File;
 import java.io.IOException;
@@ -174,26 +175,38 @@ public class Absorber
         {
             if (p_position.compareTo(m_frontPosition) <= 0)
             {
-                collection = CollectionState.FRONT;
+                collection = CollectionState.FRONTCOLLECTED;
             }
             else if (p_position.compareTo(m_backPosition) >= 0)
             {
-                collection = CollectionState.BACK;
+                collection = CollectionState.BACKCOLLECTED;
             }
         }
         else
         {
             if (p_position.compareTo(m_frontPosition) >= 0)
             {
-                collection = CollectionState.FRONT;
+                collection = CollectionState.FRONTCOLLECTED;
             }
             else if (p_position.compareTo(m_backPosition) <= 0)
             {
-                collection = CollectionState.BACK;
+                collection = CollectionState.BACKCOLLECTED;
             }
         }
         
         return collection;
+    }
+    
+    public CapturedState giveCapture(Particle p_particle)
+    {
+        CapturedState captured = CapturedState.FREE;
+        
+        if(!(m_qds.size() == 0 && m_traps.size() == 0))
+        {
+            //calculation to see if it was captured by traps or QD
+        }
+        
+        return captured;
     }
     
     public BigDecimal getNotchPosition()

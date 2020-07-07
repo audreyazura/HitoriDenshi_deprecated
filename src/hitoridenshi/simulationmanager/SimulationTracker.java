@@ -238,9 +238,9 @@ public class SimulationTracker
     
     /**
      * The different type of mean lists, used to identify where to write each particle
-     * GENERAL: the list containing the mean for all the particle
-     * FRONT: the list for the particle collected at the front
-     * BACK: the list for the particle collected at the back
+        GENERAL: the list containing the mean for all the particle
+        FRONT: the list for the particle collected at the front
+        BACK: the list for the particle collected at the back
      */
     private enum MeanType
     {
@@ -277,7 +277,7 @@ public class SimulationTracker
         
         switch (p_particle.getCollection())
         {
-            case FRONT:
+            case FRONTCOLLECTED:
                 m_numberFrontExit += 1;
                 addMean(MeanType.FRONT, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly
@@ -307,7 +307,7 @@ public class SimulationTracker
                     }
                 }
                 break;
-            case BACK:
+            case BACKCOLLECTED:
                 m_numberBackExit += 1;
                 addMean(MeanType.BACK, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
                 //if it is the first particle to reach the front -> we log everything directly

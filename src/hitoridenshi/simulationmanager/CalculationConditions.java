@@ -16,7 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.PCGGenerator;
+import com.github.kilianB.pcg.fast.PcgRSFast;
 import commonutils.PhysicsTools;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -90,7 +90,7 @@ public class CalculationConditions
          * we initialize the random generator with a seed in order to always get the same random list of speed, so the simulation can be stopped and started again later
         */
         BigDecimal vth = formatBigDecimal((PhysicsTools.KB.multiply(T).divide(particleEffectiveMass, MathContext.DECIMAL128)).sqrt(MathContext.DECIMAL128));
-        PCGGenerator randomGenerator = new PCGGenerator(42);
+        PcgRSFast randomGenerator = new PcgRSFast(42,1);
         for (int i = 0; i < p_numberSimulatedParticules; i+=1)
         {
             m_velocityList.add(formatBigDecimal((new BigDecimal(randomGenerator.nextGaussian())).multiply(vth)));

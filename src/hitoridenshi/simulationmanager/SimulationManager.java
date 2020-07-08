@@ -16,6 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
+import com.github.kilianB.pcg.fast.PcgRSFast;
 import commonutils.PhysicsTools;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -125,7 +126,7 @@ public class SimulationManager implements Runnable
                 }
                 
                 //starting a thread with the current chunk
-                SimulationWorker currentWorker = new SimulationWorker(workerCounter, m_outputFolder, (HashSet) currentChunk, m_conditions, this);
+                SimulationWorker currentWorker = new SimulationWorker(workerCounter, m_outputFolder, (HashSet) currentChunk, m_conditions, new PcgRSFast(workerCounter*100000, workerCounter*10+workerCounter), this);
                 m_totalCalculations += currentWorker.getNumberCalculations();
                 Thread currentThread = new Thread(currentWorker);
                 currentThread.start();

@@ -16,6 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
+import com.github.kilianB.pcg.fast.PcgRSFast;
 import commonutils.PhysicsTools;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -44,10 +45,11 @@ public class SimulationWorker implements Runnable
     private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final Set<Absorber> m_absorbers;
     private final String m_outputFolder;
+    private final PcgRSFast m_RNG;
     
     private int m_numberCalculations;
     
-    public SimulationWorker (int p_id, String p_outputFolder, HashSet<Absorber> p_chunk, CalculationConditions p_conditions, SimulationManager p_manager)
+    public SimulationWorker (int p_id, String p_outputFolder, HashSet<Absorber> p_chunk, CalculationConditions p_conditions, PcgRSFast p_generator, SimulationManager p_manager)
     {
         m_startingPositions = p_conditions.getStartingPositionList();
         m_velocities = p_conditions.getVelocityList();
@@ -58,6 +60,7 @@ public class SimulationWorker implements Runnable
         m_abscissaUnit = p_conditions.getAbscissaScale();
         m_absorbers = p_chunk;
         m_outputFolder = p_outputFolder;
+        m_RNG = p_generator;
         
         m_numberCalculations = m_absorbers.size()*m_startingPositions.size()*m_velocities.size();
         for (Absorber absorber: m_absorbers)
@@ -120,6 +123,11 @@ public class SimulationWorker implements Runnable
                 Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public double getRandomDouble()
+    {
+        return m_RNG.nextDouble();
     }
     
     public int getNumberCalculations()

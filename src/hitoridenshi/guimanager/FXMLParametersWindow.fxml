@@ -12,6 +12,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.RadioButton?>
@@ -63,18 +65,17 @@
                 <Label styleClass="windowtext" wrapText="true" text="Include:" />
 
                 <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
-                    <CheckBox fx:id="includegrading" allowIndeterminate="false" selected="false" onAction="#showgrading" />
                     <Label styleClass="windowtext" wrapText="true" text="Band grading" />
+                    <CheckBox fx:id="includegrading" allowIndeterminate="false" selected="false" onAction="#showgrading" />
                 </HBox>
                 
                 <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
-                    <CheckBox fx:id="includetraps" allowIndeterminate="false" selected="false" onAction="#showtraps" />
-                    <Label styleClass="windowtext" wrapText="true" text="Traps" />
-                </HBox>
-
-                <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
-                    <CheckBox fx:id="includeqds" allowIndeterminate="false" selected="false" onAction="#showqds" />
-                    <Label styleClass="windowtext" wrapText="true" text="Quantum dots" />
+                    <Label styleClass="windowtext" wrapText="true" text="Number of trap level" />
+                    <Spinner fx:id="numbertraps" prefWidth="60" editable="false" onInputMethodTextChanged="#showtraps" >
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="99" />
+                        </valueFactory>
+                    </Spinner>
                 </HBox>
             </HBox>
         </VBox>
@@ -146,31 +147,19 @@
         </HBox>
         
         <HBox styleClass="hbox" fx:id="trapbox" >
-            <HBox styleClass="internalhbox" fx:id="trapdensitybox" >
-                <Label styleClass="windowtext" text="Traps density (cm⁻³)" />
+            <HBox styleClass="internalhbox" >
+                <Label styleClass="windowtext" text="Traps density (cm⁻³): " />
                 <TextField styleClass="inputfield" fx:id="trapdensity" prefWidth="100" />
             </HBox>
             
-            <HBox styleClass="internalhbox" fx:id="trapcapturebox" >
+            <HBox styleClass="internalhbox" >
                 <Label styleClass="windowtext" text="Traps capture cross-section (cm⁻²): "/>
                 <TextField styleClass="inputfield" fx:id="trapcapture" prefWidth="100" />
             </HBox>
-        </HBox>
-        
-        <HBox styleClass="hbox" fx:id="qdbox" >
-            <HBox styleClass="internalhbox" fx:id="qddepthbox" >
-                <Label styleClass="windowtext" text="QD energy depth (eV): " />
-                <TextField styleClass="inputfield" fx:id="qddepth" prefWidth="100" />
-            </HBox>
             
-            <HBox styleClass="internalhbox" fx:id="qddensitybox" >
-                <Label styleClass="windowtext" text="QD density (cm⁻³): " />
-                <TextField styleClass="inputfield" fx:id="qddensity" prefWidth="100" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox" fx:id="qdcapturebox" >
-                <Label styleClass="windowtext" text="QD capture cross-section (cm⁻²): " />
-                <TextField styleClass="inputfield" fx:id="qdcapture" prefWidth="100" />
+            <HBox styleClass="internalhbox" >
+                <Label styleClass="windowtext" text="Traps energy (eV): "/>
+                <TextField styleClass="inputfield" fx:id="trapenergy" prefWidth="100" />
             </HBox>
         </HBox>
     </VBox>

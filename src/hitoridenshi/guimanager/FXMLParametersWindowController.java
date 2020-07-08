@@ -40,11 +40,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
+import javafx.scene.control.Spinner;
+import javafx.scene.layout.VBox;
 
 /**
  * 
@@ -53,13 +54,10 @@ import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 public class FXMLParametersWindowController
 {
     @FXML private CheckBox includegrading;
-    @FXML private CheckBox includeqds;
-    @FXML private CheckBox includetraps;
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
     @FXML private HBox gradingbox;
     @FXML private HBox trapbox;
-    @FXML private HBox qdbox;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
@@ -68,6 +66,7 @@ public class FXMLParametersWindowController
     @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton holeselection;
+    @FXML private Spinner numbertraps;
     @FXML private TextField biasvoltages;
     @FXML private TextField notches;
     @FXML private TextField generationpositions;
@@ -83,12 +82,13 @@ public class FXMLParametersWindowController
     @FXML private TextField outputFolder;
     @FXML private TextField trapcapture;
     @FXML private TextField trapdensity;
-    @FXML private TextField qdcapture;
-    @FXML private TextField qddepth;
-    @FXML private TextField qddensity;
+    @FXML private VBox parameterbox;
+    
+    private int visibleTrapBoxes = 0;
+    private List<HBox> trapBoxes = new ArrayList<>();
+    private PhysicsTools.UnitsPrefix previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
     private MainWindowCall m_mainApp;
-    private PhysicsTools.UnitsPrefix m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
     /**
      * Save the previously selected unit in the unitselec field to apply changes later
@@ -97,11 +97,11 @@ public class FXMLParametersWindowController
     {
         try
         {
-            m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
+            previouslySelectedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
         }
         catch (NullPointerException|StringIndexOutOfBoundsException ex)
         {
-            m_previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
+            previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
         }
     }
     
@@ -120,9 +120,9 @@ public class FXMLParametersWindowController
             {
                 currentPrefix = PhysicsTools.UnitsPrefix.selectPrefix(selectedUnit);
             }
-            if (m_previouslySelectedUnit == PhysicsTools.UnitsPrefix.UNITY)
+            if (previouslySelectedUnit == PhysicsTools.UnitsPrefix.UNITY)
             {
-                m_previouslySelectedUnit = currentPrefix;
+                previouslySelectedUnit = currentPrefix;
             }
             
             notchlabel.setText("Notch positions in the absorber ("+selectedUnit+", separated by ';'):");
@@ -130,7 +130,7 @@ public class FXMLParametersWindowController
             samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
             
-            BigDecimal previousMultiplier = m_previouslySelectedUnit.getMultiplier();
+            BigDecimal previousMultiplier = previouslySelectedUnit.getMultiplier();
             BigDecimal currentMultiplier = currentPrefix.getMultiplier();
 
             bufferwindowwidth.setText(changeEnteredNumberUnit(bufferwindowwidth.getText(), previousMultiplier, currentMultiplier));
@@ -243,34 +243,19 @@ public class FXMLParametersWindowController
     
     @FXML private void showtraps()
     {
-        if(includetraps.isSelected())
-        {
-            trapbox.setVisible(true);
-            trapbox.setManaged(true);
-            m_mainApp.getMainStage().sizeToScene();
-        }
-        else
-        {
-            trapbox.setVisible(false);
-            trapbox.setManaged(false);
-            m_mainApp.getMainStage().sizeToScene();
-        }
-    }
-    
-    @FXML private void showqds()
-    {
-        if(includeqds.isSelected())
-        {
-            qdbox.setVisible(true);
-            qdbox.setManaged(true);
-            m_mainApp.getMainStage().sizeToScene();
-        }
-        else
-        {
-            qdbox.setVisible(false);
-            qdbox.setManaged(false);
-            m_mainApp.getMainStage().sizeToScene();
-        }
+        System.out.println("Blah!");
+//        if(includetraps.isSelected())
+//        {
+//            trapbox.setVisible(true);
+//            trapbox.setManaged(true);
+//            m_mainApp.getMainStage().sizeToScene();
+//        }
+//        else
+//        {
+//            trapbox.setVisible(false);
+//            trapbox.setManaged(false);
+//            m_mainApp.getMainStage().sizeToScene();
+//        }
     }
     
     /**
@@ -360,6 +345,8 @@ public class FXMLParametersWindowController
      */
     @FXML private void startSimulation ()
     {
+        //add logic to remove trapBoxes that are not shown
+
         //temporarily saving current configuration in Properties
         OrderedProperties tempProp = writeConfigToProperties();
         
@@ -373,15 +360,10 @@ public class FXMLParametersWindowController
                 conditions.addGrading(new BigDecimal(frontbangap.getText()), new BigDecimal(notchbandgap.getText()), new BigDecimal(backbangap.getText()));
             }
             
-            if (includetraps.isSelected())
-            {
-                conditions.addTraps(new BigDecimal(trapdensity.getText()), new BigDecimal(trapcapture.getText()));
-            }
-            
-            if (includeqds.isSelected())
-            {
-                conditions.addQDs(new BigDecimal(qddepth.getText()), new BigDecimal(qddensity.getText()), new BigDecimal(qdcapture.getText()));
-            }
+//            if (includetraps.isSelected())
+//            {
+//                conditions.addTraps(new BigDecimal(trapdensity.getText()), new BigDecimal(trapcapture.getText()));
+//            }
             
             SimulationManager simulationLauncher = new SimulationManager(inputFolder.getText(), outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
@@ -455,6 +437,8 @@ public class FXMLParametersWindowController
      */
     private OrderedProperties writeConfigToProperties ()
     {
+        //add logic to ignore trapBoxes that are not shown
+        
         OrderedProperties extractedProperties = new OrderedProperties();
                 
         extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
@@ -469,13 +453,9 @@ public class FXMLParametersWindowController
         extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
         extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
         extractedProperties.setProperty("back_bandgap",  backbangap.getText());
-        extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
+//        extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
         extractedProperties.setProperty("trap_density", trapdensity.getText());
         extractedProperties.setProperty("trap_cross_section",  trapcapture.getText());
-        extractedProperties.setProperty("has_QDs", includeqds.isSelected() ? "true":"false");
-        extractedProperties.setProperty("QD_depth", qddepth.getText());
-        extractedProperties.setProperty("QD_density", qddensity.getText());
-        extractedProperties.setProperty("QD_cross_section", qdcapture.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
@@ -493,6 +473,8 @@ public class FXMLParametersWindowController
      */
     private void loadProperties (OrderedProperties p_properties)
     {
+        //add logic for trapBoxes
+        
         unitselec.setValue(p_properties.getProperty("abscissa_unit"));
         materialselec.setValue(p_properties.getProperty("material"));
 
@@ -506,9 +488,6 @@ public class FXMLParametersWindowController
         backbangap.setText(p_properties.getProperty("back_bandgap"));
         trapdensity.setText(p_properties.getProperty("trap_density"));
         trapcapture.setText(p_properties.getProperty("trap_cross_section"));
-        qddepth.setText(p_properties.getProperty("QD_depth"));
-        qddensity.setText(p_properties.getProperty("QD_density"));
-        qdcapture.setText(p_properties.getProperty("QD_cross_section"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
@@ -561,41 +540,83 @@ public class FXMLParametersWindowController
                 throw new RuntimeException("Invalid grading property: "+p_properties.getProperty("has_grading")+". Should be either true or false.");
         }
         
-        switch (p_properties.getProperty("has_traps"))
+//        switch (p_properties.getProperty("has_traps"))
+//        {
+//            case "true":
+//                if (!includetraps.isSelected())
+//                {
+//                    includetraps.fire();
+//                }
+//                break;
+//            case "false":
+//                if (includetraps.isSelected())
+//                {
+//                    includetraps.fire();
+//                }
+//                break;
+//            default:
+//                throw new RuntimeException("Invalid traps property: "+p_properties.getProperty("has_traps")+". Should be either true or false.");
+//        }
+    }
+    
+    private void addTrapBox(int newPosition)
+    {
+        if(newPosition > trapBoxes.size()-1)
         {
-            case "true":
-                if (!includetraps.isSelected())
-                {
-                    includetraps.fire();
-                }
-                break;
-            case "false":
-                if (includetraps.isSelected())
-                {
-                    includetraps.fire();
-                }
-                break;
-            default:
-                throw new RuntimeException("Invalid traps property: "+p_properties.getProperty("has_traps")+". Should be either true or false.");
+            HBox newTrapBox = new HBox();
+            newTrapBox.getStyleClass().add("hbox");
+//            newTrapBox.setId("trapbox"+visibleTrapBoxes);
+            
+            HBox densityBox = new HBox();
+            densityBox.getStyleClass().add("internalhbox");
+            Label densityLabel = new Label("Traps density (cm⁻³): ");
+            densityLabel.getStyleClass().add("windowtext");
+            TextField densityInput = new TextField();
+            densityInput.getStyleClass().add("inputfield");
+//            densityInput.setId("trapdensity");
+            densityInput.setPrefWidth(100);
+            densityBox.getChildren().addAll(densityLabel, densityInput);
+            
+            HBox crossSecBox = new HBox();
+            crossSecBox.getStyleClass().add("internalhbox");
+            Label crossSecLabel = new Label("Traps capture cross-section (cm⁻²): ");
+            crossSecLabel.getStyleClass().add("windowtext");
+            TextField crossSecInput = new TextField();
+            crossSecInput.getStyleClass().add("inputfield");
+//            crossSecInput.setId("trapcapture");
+            crossSecInput.setPrefWidth(100);
+            crossSecBox.getChildren().addAll(crossSecLabel, crossSecInput);           
+            
+            HBox energyBox = new HBox();
+            energyBox.getStyleClass().add("internalhbox");
+            Label energyLabel = new Label("Traps energy (eV): ");
+            energyLabel.getStyleClass().add("windowtext");
+            TextField energyInput = new TextField();
+            energyInput.getStyleClass().add("inputfield");
+//            energyInput.setId("trapenergy");
+            energyInput.setPrefWidth(100);
+            energyBox.getChildren().addAll(energyLabel, energyInput);
+            
+            newTrapBox.getChildren().addAll(densityBox, crossSecBox, energyBox);
+            parameterbox.getChildren().add(newTrapBox);
+            trapBoxes.add(newTrapBox);
+        }
+        else
+        {
+            trapBoxes.get(newPosition).setManaged(true);
+            trapBoxes.get(newPosition).setVisible(true);
         }
         
-        switch (p_properties.getProperty("has_QDs"))
-        {
-            case "true":
-                if (!includeqds.isSelected())
-                {
-                    includeqds.fire();
-                }
-                break;
-            case "false":
-                if (includeqds.isSelected())
-                {
-                    includeqds.fire();
-                }
-                break;
-            default:
-                throw new RuntimeException("Invalid QDs property: "+p_properties.getProperty("has_qds")+". Should be either true or false.");
-        }
+        m_mainApp.getMainStage().sizeToScene();
+        visibleTrapBoxes += 1;
+    }
+    
+    private void hideTrapBox(int position)
+    {
+        trapBoxes.get(position).setVisible(false);
+        trapBoxes.get(position).setManaged(false);
+        m_mainApp.getMainStage().sizeToScene();
+        visibleTrapBoxes -= 1;
     }
     
     /**
@@ -608,10 +629,17 @@ public class FXMLParametersWindowController
         m_mainApp = p_mainApp;
         gradingbox.setVisible(false);
         gradingbox.setManaged(false);
-        trapbox.setVisible(false);
-        trapbox.setManaged(false);
-        qdbox.setVisible(false);
-        qdbox.setManaged(false);
+        numbertraps.valueProperty().addListener((obs, oldValue, newValue) -> 
+            {
+                if ((int) newValue > (int) oldValue)
+                {
+                    addTrapBox(((int) newValue)-1);
+                }
+                else if ((int) newValue < (int) oldValue)
+                {
+                    hideTrapBox(((int) oldValue)-1);
+                }
+            });
         loadProperties(p_configProperties);
     }
 }

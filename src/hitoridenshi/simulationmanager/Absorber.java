@@ -16,6 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
+import com.github.kilianB.pcg.fast.PcgRSFast;
 import commonutils.PhysicsTools;
 import hitoridenshi.simulationmanager.Particle.CapturedState;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
@@ -23,9 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.DataFormatException;
+import org.nevec.rjm.BigDecimalMath;
 
 /**
  * To store the data about the solar cell, especially the abscissa (one for the eb file, one for the gen file), and tell if a particle has been or not, as well as the collection side. Also store backAbscissa and frontAbscissa.
@@ -40,8 +44,7 @@ public class Absorber
     private final boolean m_zeroAtFront;
     private final ContinuousFunction m_electricField;
     private final String m_bias;
-    private final Map<String, BigDecimal> m_qds;
-    private final Map<String, BigDecimal> m_traps;
+    private final List<HashMap<String, BigDecimal>> m_traps;
     
     /**
      * Constructor for an absorber without special feature (such as a notch)
@@ -56,8 +59,7 @@ public class Absorber
         m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
         m_bias = p_bias;
         m_notchPosition = null;
-        m_qds = p_condition.getQDsParameters();
-        m_traps = p_condition.getTrapsParameters();
+        m_traps = new ArrayList<>();
         m_zeroAtFront = p_condition.isZeroAtFront();
         if(m_zeroAtFront)
         {
@@ -85,8 +87,7 @@ public class Absorber
     {
         m_bias = p_bias;
         m_notchPosition = p_notchPosition;
-        m_qds = p_conditions.getQDsParameters();
-        m_traps = p_conditions.getTrapsParameters();
+        m_traps = new ArrayList<>();
         
         Map<String, BigDecimal> bandgaps = p_conditions.getBandgaps();
         BigDecimal absorberEnd;
@@ -197,13 +198,28 @@ public class Absorber
         return collection;
     }
     
-    public CapturedState giveCapture(Particle p_particle)
+    public CapturedState giveCapture(Particle p_particle, PcgRSFast p_RNG)
     {
         CapturedState captured = CapturedState.FREE;
         
-        if(!(m_qds.size() == 0 && m_traps.size() == 0))
+        BigDecimal preciseVelocity = p_particle.getCurrentVelocity().setScale(128);
+        
+        for (HashMap<String, BigDecimal> trap: m_traps)
         {
-            //calculation to see if it was captured by traps or QD
+            /**
+             * Using Phi(t) = Phi_0*exp(-t/tau), Phi: particle flux, tau: particle lifetime
+             * tau = 1/(Na*sigma*v), Na: trap density, sigma: cross section, v: particle velocity
+             * Therefore the probability for a particle to not be captured is
+             * exp(-t/tau)
+             * and thus the probability for it to be captured is
+             * 1-exp(-t/tau)
+             */
+            BigDecimal captureProba = BigDecimal.ONE.subtract(BigDecimalMath.exp(CalculationConditions.DT.negate().setScale(128).multiply(trap.get("density").setScale(128)).multiply(trap.get("crosssection").setScale(128)).multiply(preciseVelocity)));
+            
+            if (new BigDecimal(p_RNG.nextDouble()).compareTo(captureProba) < 0)
+            {
+                captured = CapturedState.TRAPCAPTURED;
+            }
         }
         
         return captured;

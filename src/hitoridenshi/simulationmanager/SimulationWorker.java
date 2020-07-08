@@ -101,7 +101,7 @@ public class SimulationWorker implements Runnable
                         int numberOfSteps = 0;
                         while (!currentIndividual.isCollected() && numberOfSteps < m_maxSteps)
                         {
-                            currentIndividual.applyExteriorFields(currentAbsorber, CalculationConditions.DT);
+                            currentIndividual.applyExteriorFields(currentAbsorber, m_RNG);
                             numberOfSteps += 1;
                         }
 

@@ -16,6 +16,7 @@
  */
 package hitoridenshi.simulationmanager;
 
+import com.github.kilianB.pcg.fast.PcgRSFast;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -70,9 +71,9 @@ public class Particle
     /**
      * Move the particle by calculating the effect of an external electric field
      * @param p_absorber the absorber the particle is in
-     * @param p_timeStep the time step of the simulation
+     * @param p_RNG a random number generator
      */
-    public void applyExteriorFields(Absorber p_absorber, BigDecimal p_timeStep)
+    public void applyExteriorFields(Absorber p_absorber, PcgRSFast p_RNG)
     {
         BigDecimal electricFieldValueAtPosition = CalculationConditions.formatBigDecimal(p_absorber.getElectricField().getValueAtPosition(m_position));
         
@@ -81,17 +82,17 @@ public class Particle
         m_accelerationList.add(currentAcceleration);
         
         //calculating new velocity and a mean velocity that will be used to update the position
-        BigDecimal newVelocity = CalculationConditions.formatBigDecimal(m_velocity.add(currentAcceleration.multiply(p_timeStep)));
+        BigDecimal newVelocity = CalculationConditions.formatBigDecimal(m_velocity.add(currentAcceleration.multiply(CalculationConditions.DT)));
         BigDecimal meanVelocity = CalculationConditions.formatBigDecimal((m_velocity.add(newVelocity)).divide(new BigDecimal("2", MathContext.DECIMAL128)));
         m_velocity = newVelocity;
         m_velocityList.add(m_velocity);
         
         //calculating new position
-        m_position = CalculationConditions.formatBigDecimal(m_position.add(meanVelocity.multiply(p_timeStep)));
+        m_position = CalculationConditions.formatBigDecimal(m_position.add(meanVelocity.multiply(CalculationConditions.DT)));
         m_trajectory.add(m_position);
         
         m_collectionState = p_absorber.giveCollection(m_position);
-        m_captured = p_absorber.giveCapture(this);
+        m_captured = p_absorber.giveCapture(this, p_RNG);
     }
     
     public boolean isCollected()
@@ -102,6 +103,11 @@ public class Particle
     public BigDecimal getCurrentPosition()
     {
         return CalculationConditions.formatBigDecimal(m_position);
+    }
+    
+    public BigDecimal getCurrentVelocity()
+    {
+        return CalculationConditions.formatBigDecimal(m_velocity);
     }
     
     public ArrayList<BigDecimal> getTrajectory()

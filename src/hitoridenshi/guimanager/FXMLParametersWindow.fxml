@@ -146,7 +146,7 @@
             </HBox>
         </HBox>
         
-        <HBox styleClass="hbox" fx:id="trapbox" >
+<!--        <HBox styleClass="hbox" fx:id="trapbox" >
             <HBox styleClass="internalhbox" >
                 <Label styleClass="windowtext" text="Traps density (cm⁻³): " />
                 <TextField styleClass="inputfield" fx:id="trapdensity" prefWidth="100" />
@@ -161,7 +161,7 @@
                 <Label styleClass="windowtext" text="Traps energy (eV): "/>
                 <TextField styleClass="inputfield" fx:id="trapenergy" prefWidth="100" />
             </HBox>
-        </HBox>
+        </HBox>-->
     </VBox>
     
     <VBox styleClass="propertyvbox">

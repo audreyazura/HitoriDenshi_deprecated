@@ -19,7 +19,7 @@
 <?import javafx.scene.control.RadioButton?>
 
 <VBox fx:controller="hitoridenshi.guimanager.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
-      styleClass="mainvbox" fx:id="parameterbox">
+      styleClass="mainvbox" >
     
     <stylesheets>
         <URL value="@WindowsStyle.css" />
@@ -106,7 +106,7 @@
         </GridPane>
     </VBox>
     
-    <VBox styleClass="propertyvbox" fx:id="parameterbox" >
+    <VBox styleClass="propertyvbox" fx:id="sampleparameterbox" >
         <Label styleClass="titlelabel" text="Sample parameters"/>
         
         <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
@@ -145,23 +145,6 @@
                 <TextField styleClass="inputfield" fx:id="backbangap" prefWidth="65" />
             </HBox>
         </HBox>
-        
-<!--        <HBox styleClass="hbox" fx:id="trapbox" >
-            <HBox styleClass="internalhbox" >
-                <Label styleClass="windowtext" text="Traps density (cm⁻³): " />
-                <TextField styleClass="inputfield" fx:id="trapdensity" prefWidth="100" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox" >
-                <Label styleClass="windowtext" text="Traps capture cross-section (cm⁻²): "/>
-                <TextField styleClass="inputfield" fx:id="trapcapture" prefWidth="100" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox" >
-                <Label styleClass="windowtext" text="Traps energy (eV): "/>
-                <TextField styleClass="inputfield" fx:id="trapenergy" prefWidth="100" />
-            </HBox>
-        </HBox>-->
     </VBox>
     
     <VBox styleClass="propertyvbox">

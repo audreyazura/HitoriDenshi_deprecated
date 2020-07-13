@@ -80,6 +80,7 @@ public class ExecutionManager {
             {
                 appToLaunch = new GUIManager();
             }
+            
             appToLaunch.startOutput(curratedArgument);
         }
     }

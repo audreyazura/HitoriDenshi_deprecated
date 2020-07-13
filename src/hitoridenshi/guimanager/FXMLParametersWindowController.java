@@ -86,9 +86,7 @@ public class FXMLParametersWindowController
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
-//    @FXML private TextField trapcapture;
-//    @FXML private TextField trapdensity;
-    @FXML private VBox parameterbox;
+    @FXML private VBox sampleparameterbox;
     
     private int visibleTrapBoxes = 0;
     private List<HBox> trapBoxes = new ArrayList<>();
@@ -587,7 +585,7 @@ public class FXMLParametersWindowController
             energyBox.getChildren().addAll(energyLabel, energyInput);
             
             newTrapBox.getChildren().addAll(densityBox, crossSecBox, energyBox);
-            parameterbox.getChildren().add(newTrapBox);
+            sampleparameterbox.getChildren().add(newTrapBox);
             trapBoxes.add(newTrapBox);
         }
         else

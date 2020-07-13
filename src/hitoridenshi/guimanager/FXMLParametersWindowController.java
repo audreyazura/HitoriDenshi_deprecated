@@ -44,6 +44,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 
@@ -57,7 +59,6 @@ public class FXMLParametersWindowController
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
     @FXML private HBox gradingbox;
-    @FXML private HBox trapbox;
     @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
@@ -80,8 +81,8 @@ public class FXMLParametersWindowController
     @FXML private TextField numbersimulated;
     @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
-    @FXML private TextField trapcapture;
-    @FXML private TextField trapdensity;
+//    @FXML private TextField trapcapture;
+//    @FXML private TextField trapdensity;
     @FXML private VBox parameterbox;
     
     private int visibleTrapBoxes = 0;
@@ -346,6 +347,10 @@ public class FXMLParametersWindowController
     @FXML private void startSimulation ()
     {
         //add logic to remove trapBoxes that are not shown
+        while (trapBoxes.size() > visibleTrapBoxes)
+        {
+            trapBoxes.remove(trapBoxes.size()-1);
+        }
 
         //temporarily saving current configuration in Properties
         OrderedProperties tempProp = writeConfigToProperties();
@@ -353,6 +358,19 @@ public class FXMLParametersWindowController
         //configuring the simulation and launching it
         try
         {
+            List<HashMap<String, BigDecimal>> trapList = new ArrayList<>();
+            
+            for (int i = 0 ; i < trapBoxes.size() ; i++)
+            {
+                Map<String, BigDecimal> currentTrap = new HashMap<>();
+                        
+                currentTrap.put("density", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(0)).getChildren().get(1)).getText()));
+                currentTrap.put("crosssection", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(1)).getChildren().get(1)).getText()));
+                currentTrap.put("energy", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(2)).getChildren().get(1)).getText()));
+                
+                trapList.add((HashMap) currentTrap);
+            }
+            
             CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), notches.getText(), generationpositions.getText());
             
             if (includegrading.isSelected())
@@ -454,8 +472,8 @@ public class FXMLParametersWindowController
         extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
         extractedProperties.setProperty("back_bandgap",  backbangap.getText());
 //        extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
-        extractedProperties.setProperty("trap_density", trapdensity.getText());
-        extractedProperties.setProperty("trap_cross_section",  trapcapture.getText());
+//        extractedProperties.setProperty("trap_density", trapdensity.getText());
+//        extractedProperties.setProperty("trap_cross_section",  trapcapture.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
@@ -486,8 +504,8 @@ public class FXMLParametersWindowController
         frontbangap.setText(p_properties.getProperty("front_bandgap"));
         notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
         backbangap.setText(p_properties.getProperty("back_bandgap"));
-        trapdensity.setText(p_properties.getProperty("trap_density"));
-        trapcapture.setText(p_properties.getProperty("trap_cross_section"));
+//        trapdensity.setText(p_properties.getProperty("trap_density"));
+//        trapcapture.setText(p_properties.getProperty("trap_cross_section"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));

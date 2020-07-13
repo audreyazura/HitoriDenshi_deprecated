@@ -42,7 +42,7 @@ public class Absorber
     private final BigDecimal m_frontPosition;
     private final BigDecimal m_notchPosition;
     private final boolean m_zeroAtFront;
-    private final ContinuousFunction m_electricField;
+    private final SCAPSFunction m_electricField;
     private final String m_bias;
     private final List<HashMap<String, BigDecimal>> m_traps;
     
@@ -56,7 +56,7 @@ public class Absorber
      */
     public Absorber(File p_electricField, String p_bias, CalculationConditions p_condition) throws DataFormatException, IOException
     {
-        m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
+        m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
         m_bias = p_bias;
         m_notchPosition = null;
         m_traps = new ArrayList<>();
@@ -110,7 +110,7 @@ public class Absorber
         
         if (p_conditions.isElectron() && p_conditions.includesGrading())
         {
-            ContinuousFunction internalElectricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
+            SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
             //À refactoriser ?
             if(m_zeroAtFront)
             {
@@ -149,18 +149,18 @@ public class Absorber
                 }
             }
 
-            ContinuousFunction notchEffectiveElectricField = new ContinuousFunction(internalElectricField.getAbscissa(), m_notchPosition, field0toNotch, fieldNotchtoEnd, absorberEnd);
-            m_electricField = internalElectricField.add(notchEffectiveElectricField);
+            SCAPSFunction notchEffectiveElectricField = new SCAPSFunction(internalElectricField.getAbscissa(), m_notchPosition, field0toNotch, fieldNotchtoEnd, absorberEnd);
+            m_electricField = (SCAPSFunction) internalElectricField.add(notchEffectiveElectricField);
         }
         else
         {
-            m_electricField = ContinuousFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
+            m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
         }
     }
     
-    public ContinuousFunction getElectricField()
+    public SCAPSFunction getElectricField()
     {
-        return new ContinuousFunction(m_electricField);
+        return new SCAPSFunction(m_electricField);
     }
     
     /**

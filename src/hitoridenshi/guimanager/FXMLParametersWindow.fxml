@@ -71,7 +71,7 @@
                 
                 <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
                     <Label styleClass="windowtext" wrapText="true" text="Number of trap level" />
-                    <Spinner fx:id="numbertraps" prefWidth="60" editable="false" onInputMethodTextChanged="#showtraps" >
+                    <Spinner fx:id="numbertraps" prefWidth="60" editable="false" >
                         <valueFactory>
                             <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="99" />
                         </valueFactory>

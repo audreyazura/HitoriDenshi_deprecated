@@ -46,7 +46,12 @@ import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -242,23 +247,6 @@ public class FXMLParametersWindowController
         }
     }
     
-    @FXML private void showtraps()
-    {
-        System.out.println("Blah!");
-//        if(includetraps.isSelected())
-//        {
-//            trapbox.setVisible(true);
-//            trapbox.setManaged(true);
-//            m_mainApp.getMainStage().sizeToScene();
-//        }
-//        else
-//        {
-//            trapbox.setVisible(false);
-//            trapbox.setManaged(false);
-//            m_mainApp.getMainStage().sizeToScene();
-//        }
-    }
-    
     /**
      * automatically changes the particle dependent parameters after the particle selection
      * to be refactored once different material are introduce. Materials will be listed in PhysicalConstant.
@@ -281,62 +269,14 @@ public class FXMLParametersWindowController
         }
     }
     
-    /**
-     * launch a DirectoryChooser to select the input directory and write its address in the field inputFolder
-     */
     @FXML private void browsingInput ()
     {
-        DirectoryChooser browser = new DirectoryChooser();
-	browser.setTitle("Chose the folder containing the input files");
-        
-        String fieldText = inputFolder.getText();
-        try
-        {
-            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
-        }
-        catch (NullPointerException ex)
-        {
-            browser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-        
-        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
-        if (selectedFolder != null)
-        {
-            inputFolder.setText(selectedFolder.getAbsolutePath());
-        }
-        else
-        {
-            inputFolder.setText(fieldText);
-        }
+        browse(inputFolder, "Chose the folder containing the input files");
     }
     
-    /**
-     * launch a DirectoryChooser to select the output directory and write its address in the field inputFolder
-     */
     @FXML private void browsingOutput ()
     {
-        DirectoryChooser browser = new DirectoryChooser();
-	browser.setTitle("Chose the output folder");
-        
-        String fieldText = outputFolder.getText();
-        try
-        {
-            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
-        }
-        catch (NullPointerException ex)
-        {
-            browser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-        
-        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
-        if (selectedFolder != null)
-        {
-            outputFolder.setText(selectedFolder.getAbsolutePath());
-        }
-        else
-        {
-            outputFolder.setText(fieldText);
-        }
+        browse(outputFolder, "Chose the folder to write the resulting files");
     }
     
     /**
@@ -397,6 +337,37 @@ public class FXMLParametersWindowController
         {
             System.err.println("Verify that each field is properly filled.");
 //            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * launch a DirectoryChooser to select a directory and write its address in the passed field
+     * @param p_outputField the TextField were the address of the selected folder will be written
+     * @param p_title the title of the window
+     */
+    private void browse (TextField p_outputField, String p_title)
+    {
+        DirectoryChooser browser = new DirectoryChooser();
+	browser.setTitle(p_title);
+        
+        String fieldText = p_outputField.getText();
+        try
+        {
+            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
+        }
+        catch (NullPointerException ex)
+        {
+            browser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+        
+        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
+        if (selectedFolder != null)
+        {
+            p_outputField.setText(selectedFolder.getAbsolutePath());
+        }
+        else
+        {
+            p_outputField.setText(fieldText);
         }
     }
     

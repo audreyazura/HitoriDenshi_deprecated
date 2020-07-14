@@ -46,7 +46,17 @@ class SCAPSFunction extends ContinuousFunction
        return new SCAPSFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
     }
     
+    public SCAPSFunction()
+    {
+        super();
+    }
+    
     public SCAPSFunction (SCAPSFunction p_passedFunction)
+    {
+        super(p_passedFunction);
+    }
+    
+    public SCAPSFunction (ContinuousFunction p_passedFunction)
     {
         super(p_passedFunction);
     }

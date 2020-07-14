@@ -150,7 +150,7 @@ public class Absorber
             }
 
             SCAPSFunction notchEffectiveElectricField = new SCAPSFunction(internalElectricField.getAbscissa(), m_notchPosition, field0toNotch, fieldNotchtoEnd, absorberEnd);
-            m_electricField = (SCAPSFunction) internalElectricField.add(notchEffectiveElectricField);
+            m_electricField = new SCAPSFunction(internalElectricField.add(notchEffectiveElectricField));
         }
         else
         {

@@ -84,8 +84,7 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         try
         {
             Parent windowFxml = parameterWindowLoader.load();
-	    FXMLParametersWindowController controller = parameterWindowLoader.getController();
-	    controller.initialize(this, p_configurationProperties);
+	    ((FXMLParametersWindowController) parameterWindowLoader.getController()).initialize(this, p_configurationProperties);
             m_mainStage.setScene(new Scene(windowFxml));
             m_mainStage.sizeToScene();
 	    m_mainStage.show();
@@ -104,9 +103,8 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         try
         {
             Parent simulationWindowFxml = simulationTrackerWindowLoader.load();
-            SimulationWindowController controller = simulationTrackerWindowLoader.getController();
-            m_simulationWindowController = controller;
-            controller.initialize(p_tempConfigProperties, this, p_workerAmount);
+            m_simulationWindowController = simulationTrackerWindowLoader.getController();
+            m_simulationWindowController.initialize(p_tempConfigProperties, this, p_workerAmount);
             int longestColumn = p_workerAmount - p_workerAmount / 2;
             m_mainStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
 	    m_mainStage.show();

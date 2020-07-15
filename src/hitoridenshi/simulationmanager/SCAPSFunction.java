@@ -89,11 +89,6 @@ class SCAPSFunction extends ContinuousFunction
                 m_values.put(formatBigDecimal(position), BigDecimal.ZERO);
             }
         }
-        
-        for (BigDecimal value: m_values.keySet())
-        {
-            m_abscissa.add(value);
-        }
     }
     
     private SCAPSFunction (File p_inputFile, BigDecimal p_abscissaUnitMultiplier, BigDecimal p_valuesUnitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException

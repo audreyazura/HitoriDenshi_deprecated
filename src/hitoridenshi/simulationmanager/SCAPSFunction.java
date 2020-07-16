@@ -43,7 +43,7 @@ class SCAPSFunction extends ContinuousFunction
      */
     static public SCAPSFunction createElectricFieldFromSCAPS(File p_inputFile, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
-       return new SCAPSFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), "eb", 23, new int[] {1,12});
+       return new SCAPSFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), "eb", "\t", 23, new int[] {1,12});
     }
     
     public SCAPSFunction()
@@ -91,9 +91,9 @@ class SCAPSFunction extends ContinuousFunction
         }
     }
     
-    private SCAPSFunction (File p_inputFile, BigDecimal p_abscissaUnitMultiplier, BigDecimal p_valuesUnitMultiplier, String p_expectedExtension, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
+    private SCAPSFunction (File p_inputFile, BigDecimal p_abscissaUnitMultiplier, BigDecimal p_valuesUnitMultiplier, String p_expectedExtension, String p_separator, int p_ncolumn, int[] p_columnToExtract) throws FileNotFoundException, DataFormatException, ArrayIndexOutOfBoundsException, IOException
     {
-        super(p_inputFile, p_abscissaUnitMultiplier, p_valuesUnitMultiplier, p_expectedExtension, p_ncolumn, p_columnToExtract);
+        super(p_inputFile, p_abscissaUnitMultiplier, p_valuesUnitMultiplier, p_expectedExtension, p_separator, p_ncolumn, p_columnToExtract);
     }
     
     @Override

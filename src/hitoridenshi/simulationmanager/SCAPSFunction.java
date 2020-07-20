@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.TreeSet;
 import java.util.zip.DataFormatException;
 
@@ -43,7 +44,7 @@ class SCAPSFunction extends ContinuousFunction
      */
     static public SCAPSFunction createElectricFieldFromSCAPS(File p_inputFile, BigDecimal p_unitMultiplier) throws DataFormatException, IOException, ArrayIndexOutOfBoundsException
     {
-       return new SCAPSFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), "eb", "\t", 23, new int[] {1,12});
+       return new SCAPSFunction(p_inputFile, p_unitMultiplier, PhysicsTools.UnitsPrefix.UNITY.getMultiplier().divide(PhysicsTools.UnitsPrefix.CENTI.getMultiplier(), MathContext.DECIMAL128), "eb", "\t", 23, new int[] {1,12});
     }
     
     public SCAPSFunction()

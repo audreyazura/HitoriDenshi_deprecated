@@ -100,6 +100,11 @@ public class Particle
         return m_collectionState != CollectionState.NOTCOLLECTED;
     }
     
+    public boolean isCaptured()
+    {
+        return m_captured != CapturedState.FREE;
+    }
+    
     public BigDecimal getCurrentPosition()
     {
         return CalculationConditions.formatBigDecimal(m_position);

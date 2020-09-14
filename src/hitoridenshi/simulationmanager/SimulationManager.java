@@ -59,7 +59,7 @@ public class SimulationManager implements Runnable
         //calculating the number of worker used to run the simulation
         int nAvailableCore = Runtime.getRuntime().availableProcessors();
         int nIndependantCalculation = m_biasVoltages.length * m_notchPositions.size();
-        m_numberOfWorker = (nAvailableCore < nIndependantCalculation) ? nAvailableCore : nIndependantCalculation;
+        m_numberOfWorker = Integer.min(nAvailableCore, nIndependantCalculation);
     }
     
     /**

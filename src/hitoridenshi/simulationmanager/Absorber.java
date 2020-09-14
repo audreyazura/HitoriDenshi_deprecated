@@ -17,7 +17,7 @@
 package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import hitoridenshi.simulationmanager.Particle.CapturedState;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
 import java.io.File;

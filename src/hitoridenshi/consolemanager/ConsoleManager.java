@@ -16,7 +16,7 @@
  */
 package hitoridenshi.consolemanager;
 
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import hitoridenshi.executionmanager.OutputInterface;
 import hitoridenshi.guimanager.GUIManager;
 import hitoridenshi.simulationmanager.CalculationConditions;

@@ -16,8 +16,8 @@
  */
 package hitoridenshi.simulationmanager;
 
-import commonutils.ContinuousFunction;
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.ContinuousFunction;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

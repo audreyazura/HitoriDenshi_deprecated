@@ -17,7 +17,7 @@
 package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;

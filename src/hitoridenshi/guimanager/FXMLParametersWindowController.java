@@ -18,7 +18,7 @@ package hitoridenshi.guimanager;
 
 import hitoridenshi.simulationmanager.CalculationConditions;
 import hitoridenshi.simulationmanager.SimulationManager;
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -46,12 +46,7 @@ import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 import java.util.HashMap;
 import java.util.Map;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 /**

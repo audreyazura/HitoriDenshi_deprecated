@@ -17,7 +17,7 @@
 package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
-import commonutils.PhysicsTools;
+import com.github.audreyazura.commonutils.PhysicsTools;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.FileSystemException;

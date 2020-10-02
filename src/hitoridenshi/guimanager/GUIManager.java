@@ -84,7 +84,7 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         try
         {
             Parent windowFxml = parameterWindowLoader.load();
-	    ((FXMLParametersWindowController) parameterWindowLoader.getController()).initialize(this, p_configurationProperties);
+	    ((ParametersWindowController) parameterWindowLoader.getController()).initialize(this, p_configurationProperties);
             m_mainStage.setScene(new Scene(windowFxml));
             m_mainStage.sizeToScene();
 	    m_mainStage.show();

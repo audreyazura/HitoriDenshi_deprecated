@@ -14,11 +14,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.RadioButton?>
 
-<VBox fx:controller="hitoridenshi.guimanager.FXMLParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
+<VBox fx:controller="hitoridenshi.guimanager.ParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="mainvbox" >
     
     <stylesheets>
@@ -95,14 +96,17 @@
                 <ColumnConstraints hgrow="NEVER" />
                 <ColumnConstraints hgrow="ALWAYS" />
             </columnConstraints>
-            <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label styleClass="windowtext" text="Input files: " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
+            <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
+            
+            <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         
-            <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         
-            <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </GridPane>
     </VBox>
     

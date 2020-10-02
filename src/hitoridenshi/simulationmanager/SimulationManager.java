@@ -38,10 +38,10 @@ public class SimulationManager implements Runnable
     private final CalculationConditions m_conditions;
     private final ProgressNotifierInterface m_guiApp;
     private final int m_numberOfWorker;
-    private final List<BigDecimal> m_notchPositions;
     private final String m_inputFolder;
     private final String m_outputFolder;
     private final String[] m_biasVoltages;
+    private final String[] m_notchPositions;
     
     private double m_progress = 0;
     private int m_totalCalculations = 0;
@@ -58,7 +58,7 @@ public class SimulationManager implements Runnable
         
         //calculating the number of worker used to run the simulation
         int nAvailableCore = Runtime.getRuntime().availableProcessors();
-        int nIndependantCalculation = m_biasVoltages.length * m_notchPositions.size();
+        int nIndependantCalculation = m_biasVoltages.length * m_notchPositions.length;
         m_numberOfWorker = Integer.min(nAvailableCore, nIndependantCalculation);
     }
     
@@ -95,8 +95,9 @@ public class SimulationManager implements Runnable
             //all the values in p_conditions are in SI units
             for (String bias: m_biasVoltages)
             {
-                for (BigDecimal notch: m_notchPositions)
+                for (String notchString: m_notchPositions)
                 {
+                    BigDecimal notch = CalculationConditions.formatBigDecimal(new BigDecimal(notchString).multiply(m_conditions.getAbscissaMultiplier()));
                     String notchPositionNanometer = String.valueOf(notch.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier()).intValue());
                     absorberList.add(new Absorber(m_inputFolder+"/E"+bias+"V_N"+notchPositionNanometer+"nm.eb", bias, notch, m_conditions));
                 }

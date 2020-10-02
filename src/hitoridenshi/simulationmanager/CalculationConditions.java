@@ -18,6 +18,7 @@ package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
 import com.github.audreyazura.commonutils.PhysicsTools;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -49,15 +50,16 @@ public class CalculationConditions
     private final BigDecimal m_sampleSize;
     private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
-    private final List<BigDecimal> m_notchPositions;
+    private final String[] m_notchPositions;
     private final List<BigDecimal> m_startingPositons;
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
     private final Map<String, BigDecimal> m_qds = new HashMap<>();
     private final Map<String, BigDecimal> m_traps = new HashMap<>();
+    private final Map<String, File> m_electricFieldFiles = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions)
+    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions, String p_electricFieldFiles)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
@@ -73,7 +75,7 @@ public class CalculationConditions
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         
-        m_notchPositions = getBigDecimalArrayFromString(p_notchPositions, formatBigDecimal(m_abscissaUnit.getMultiplier()));
+        m_notchPositions = p_notchPositions.strip().split("\\h*;\\h*");
         m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, formatBigDecimal(m_abscissaUnit.getMultiplier()));
         
         if(p_isElectron)
@@ -84,6 +86,8 @@ public class CalculationConditions
         {
             m_particleParameters.put("charge", formatBigDecimal(PhysicsTools.Q));
         }
+        
+        String[] electricFieldFileList = p_electricFieldFiles.strip().split("\\h*"+System.lineSeparator()+"\\h*");
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
@@ -229,9 +233,9 @@ public class CalculationConditions
         return m_biasVoltages.clone();
     }
     
-    public ArrayList<BigDecimal> getNotchPositionArray()
+    public String[] getNotchPositionArray()
     {
-        return new ArrayList(m_notchPositions);
+        return m_notchPositions.clone();
     }
     
     public synchronized ArrayList<BigDecimal> getStartingPositionList()

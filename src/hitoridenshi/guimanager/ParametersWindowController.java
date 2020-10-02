@@ -306,7 +306,7 @@ public class ParametersWindowController
                 trapList.add((HashMap) currentTrap);
             }
             
-            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), notches.getText(), generationpositions.getText());
+            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), notches.getText(), generationpositions.getText(), electricfieldfiles.getText());
             
             if (includegrading.isSelected())
             {
@@ -416,7 +416,7 @@ public class ParametersWindowController
      */
     private OrderedProperties writeConfigToProperties ()
     {
-        //add logic to ignore trapBoxes that are not shown
+        //ADD LOGIC TO IGNORE UNFILLED TRAPBOXES
         
         OrderedProperties extractedProperties = new OrderedProperties();
                 
@@ -452,7 +452,7 @@ public class ParametersWindowController
      */
     private void loadProperties (OrderedProperties p_properties)
     {
-        //add logic for trapBoxes
+        //ADD LOGIC FOR TRAPBOXES
         
         unitselec.setValue(p_properties.getProperty("abscissa_unit"));
         materialselec.setValue(p_properties.getProperty("material"));

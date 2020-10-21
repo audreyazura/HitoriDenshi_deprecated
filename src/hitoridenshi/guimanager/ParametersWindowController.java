@@ -48,7 +48,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -70,7 +69,7 @@ public class ParametersWindowController
     @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton holeselection;
-    @FXML private Spinner numbertraps;
+    @FXML private Spinner<Integer> numbertraps;
     @FXML private TextArea electricfieldfiles;
     @FXML private TextField biasvoltages;
     @FXML private TextField notches;
@@ -444,12 +443,12 @@ public class ParametersWindowController
      * create an OrderedProperties from the current configuration
      * @return an OrderedProperties containing the current configuration
      */
-    private OrderedProperties writeConfigToProperties ()
+    private OrderedProperties writeConfigToProperties()
     {
-        //ADD LOGIC TO IGNORE UNFILLED TRAPBOXES
-        
         OrderedProperties extractedProperties = new OrderedProperties();
                 
+        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
+        extractedProperties.setProperty("output_folder",  outputFolder.getText());
         extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
         extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
         extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
@@ -462,15 +461,33 @@ public class ParametersWindowController
         extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
         extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
         extractedProperties.setProperty("back_bandgap",  backbangap.getText());
-//        extractedProperties.setProperty("has_traps", includetraps.isSelected() ? "true":"false");
-//        extractedProperties.setProperty("trap_density", trapdensity.getText());
-//        extractedProperties.setProperty("trap_cross_section",  trapcapture.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
         extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
-        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
+        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
         extractedProperties.setProperty("output_folder",  outputFolder.getText());
+        
+        //writing the traps in a legible way
+        if (trapBoxes.size() > 0)
+        {
+            extractedProperties.setProperty("number_of_traps", Integer.toString(trapBoxes.size()));
+            
+            for (int boxIndex = 0 ; boxIndex < trapBoxes.size() ; boxIndex += 1)
+            {
+                String trapDensity = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(0)).getChildren().get(1)).getText();
+                String trapCrossSection = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(1)).getChildren().get(1)).getText();
+                String trapEnergy = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(2)).getChildren().get(1)).getText();
+                
+                if (!(trapDensity.equals("") || trapCrossSection.equals("") || trapEnergy.equals("")))
+                {
+                    extractedProperties.setProperty("trap"+boxIndex+"_density", trapDensity);
+                    extractedProperties.setProperty("trap"+boxIndex+"_crosssection", trapCrossSection);
+                    extractedProperties.setProperty("trap"+boxIndex+"_energy", trapEnergy);
+                }
+            }
+        }
+        
         
         return extractedProperties;
     }
@@ -500,9 +517,10 @@ public class ParametersWindowController
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
-        electricfieldfiles.setText(p_properties.getProperty("input_folder"));
+        electricfieldfiles.setText(p_properties.getProperty("input_files"));
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
+        //selecting the right position for the position origin
         switch (p_properties.getProperty("origin_position"))
         {
             case "front":
@@ -517,6 +535,7 @@ public class ParametersWindowController
                 throw new RuntimeException("Invalid origin position: "+p_properties.getProperty("zero_position")+". Should be front, back or nothing.");
         }
 
+        //selecting the right particles
         switch (p_properties.getProperty("simulated_particle"))
         {
             case "electron":
@@ -531,6 +550,7 @@ public class ParametersWindowController
                 throw new RuntimeException("Invalid particle: "+p_properties.getProperty("simulated_particle")+". Should be electron, hole or nothing.");
         }
         
+        //select grading and add or hide the box when necessary
         switch (p_properties.getProperty("has_grading"))
         {
             case "true":
@@ -549,23 +569,28 @@ public class ParametersWindowController
                 throw new RuntimeException("Invalid grading property: "+p_properties.getProperty("has_grading")+". Should be either true or false.");
         }
         
-//        switch (p_properties.getProperty("has_traps"))
-//        {
-//            case "true":
-//                if (!includetraps.isSelected())
-//                {
-//                    includetraps.fire();
-//                }
-//                break;
-//            case "false":
-//                if (includetraps.isSelected())
-//                {
-//                    includetraps.fire();
-//                }
-//                break;
-//            default:
-//                throw new RuntimeException("Invalid traps property: "+p_properties.getProperty("has_traps")+". Should be either true or false.");
-//        }
+        //erasing the previously entered traps
+        while (numbertraps.getValue() > 0)
+        {
+            numbertraps.decrement();
+        }
+        trapBoxes = new ArrayList<>();
+
+        //loading traps and writting the correct informations to it
+        String numberTrapsString = p_properties.getProperty("number_of_traps");
+        if (!(numberTrapsString == null))
+        {
+            int nTraps = Integer.parseInt(numberTrapsString);
+            
+            for(int i = 0 ; i < nTraps ; i += 1)
+            {
+                numbertraps.increment();
+                
+                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(0)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_density"));
+                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(1)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_crosssection"));
+                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(2)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_energy"));
+            }
+        }
     }
     
     private void addTrapBox(int newPosition)
@@ -620,12 +645,23 @@ public class ParametersWindowController
         visibleTrapBoxes += 1;
     }
     
-    private void hideTrapBox(int position)
+    private void decreaseTrapBox(int position)
     {
-        trapBoxes.get(position).setVisible(false);
-        trapBoxes.get(position).setManaged(false);
+        HBox treatingBox = trapBoxes.get(position);
+        
+        treatingBox.setVisible(false);
+        treatingBox.setManaged(false);
         m_mainApp.getMainStage().sizeToScene();
         visibleTrapBoxes -= 1;
+        
+        String trapDensity = ((TextField) ((HBox) treatingBox.getChildren().get(0)).getChildren().get(1)).getText();
+        String trapCrossSection = ((TextField) ((HBox) treatingBox.getChildren().get(1)).getChildren().get(1)).getText();
+        String trapEnergy = ((TextField) ((HBox) treatingBox.getChildren().get(2)).getChildren().get(1)).getText();
+        
+        if (trapDensity.equals("") && trapCrossSection.equals("") && trapEnergy.equals(""))
+        {
+            trapBoxes.remove(position);
+        }
     }
     
     /**
@@ -646,7 +682,7 @@ public class ParametersWindowController
                 }
                 else if ((int) newValue < (int) oldValue)
                 {
-                    hideTrapBox(((int) oldValue)-1);
+                    decreaseTrapBox(((int) oldValue)-1);
                 }
             });
         loadProperties(p_configProperties);

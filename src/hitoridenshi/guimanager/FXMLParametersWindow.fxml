@@ -118,13 +118,13 @@
             </columnConstraints>
             
             <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         
             <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         
             <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </GridPane>
     </VBox>
     

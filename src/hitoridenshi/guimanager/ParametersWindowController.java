@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.VBox;
 
 /**
@@ -81,7 +82,6 @@ public class ParametersWindowController
     @FXML private TextField effectivemass;
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
-    @FXML private TextField inputFolder;
     @FXML private TextField outputFolder;
     @FXML private VBox sampleparameterbox;
     
@@ -266,7 +266,7 @@ public class ParametersWindowController
     
     @FXML private void browsingInput ()
     {
-        browse(inputFolder, "Chose the folder containing the input files");
+        browse(electricfieldfiles, "Chose the folder containing the input files");
     }
     
     @FXML private void browsingOutput ()
@@ -313,7 +313,7 @@ public class ParametersWindowController
                 conditions.addGrading(new BigDecimal(frontbangap.getText()), new BigDecimal(notchbandgap.getText()), new BigDecimal(backbangap.getText()));
             }
             
-            SimulationManager simulationLauncher = new SimulationManager(inputFolder.getText(), outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
+            SimulationManager simulationLauncher = new SimulationManager(electricfieldfiles.getText(), outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
@@ -335,7 +335,7 @@ public class ParametersWindowController
      * @param p_outputField the TextField were the address of the selected folder will be written
      * @param p_title the title of the window
      */
-    private void browse (TextField p_outputField, String p_title)
+    private void browse (TextInputControl p_outputField, String p_title)
     {
         DirectoryChooser browser = new DirectoryChooser();
 	browser.setTitle(p_title);
@@ -439,7 +439,7 @@ public class ParametersWindowController
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
         extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
-        extractedProperties.setProperty("input_folder",  inputFolder.getText());
+        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
         extractedProperties.setProperty("output_folder",  outputFolder.getText());
         
         return extractedProperties;
@@ -470,7 +470,7 @@ public class ParametersWindowController
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
-        inputFolder.setText(p_properties.getProperty("input_folder"));
+        electricfieldfiles.setText(p_properties.getProperty("input_folder"));
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
         switch (p_properties.getProperty("origin_position"))

@@ -89,6 +89,26 @@
     </HBox>
     
     <VBox styleClass="propertyvbox">
+        <Label styleClass="titlelabel" text="Files configuration"/>
+        
+        <GridPane styleClass="gridpane">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" />
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="NEVER" />
+            </columnConstraints>
+            
+            <Label styleClass="windowtext" text="Input files: " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
+            <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
+            <Button text="Browse" onAction="#browsingInput" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.valignment="top" />
+
+            <Label styleClass="windowtext" text="Output folder: " GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button text="Browse" alignment="center" onAction="#browsingOutput" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        </GridPane>
+    </VBox>
+    
+    <VBox styleClass="propertyvbox">
         <Label styleClass="titlelabel" text="Variable parameters"/>
         
         <GridPane styleClass="gridpane">
@@ -96,17 +116,15 @@
                 <ColumnConstraints hgrow="NEVER" />
                 <ColumnConstraints hgrow="ALWAYS" />
             </columnConstraints>
-            <Label styleClass="windowtext" text="Input files: " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
-            <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
             
             <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="2" GridPane.rowIndex="1" />
         
             <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="2" GridPane.rowIndex="2" />
         
             <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="2" GridPane.rowIndex="3" />
         </GridPane>
     </VBox>
     
@@ -179,25 +197,6 @@
                 <TextField styleClass="inputfield" fx:id="numbersimulated" prefWidth="100" />
             </HBox>
         </HBox>
-    </VBox>
-    
-    <VBox styleClass="propertyvbox">
-        <Label styleClass="titlelabel" text="Files configuration"/>
-        
-        <GridPane styleClass="gridpane">
-            <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" />
-                <ColumnConstraints hgrow="ALWAYS" />
-                <ColumnConstraints hgrow="NEVER" />
-            </columnConstraints>
-            <Label styleClass="windowtext" text="Folder with the SCAPS gen file: " GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField styleClass="inputfield" fx:id="inputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-            <Button text="Browse" alignment="center" onAction="#browsingInput" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-
-            <Label styleClass="windowtext" text="Output folder: " GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button text="Browse" alignment="center" onAction="#browsingOutput" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-        </GridPane>
     </VBox>
     
     <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox">

@@ -52,6 +52,7 @@ public class ConsoleManager implements OutputInterface
         String biasVoltagesList = p_properties.getProperty("bias_voltages");
         String notchesList = p_properties.getProperty("notch_positions");
         String initialPositionsList = p_properties.getProperty("generation_positions");
+        String fileString = p_properties.getProperty("input_files");
         
         PhysicsTools.UnitsPrefix unitPrefix = PhysicsTools.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa_unit"));
             
@@ -62,7 +63,7 @@ public class ConsoleManager implements OutputInterface
         
         int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("number_of_simulated_particles"));
 
-        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList);
+        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList, fileString);
         
         if (p_properties.getProperty("has_grading").equals("true"))
         {

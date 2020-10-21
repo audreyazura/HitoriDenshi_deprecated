@@ -50,6 +50,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -266,12 +267,72 @@ public class ParametersWindowController
     
     @FXML private void browsingInput ()
     {
-        browse(electricfieldfiles, "Chose the folder containing the input files");
+        FileChooser browser = new FileChooser();
+        
+        browser.setTitle("Chose the folder containing the input files");
+        browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("SCAPS-1D eb files (*.eb)", "*.eb"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
+	
+	try
+        {
+            String fieldText = electricfieldfiles.getText().split(System.lineSeparator())[0];
+            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
+        }
+        catch (NullPointerException ex)
+        {
+            browser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+        
+        List<File> selectedFileList = new ArrayList();
+        selectedFileList = browser.showOpenMultipleDialog(new Stage());
+        
+        String fileAddressList = electricfieldfiles.getText();
+        if (selectedFileList != null)
+        {
+            fileAddressList = "";
+            for (File selectedFile: selectedFileList)
+            {
+                if (selectedFile != null)
+                {
+                    fileAddressList += selectedFile.getAbsolutePath() + System.lineSeparator();
+                }
+                else
+                {
+                    if (fileAddressList.equals("") && selectedFileList.size() == 1)
+                    {
+                        fileAddressList = electricfieldfiles.getText();
+                    }
+                }
+            }
+        }
+        
+        fileAddressList = fileAddressList.strip();
+        electricfieldfiles.setText(fileAddressList);
     }
     
     @FXML private void browsingOutput ()
     {
-        browse(outputFolder, "Chose the folder to write the resulting files");
+        DirectoryChooser browser = new DirectoryChooser();
+	browser.setTitle("Chose the folder to write the resulting files");
+        
+        String fieldText = outputFolder.getText();
+        try
+        {
+            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
+        }
+        catch (NullPointerException ex)
+        {
+            browser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+        
+        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
+        if (selectedFolder != null)
+        {
+            outputFolder.setText(selectedFolder.getAbsolutePath());
+        }
+        else
+        {
+            outputFolder.setText(fieldText);
+        }
     }
     
     /**
@@ -327,37 +388,6 @@ public class ParametersWindowController
         {
             System.err.println("Verify that each field is properly filled.");
 //            ex.printStackTrace();
-        }
-    }
-    
-    /**
-     * launch a DirectoryChooser to select a directory and write its address in the passed field
-     * @param p_outputField the TextField were the address of the selected folder will be written
-     * @param p_title the title of the window
-     */
-    private void browse (TextInputControl p_outputField, String p_title)
-    {
-        DirectoryChooser browser = new DirectoryChooser();
-	browser.setTitle(p_title);
-        
-        String fieldText = p_outputField.getText();
-        try
-        {
-            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
-        }
-        catch (NullPointerException ex)
-        {
-            browser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-        
-        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
-        if (selectedFolder != null)
-        {
-            p_outputField.setText(selectedFolder.getAbsolutePath());
-        }
-        else
-        {
-            p_outputField.setText(fieldText);
         }
     }
     

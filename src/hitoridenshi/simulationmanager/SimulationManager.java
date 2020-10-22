@@ -18,9 +18,11 @@ package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
 import com.github.audreyazura.commonutils.PhysicsTools;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.FileSystemException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,8 +42,6 @@ public class SimulationManager implements Runnable
     private final int m_numberOfWorker;
     private final String m_inputFolder;
     private final String m_outputFolder;
-    private final String[] m_biasVoltages;
-    private final String[] m_notchPositions;
     
     private double m_progress = 0;
     private int m_totalCalculations = 0;
@@ -50,15 +50,13 @@ public class SimulationManager implements Runnable
     public SimulationManager (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions, ProgressNotifierInterface p_guiApp)
     {
         m_conditions = p_conditions;
-        m_biasVoltages = m_conditions.getBiasVoltageArray();
-        m_notchPositions = m_conditions.getNotchPositionArray();
         m_inputFolder = p_folderElectricFields;
         m_outputFolder = p_outputFolder;
         m_guiApp = p_guiApp;
         
         //calculating the number of worker used to run the simulation
         int nAvailableCore = Runtime.getRuntime().availableProcessors();
-        int nIndependantCalculation = m_biasVoltages.length * m_notchPositions.length;
+        int nIndependantCalculation = p_conditions.getFileList().size();
         m_numberOfWorker = Integer.min(nAvailableCore, nIndependantCalculation);
     }
     
@@ -90,17 +88,15 @@ public class SimulationManager implements Runnable
         sendMessage("Launching simulation...\n");
         try
         {
+            HashMap<File, BigDecimal> notchReference = m_conditions.getNotchPositions();
+
             //preparing the absorbers on which the simulation will be run
             Set<Absorber> absorberList = new HashSet<>();
-            //all the values in p_conditions are in SI units
-            for (String bias: m_biasVoltages)
+            //all the values in m_conditions are in SI units
+            for (File sampleFile: m_conditions.getFileList())
             {
-                for (String notchString: m_notchPositions)
-                {
-                    BigDecimal notch = CalculationConditions.formatBigDecimal(new BigDecimal(notchString).multiply(m_conditions.getAbscissaMultiplier()));
-                    String notchPositionNanometer = String.valueOf(notch.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier()).intValue());
-                    absorberList.add(new Absorber(m_inputFolder+"/E"+bias+"V_N"+notchPositionNanometer+"nm.eb", bias, notch, m_conditions));
-                }
+                BigDecimal notch = CalculationConditions.formatBigDecimal(notchReference.get(sampleFile).multiply(m_conditions.getAbscissaMultiplier()));
+                absorberList.add(new Absorber(sampleFile, m_conditions));
             }
             
             //int division casting to an int truncate it

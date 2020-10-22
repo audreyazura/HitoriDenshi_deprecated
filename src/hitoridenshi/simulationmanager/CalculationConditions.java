@@ -24,9 +24,12 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents the necessary parameters of the calculation, correctly converted and formatted
@@ -50,14 +53,14 @@ public class CalculationConditions
     private final BigDecimal m_sampleSize;
     private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
-    private final String[] m_notchPositions;
+    private final List<File> m_fileList = new ArrayList<>();
     private final List<BigDecimal> m_startingPositons;
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
+    private final Map<File, BigDecimal> m_notchPositions = new HashMap<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
     private final Map<String, BigDecimal> m_qds = new HashMap<>();
     private final Map<String, BigDecimal> m_traps = new HashMap<>();
-    private final Map<String, File> m_electricFieldFiles = new HashMap<>();
     
     public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions, String p_electricFieldFiles)
     {
@@ -75,7 +78,6 @@ public class CalculationConditions
         
         m_biasVoltages = p_biasVoltages.strip().split("\\h*;\\h*");
         
-        m_notchPositions = p_notchPositions.strip().split("\\h*;\\h*");
         m_startingPositons = getBigDecimalArrayFromString(p_startingPositions, formatBigDecimal(m_abscissaUnit.getMultiplier()));
         
         if(p_isElectron)
@@ -87,7 +89,37 @@ public class CalculationConditions
             m_particleParameters.put("charge", formatBigDecimal(PhysicsTools.Q));
         }
         
-        String[] electricFieldFileList = p_electricFieldFiles.strip().split("\\h*"+System.lineSeparator()+"\\h*");
+        List<String> notchList = Arrays.asList(p_notchPositions.strip().split("\\h*;\\h*"));
+        List<String> electricFieldFileList = Arrays.asList(p_electricFieldFiles.strip().split("\\h*"+System.lineSeparator()+"\\h*"));
+        Iterator<String> electricFieldIterator = electricFieldFileList.iterator();
+        while (electricFieldIterator.hasNext())
+        {
+            Iterator<String> notchIterator = notchList.iterator();
+            
+            while (notchIterator.hasNext())
+            {
+                if (electricFieldIterator.hasNext())
+                {
+                    File currentFile = new File(electricFieldIterator.next());
+                    
+                    m_fileList.add(currentFile);
+                    
+                    try
+                    {
+                        m_notchPositions.put(currentFile, formatBigDecimal((new BigDecimal(notchIterator.next())).multiply(m_abscissaUnit.getMultiplier())));
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
@@ -233,9 +265,14 @@ public class CalculationConditions
         return m_biasVoltages.clone();
     }
     
-    public String[] getNotchPositionArray()
+    public ArrayList<File> getFileList()
     {
-        return m_notchPositions.clone();
+        return new ArrayList(m_fileList);
+    }
+    
+    public HashMap<File, BigDecimal> getNotchPositions()
+    {
+        return new HashMap(m_notchPositions);
     }
     
     public synchronized ArrayList<BigDecimal> getStartingPositionList()

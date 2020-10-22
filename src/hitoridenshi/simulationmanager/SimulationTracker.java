@@ -353,11 +353,11 @@ public class SimulationTracker
      * @throws FileSystemException
      * @throws IOException 
      */
-    synchronized public void saveToFile(String p_generalOutputFolder, String p_biasVoltage, String p_notchPosition, BigDecimal p_initialPosition, PhysicsTools.UnitsPrefix p_prefix) throws FileSystemException, IOException
+    synchronized public void saveToFile(String p_outputFolder, BigDecimal p_initialPosition, PhysicsTools.UnitsPrefix p_prefix) throws FileSystemException, IOException
     {
         String initialPositionString = String.valueOf(p_initialPosition.intValue());
         
-        File currenOutputFolder = new File (new String(p_generalOutputFolder + "/E" + p_biasVoltage + "V/Notch"+p_notchPosition+"nm/xi"+initialPositionString+"nm"));
+        File currenOutputFolder = new File (p_outputFolder + "/xi"+initialPositionString+"nm");
         
         if (currenOutputFolder.mkdirs() || currenOutputFolder.isDirectory())
         {

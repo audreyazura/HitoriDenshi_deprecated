@@ -79,8 +79,6 @@ public class SimulationWorker implements Runnable
         for (Absorber currentAbsorber: m_absorbers)
         {
             BigDecimal notchPosition = currentAbsorber.getNotchPosition();
-            String currrentNotchPositionString = String.valueOf(notchPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier()).intValue());;
-            String currentBias = currentAbsorber.getBias();
             try
             {
                 List<BigDecimal> initialPositionWithNotch = new ArrayList(m_startingPositions);
@@ -113,8 +111,8 @@ public class SimulationWorker implements Runnable
                         m_manager.sendUpdate(m_id, workerProgress);
                     }
 
-                    currentTracker.saveToFile(m_outputFolder, currentBias, currrentNotchPositionString, initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
-                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for E_bias = "+currentBias+", x_notch = "+currrentNotchPositionString+"nm and x_init = "+String.valueOf((initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    currentTracker.saveToFile(m_outputFolder + "/" + currentAbsorber.getEnergyBandFile(), initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
+                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for " + currentAbsorber.getEnergyBandFile() + " and x_init = "+String.valueOf((initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                 }
             }
             catch (FileSystemException ex)

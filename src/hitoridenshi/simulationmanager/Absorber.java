@@ -43,7 +43,7 @@ public class Absorber
     private final BigDecimal m_notchPosition;
     private final boolean m_zeroAtFront;
     private final SCAPSFunction m_electricField;
-    private final String m_bias;
+    private final String m_energyBandFile;
     private final List<HashMap<String, BigDecimal>> m_traps;
     
     /**
@@ -54,39 +54,39 @@ public class Absorber
      * @throws DataFormatException
      * @throws IOException 
      */
-    public Absorber(File p_electricField, String p_bias, CalculationConditions p_condition) throws DataFormatException, IOException
-    {
-        m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
-        m_bias = p_bias;
-        m_notchPosition = null;
-        m_traps = new ArrayList<>();
-        m_zeroAtFront = p_condition.isZeroAtFront();
-        if(m_zeroAtFront)
-        {
-            m_frontPosition = BigDecimal.ZERO;
-            m_backPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
-        }
-        else
-        {
-            m_frontPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
-            m_backPosition = BigDecimal.ZERO;
-        }
-    }
+//    public Absorber(File p_electricField, CalculationConditions p_condition) throws DataFormatException, IOException
+//    {
+//        m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
+//        m_energyBandFile = p_electricField;
+//        m_notchPosition = null;
+//        m_traps = new ArrayList<>();
+//        m_zeroAtFront = p_condition.isZeroAtFront();
+//        if(m_zeroAtFront)
+//        {
+//            m_frontPosition = BigDecimal.ZERO;
+//            m_backPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
+//        }
+//        else
+//        {
+//            m_frontPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
+//            m_backPosition = BigDecimal.ZERO;
+//        }
+//    }
     
     /**
      * Constructor for an absorber with a notch
      * Calculate the notch-created effective electric field and add it to the internal electric field given by SCAPS
-     * @param p_fileElectricFields the *.eb file given from SCAPS
+     * @param p_SCAPSFile the *.eb file given from SCAPS
      * @param p_bias the bias voltage applied on the absorber
      * @param p_notchPosition the position of the notch in the absorber
      * @param p_conditions the condition of calculation
      * @throws DataFormatException
      * @throws IOException 
      */
-    public Absorber(String p_fileElectricFields, String p_bias, BigDecimal p_notchPosition, CalculationConditions p_conditions) throws DataFormatException, IOException
+    public Absorber(File p_SCAPSFile, CalculationConditions p_conditions) throws DataFormatException, IOException
     {
-        m_bias = p_bias;
-        m_notchPosition = p_notchPosition;
+        m_energyBandFile = p_SCAPSFile.getName();
+        m_notchPosition = p_conditions.getNotchPositions().get(p_SCAPSFile);
         m_traps = new ArrayList<>();
         
         Map<String, BigDecimal> bandgaps = p_conditions.getBandgaps();
@@ -110,7 +110,7 @@ public class Absorber
         
         if (p_conditions.isElectron() && p_conditions.includesGrading())
         {
-            SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
+            SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(p_SCAPSFile, p_conditions.getAbscissaMultiplier());
             //À refactoriser ?
             if(m_zeroAtFront)
             {
@@ -154,7 +154,7 @@ public class Absorber
         }
         else
         {
-            m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(new File(p_fileElectricFields), p_conditions.getAbscissaMultiplier());
+            m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_SCAPSFile, p_conditions.getAbscissaMultiplier());
         }
     }
     
@@ -230,9 +230,9 @@ public class Absorber
         return m_notchPosition;
     }
     
-    public String getBias()
+    public String getEnergyBandFile()
     {
-        return m_bias;
+        return m_energyBandFile;
     }
     
     public BigDecimal getFrontPosition()

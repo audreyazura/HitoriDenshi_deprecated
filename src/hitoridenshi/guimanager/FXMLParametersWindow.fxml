@@ -14,6 +14,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -36,9 +38,9 @@
     </HBox>
     
     <HBox styleClass="hbox">        
-        <VBox styleClass="headervbox" HBox.hgrow="ALWAYS" >
-            <HBox styleClass="hbox" VBox.vgrow="ALWAYS">
-                <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
+        <VBox styleClass="headervbox" HBox.hgrow="ALWAYS">
+            <HBox styleClass="hbox" fx:id="firsthbox" VBox.vgrow="ALWAYS">
+                <VBox styleClass="internalvbox">
                     <Label styleClass="windowtext" text="Abscissa unit:" />
                     <ChoiceBox fx:id="unitselec" onAction="#applyNewUnitSelection" onShowing="#savePreviousSelection">
                         <items>
@@ -50,7 +52,7 @@
                     </ChoiceBox>
                 </VBox>
 
-                <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS" >
+                <VBox styleClass="internalvbox">
                     <Label styleClass="windowtext" text="Material:" />
                     <ChoiceBox fx:id="materialselec">
                         <items>
@@ -60,6 +62,15 @@
                         </items>    
                     </ChoiceBox>
                 </VBox>
+                
+                <HBox styleClass="internalhbox">
+                    <Label styleClass="windowtext" wrapText="true" text="Number of samples" />
+                    <Spinner fx:id="numberSamples" prefWidth="60" editable="false" >
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="99" />
+                        </valueFactory>
+                    </Spinner>
+                </HBox>
             </HBox>
             
             <HBox styleClass="hbox" VBox.vgrow="ALWAYS">
@@ -88,119 +99,228 @@
         </HBox>
     </HBox>
     
-    <VBox styleClass="propertyvbox">
-        <Label styleClass="titlelabel" text="Files configuration"/>
-        
-        <GridPane styleClass="gridpane">
-            <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" />
-                <ColumnConstraints hgrow="ALWAYS" />
-                <ColumnConstraints hgrow="NEVER" />
-            </columnConstraints>
-            
-            <Label styleClass="windowtext" text="SCAPS Energy Band files (*.eb): " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
-            <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
-            <Button text="Browse" onAction="#browsingInput" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.valignment="top" />
+    <HBox styleClass="internalhbox">
+        <VBox styleClass="propertyvbox">
+            <Label styleClass="titlelabel" text="Sample particularities"/>
 
-            <Label styleClass="windowtext" text="Output folder: " GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button text="Browse" alignment="center" onAction="#browsingOutput" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-        </GridPane>
-    </VBox>
-    
-    <VBox styleClass="propertyvbox">
-        <Label styleClass="titlelabel" text="Variable parameters"/>
-        
-        <GridPane styleClass="gridpane">
-            <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" />
-                <ColumnConstraints hgrow="ALWAYS" />
-            </columnConstraints>
-            
-            <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        
-            <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        
-            <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        </GridPane>
-    </VBox>
-    
-    <VBox styleClass="propertyvbox" fx:id="sampleparameterbox" >
-        <Label styleClass="titlelabel" text="Sample parameters"/>
-        
-        <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
-            <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of origin (x = 0):"/>
-            <HBox styleClass="hbox" HBox.hgrow="ALWAYS">
-                <RadioButton toggleGroup="$originselection" text="Front" fx:id="originatfront" />
-                <RadioButton toggleGroup="$originselection" text="Back" fx:id="originatback" />
-            </HBox>
-        </VBox> 
-        
-        <HBox styleClass="hbox">
-            <HBox styleClass="internalhbox" >
-                <Label styleClass="windowtext" text="Sample width: " fx:id="samplewidthlabel"/>
-                <TextField styleClass="inputfield" fx:id="samplewidth" prefWidth="100" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox" >
-                <Label styleClass="windowtext" text="Buffer+window width: " fx:id="bufferwindowlabel"/>
-                <TextField styleClass="inputfield" fx:id="bufferwindowwidth" prefWidth="100" />
-            </HBox>
-        </HBox>
+            <HBox styleClass="internalhbox">
+                <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                    <CheckBox fx:id="sameFile" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                    <Label styleClass="windowtext" wrapText="true" text="Unique sample file" />
+                </HBox>
 
-        <HBox styleClass="hbox" fx:id="gradingbox" >
-            <HBox styleClass="internalhbox" fx:id="frontgapbox" >
-                <Label styleClass="windowtext" wrapText="true" text="Front bandgap (eV): " />
-                <TextField styleClass="inputfield" fx:id="frontbangap" prefWidth="65" />
+                <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS">
+                    <HBox fx:id="UniqueGradingBox" styleClass="intermediatehbox" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameNotchPos" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique notch position" />
+                        </HBox>
+
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameFrontEnergy" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique front gap" />
+                        </HBox>
+
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameNotchEnergy" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique notch gap" />
+                        </HBox>
+
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameBackEnergy" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique back gap" />
+                        </HBox>
+                    </HBox>
+
+                    <HBox fx:id="UniqueTrapBox" styleClass="intermediatehbox">
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameTrapDensity" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique trap#1 density" />
+                        </HBox>
+
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameTrapCrosssection" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique trap#1 cross-section" />
+                        </HBox>
+
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <CheckBox fx:id="sameTrapEnergy" allowIndeterminate="false" selected="false" onAction="#showgrading" />    
+                            <Label styleClass="windowtext" wrapText="true" text="Unique trap#1 energy" />
+                        </HBox>
+                    </HBox>
+                </VBox>
             </HBox>
-            
-            <HBox styleClass="internalhbox" fx:id="notchgapbox" >
-                <Label styleClass="windowtext" wrapText="true" text="Minimum bandgap (eV): " />
-                <TextField styleClass="inputfield" fx:id="notchbandgap" prefWidth="65" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox" fx:id="backgapbox" >
-                <Label styleClass="windowtext" wrapText="true" text="Back bandgap (eV): " />
-                <TextField styleClass="inputfield" fx:id="backbangap" prefWidth="65" />
-            </HBox>
-        </HBox>
-    </VBox>
-    
-    <VBox styleClass="propertyvbox">
-        <Label styleClass="titlelabel" text="Particles parameters"/>
-        
-        <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
-            <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Chose the simulated particle:"/>
-            <HBox styleClass="hbox">
-                <RadioButton toggleGroup="$particleselection" text="Electrons" onAction="#changeSelectedParticle" fx:id="electronselection" />
-                <RadioButton toggleGroup="$particleselection" text="Holes" onAction="#changeSelectedParticle" fx:id="holeselection" />
-            </HBox>
+
+            <VBox styleClass="propertyvbox" fx:id="Sample1Box">
+                <Label styleClass="titlelabel" text="Sample 1"/>
+
+                <VBox styleClass="internalhbox">
+                    <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS">
+                        <Label styleClass="windowtext" text="SCAPS Energy Band files (*.eb)"/>
+                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
+                            <TextField styleClass="inputfield" fx:id="outputFolderSample1" HBox.hgrow="ALWAYS"/>
+                            <Button text="Browse" alignment="center" onAction="#browsingInput"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="internalvbox">
+                        <Label styleClass="subtitle" text="Grading"/>
+                        <HBox styleClass="parametershbox">
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Notch position (nm)"/>
+                                <TextField styleClass="inputfield" fx:id="notchPositionSample1" maxWidth="65"/>
+                            </HBox>
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Front gap (eV)"/>
+                                <TextField styleClass="inputfield" fx:id="frontGapSample1" maxWidth="65"/>
+                            </HBox>
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Notch gap (eV)"/>
+                                <TextField styleClass="inputfield" fx:id="notchGapSample1" maxWidth="65"/>
+                            </HBox>
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Back gap (eV)"/>
+                                <TextField styleClass="inputfield" fx:id="backGapSample1" maxWidth="65"/>
+                            </HBox>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="internalvbox">
+                        <Label styleClass="subtitle" text="Trap #1"/>
+                        <HBox styleClass="parametershbox">
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Trap density (cm-3)"/>
+                                <TextField styleClass="inputfield" fx:id="trap1DensitySample1" maxWidth="65"/>
+                            </HBox>
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Trap cross-section (cm-2)"/>
+                                <TextField styleClass="inputfield" fx:id="trap1CrosssectionSample1" maxWidth="65"/>
+                            </HBox>
+                            <HBox styleClass="internalvbox">
+                                <Label styleClass="windowtext" text="Trap energy (eV)"/>
+                                <TextField styleClass="inputfield" fx:id="trap1EnergySample1" maxWidth="65"/>
+                            </HBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </VBox>
         </VBox>
         
-        <HBox styleClass="internalhbox">
-            <Label styleClass="windowtext" text="Particle effective mass: "/>
-            <TextField styleClass="inputfield" fx:id="effectivemass" prefWidth="100" />
-            <Label styleClass="windowtext" text="*electron mass"/>
-        </HBox>
+        <VBox styleClass="propertyvbox">
+            <VBox styleClass="propertyvbox">
+                <Label styleClass="titlelabel" text="Files configuration"/>
 
-        <HBox styleClass="hbox">
-            <HBox styleClass="internalhbox">
-                <Label styleClass="windowtext" text="Lifetime (ns): "/>
-                <TextField styleClass="inputfield" fx:id="lifetime" prefWidth="100" />
-            </HBox>
-            
-            <HBox styleClass="internalhbox">
-                <Label styleClass="windowtext" text="Number of simulated particle: "/>
-                <TextField styleClass="inputfield" fx:id="numbersimulated" prefWidth="100" />
-            </HBox>
-        </HBox>
-    </VBox>
+                <GridPane styleClass="gridpane">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints hgrow="NEVER" />
+                    </columnConstraints>
+
+                    <Label styleClass="windowtext" text="SCAPS Energy Band files (*.eb): " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
+                    <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
+                    <Button text="Browse" onAction="#browsingInput" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.valignment="top" />
+
+                    <Label styleClass="windowtext" text="Output folder: " GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Button text="Browse" alignment="center" onAction="#browsingOutput" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                </GridPane>
+            </VBox>
+
+            <VBox styleClass="propertyvbox">
+                <Label styleClass="titlelabel" text="Variable parameters"/>
+
+                <GridPane styleClass="gridpane">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+
+                    <Label styleClass="windowtext" text="Bias voltages (V, separated by ';'): " GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField styleClass="inputfield" fx:id="biasvoltages" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label styleClass="windowtext" text="Notch positions in the absorber (separated by ';'): " fx:id="notchlabel" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextField styleClass="inputfield" fx:id="notches" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label styleClass="windowtext" text="Generation positions (separated by ';'): " fx:id="generationlabel" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <TextField styleClass="inputfield" fx:id="generationpositions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                </GridPane>
+            </VBox>
+
+            <VBox styleClass="propertyvbox" fx:id="sampleparameterbox" >
+                <Label styleClass="titlelabel" text="Sample parameters"/>
+
+                <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
+                    <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of origin (x = 0):"/>
+                    <HBox styleClass="hbox" HBox.hgrow="ALWAYS">
+                        <RadioButton toggleGroup="$originselection" text="Front" fx:id="originatfront" />
+                        <RadioButton toggleGroup="$originselection" text="Back" fx:id="originatback" />
+                    </HBox>
+                </VBox> 
+
+                <HBox styleClass="hbox">
+                    <HBox styleClass="internalhbox" >
+                        <Label styleClass="windowtext" text="Sample width: " fx:id="samplewidthlabel"/>
+                        <TextField styleClass="inputfield" fx:id="samplewidth" prefWidth="100" />
+                    </HBox>
+
+                    <HBox styleClass="internalhbox" >
+                        <Label styleClass="windowtext" text="Buffer+window width: " fx:id="bufferwindowlabel"/>
+                        <TextField styleClass="inputfield" fx:id="bufferwindowwidth" prefWidth="100" />
+                    </HBox>
+                </HBox>
+
+                <HBox styleClass="hbox" fx:id="gradingbox" >
+                    <HBox styleClass="internalhbox" fx:id="frontgapbox" >
+                        <Label styleClass="windowtext" wrapText="true" text="Front bandgap (eV): " />
+                        <TextField styleClass="inputfield" fx:id="frontbangap" prefWidth="65" />
+                    </HBox>
+
+                    <HBox styleClass="internalhbox" fx:id="notchgapbox" >
+                        <Label styleClass="windowtext" wrapText="true" text="Minimum bandgap (eV): " />
+                        <TextField styleClass="inputfield" fx:id="notchbandgap" prefWidth="65" />
+                    </HBox>
+
+                    <HBox styleClass="internalhbox" fx:id="backgapbox" >
+                        <Label styleClass="windowtext" wrapText="true" text="Back bandgap (eV): " />
+                        <TextField styleClass="inputfield" fx:id="backbangap" prefWidth="65" />
+                    </HBox>
+                </HBox>
+            </VBox>
+
+            <VBox styleClass="propertyvbox">
+                <Label styleClass="titlelabel" text="Particles parameters"/>
+
+                <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
+                    <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Chose the simulated particle:"/>
+                    <HBox styleClass="hbox">
+                        <RadioButton toggleGroup="$particleselection" text="Electrons" onAction="#changeSelectedParticle" fx:id="electronselection" />
+                        <RadioButton toggleGroup="$particleselection" text="Holes" onAction="#changeSelectedParticle" fx:id="holeselection" />
+                    </HBox>
+                </VBox>
+
+                <HBox styleClass="internalhbox">
+                    <Label styleClass="windowtext" text="Particle effective mass: "/>
+                    <TextField styleClass="inputfield" fx:id="effectivemass" prefWidth="100" />
+                    <Label styleClass="windowtext" text="*electron mass"/>
+                </HBox>
+
+                <HBox styleClass="hbox">
+                    <HBox styleClass="internalhbox">
+                        <Label styleClass="windowtext" text="Lifetime (ns): "/>
+                        <TextField styleClass="inputfield" fx:id="lifetime" prefWidth="100" />
+                    </HBox>
+
+                    <HBox styleClass="internalhbox">
+                        <Label styleClass="windowtext" text="Number of simulated particle: "/>
+                        <TextField styleClass="inputfield" fx:id="numbersimulated" prefWidth="100" />
+                    </HBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </HBox>
     
     <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox">
         <Button text="Start simulation" alignment="center" defaultButton="true" onAction="#startSimulation"/>
     </HBox>
-    
 </VBox>

@@ -61,6 +61,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-alignment: center-left;
 }
 
+.intermediatehbox
+{
+    -fx-fill-height: true;
+    -fx-alignment: center-left;
+}
+
 .internalhbox
 {
     -fx-spacing: 5px;
@@ -90,6 +96,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-padding: 15px 20px 20px 20px; /*top, right, bottom, left*/
 }
 
+.parametershbox
+{
+    -fx-fill-height: true;
+    -fx-alignment: center-left;
+    -fx-spacing: 25px;
+}
+
 .pbar
 {
     -fx-progress-color: #000000;
@@ -102,6 +115,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-fill-width: true;
     -fx-border-style: solid;
     -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
+}
+
+.subtitle
+{
+    -fx-font-family: SourceSansPro;
+    -fx-text-alignment: justify;
+    -fx-font-weight: bold;
 }
 
 .titlelabel
@@ -121,6 +141,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #closebuttonbox
 {
     -fx-alignment: top-right;
+}
+
+#firsthbox
+{
+    -fx-spacing: 20px;
 }
 
 #startsimubox

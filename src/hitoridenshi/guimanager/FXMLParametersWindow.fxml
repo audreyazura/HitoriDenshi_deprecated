@@ -98,7 +98,7 @@
                 <ColumnConstraints hgrow="NEVER" />
             </columnConstraints>
             
-            <Label styleClass="windowtext" text="Input files: " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
+            <Label styleClass="windowtext" text="SCAPS Energy Band files (*.eb): " GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="top" />
             <TextArea styleClass="inputfield" fx:id="electricfieldfiles" GridPane.columnIndex="1" GridPane.rowIndex="0" prefRowCount="3" />
             <Button text="Browse" onAction="#browsingInput" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.valignment="top" />
 

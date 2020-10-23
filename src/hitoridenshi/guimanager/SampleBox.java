@@ -242,14 +242,20 @@ public class SampleBox implements Sample
         {
             for (HashMap<String, String> trap: m_traps)
             {
-                HashMap<String, BigDecimal> currentMap = new HashMap<>();
+                String density = trap.get("density");
+                String xsection = trap.get("cross-section");
+                String energy = trap.get("energy");
                 
-                for (String key: trap.keySet())
+                if (!(density == "" || density == null) && !(xsection == "" || xsection == null) && !(energy == "" || energy == null))
                 {
-                    currentMap.put(key, new BigDecimal(trap.get(key)));
+                    HashMap<String, BigDecimal> currentMap = new HashMap<>();
+                    
+                    currentMap.put("density", new BigDecimal(density));
+                    currentMap.put("cross-section", new BigDecimal(xsection));
+                    currentMap.put("energy", new BigDecimal(energy));
+                    
+                    returnList.add(currentMap);
                 }
-                
-                returnList.add(currentMap);
             }
         }
         catch (NumberFormatException ex)

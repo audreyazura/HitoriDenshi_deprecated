@@ -69,6 +69,7 @@ public class ParametersWindowController
     @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
     @FXML private RadioButton holeselection;
+    @FXML private Spinner<Integer> numberSamples;
     @FXML private Spinner<Integer> numbertraps;
     @FXML private TextArea electricfieldfiles;
     @FXML private TextField biasvoltages;
@@ -593,6 +594,16 @@ public class ParametersWindowController
         }
     }
     
+    private void addSample(int newPosition)
+    {
+        System.out.println(newPosition);
+    }
+    
+    private void decreaseSamples(int newPosition)
+    {
+        System.out.println(newPosition);
+    }
+    
     private void addTrapBox(int newPosition)
     {
         if(newPosition > trapBoxes.size()-1)
@@ -674,6 +685,17 @@ public class ParametersWindowController
         m_mainApp = p_mainApp;
         gradingbox.setVisible(false);
         gradingbox.setManaged(false);
+        numberSamples.valueProperty().addListener((obs, oldValue, newValue) -> 
+            {
+                if ((int) newValue > (int) oldValue)
+                {
+                    addSample(((int) newValue)-1);
+                }
+                else if ((int) newValue < (int) oldValue)
+                {
+                    decreaseSamples(((int) oldValue)-1);
+                }
+            });
         numbertraps.valueProperty().addListener((obs, oldValue, newValue) -> 
             {
                 if ((int) newValue > (int) oldValue)

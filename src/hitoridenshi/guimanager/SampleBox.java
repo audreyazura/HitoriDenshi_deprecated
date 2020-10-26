@@ -177,11 +177,12 @@ public class SampleBox implements Sample
     {
         for (int i = 0 ; i < p_traps.size() ; i += 1)
         {
-            addTrap(i+1);
+            addTrap(i);
             
             HashMap<String, String> currentTrap = p_traps.get(i);
-            m_traps.add(new HashMap(currentTrap));
+            m_traps.set(i, new HashMap(currentTrap));
             
+            System.out.println(m_traps.size());
             HBox trapParameters = (HBox) m_trapBoxes.get(i).getChildren().get(1);
             HBox densityBox = (HBox) trapParameters.getChildren().get(0);
             HBox xsectionBox = (HBox) trapParameters.getChildren().get(1);
@@ -218,6 +219,20 @@ public class SampleBox implements Sample
         }
     }
     
+    private boolean isEmptyTrap(int p_position)
+    {
+        HBox parametersBox = (HBox) m_trapBoxes.get(p_position).getChildren().get(1);
+        HBox densityBox = (HBox) parametersBox.getChildren().get(0);
+        HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
+        HBox energyBox = (HBox) parametersBox.getChildren().get(0);
+
+        String density = ((TextField) densityBox.getChildren().get(1)).getText();
+        String xsection = ((TextField) xsectionBox.getChildren().get(1)).getText();
+        String energy = ((TextField) energyBox.getChildren().get(1)).getText();
+
+        return (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
+    }
+    
     private void updateData ()
     {
         m_gradingProfile.put("front", m_frontGap.getText());
@@ -229,7 +244,7 @@ public class SampleBox implements Sample
         {
             try
             {
-                HBox parametersBox = (HBox) m_trapBoxes.get(i).getChildren().get(2);
+                HBox parametersBox = (HBox) m_trapBoxes.get(i).getChildren().get(1);
                 HBox densityBox = (HBox) parametersBox.getChildren().get(0);
                 HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
                 HBox energyBox = (HBox) parametersBox.getChildren().get(0);
@@ -247,10 +262,10 @@ public class SampleBox implements Sample
     
     public final void addTrap(int p_trapIndex)
     {
-        m_traps.add(new HashMap<>());
+        m_traps.add(p_trapIndex, new HashMap<>());
         
         //creating trap fields and applying the right styles
-        Label trapTitle = new Label("Trap "+p_trapIndex);
+        Label trapTitle = new Label("Trap " + (p_trapIndex+1));
         trapTitle.getStyleClass().add("subtitle");
         
         Label trapDensityLabel = new Label("Trap density (cm⁻³)");
@@ -371,20 +386,39 @@ public class SampleBox implements Sample
         }
         catch (NumberFormatException ex)
         {
-            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the traps values", ex);
         }
         catch (NullPointerException ex)
         {
-            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the traps values", ex);
         }
         
         return returnList;
+    }
+    
+    public int numberOfTraps()
+    {
+        return m_trapBoxes.size();
     }
     
     public void hide()
     {
         m_outerVBox.setVisible(false);
         m_outerVBox.setManaged(false);
+    }
+    
+    public void hideOrRemoveTrap(int p_position)
+    {
+        VBox currentTrap = m_trapBoxes.get(p_position);
+        
+        currentTrap.setVisible(false);
+        currentTrap.setManaged(false);
+        
+        if (isEmptyTrap(p_position))
+        {
+            m_trapBoxes.remove(p_position);
+            m_traps.remove(p_position);
+        }
     }
     
     public boolean isEmpty()
@@ -396,18 +430,9 @@ public class SampleBox implements Sample
             returnBoolean &= (m_notchPosition.getText().equals("")) && (m_frontGap.getText().equals("")) && (m_notchGap.getText().equals("")) && (m_backGap.getText().equals(""));
         }
         
-        for (VBox trapBox: m_trapBoxes)
+        for (int i = 0 ; i < m_trapBoxes.size() ; i += 1)
         {
-            HBox parametersBox = (HBox) trapBox.getChildren().get(2);
-            HBox densityBox = (HBox) parametersBox.getChildren().get(0);
-            HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
-            HBox energyBox = (HBox) parametersBox.getChildren().get(0);
-            
-            String density = ((TextField) densityBox.getChildren().get(1)).getText();
-            String xsection = ((TextField) xsectionBox.getChildren().get(1)).getText();
-            String energy = ((TextField) energyBox.getChildren().get(1)).getText();
-            
-            returnBoolean &= (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
+            returnBoolean &= isEmptyTrap(i);
         }
         
         return returnBoolean;
@@ -417,5 +442,11 @@ public class SampleBox implements Sample
     {
         m_outerVBox.setVisible(true);
         m_outerVBox.setManaged(true);
+    }
+    
+    public void showTrap(int p_position)
+    {
+        m_trapBoxes.get(p_position).setVisible(true);
+        m_trapBoxes.get(p_position).setManaged(true);
     }
 }

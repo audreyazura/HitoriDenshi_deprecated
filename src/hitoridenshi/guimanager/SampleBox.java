@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -314,6 +313,11 @@ public class SampleBox implements Sample
         m_notchPosition.setText(notchPositionString);
     }
     
+    public SampleBox copy(int p_newIndex)
+    {
+        return new SampleBox(p_newIndex, m_fileField.getText(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
+    }
+    
     @Override
     public File getConfigFile()
     {
@@ -377,8 +381,41 @@ public class SampleBox implements Sample
         return returnList;
     }
     
-    public SampleBox copy(int p_newIndex)
+    public void hide()
     {
-        return new SampleBox(p_newIndex, m_configFile.getAbsolutePath(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
+        m_outerVBox.setVisible(false);
+        m_outerVBox.setManaged(false);
+    }
+    
+    public boolean isEmpty()
+    {
+        boolean returnBoolean = (m_fileField.getText().equals(""));
+        
+        if (m_gradingBox.isVisible())
+        {
+            returnBoolean &= (m_notchPosition.getText().equals("")) && (m_frontGap.getText().equals("")) && (m_notchGap.getText().equals("")) && (m_backGap.getText().equals(""));
+        }
+        
+        for (VBox trapBox: m_trapBoxes)
+        {
+            HBox parametersBox = (HBox) trapBox.getChildren().get(2);
+            HBox densityBox = (HBox) parametersBox.getChildren().get(0);
+            HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
+            HBox energyBox = (HBox) parametersBox.getChildren().get(0);
+            
+            String density = ((TextField) densityBox.getChildren().get(1)).getText();
+            String xsection = ((TextField) xsectionBox.getChildren().get(1)).getText();
+            String energy = ((TextField) energyBox.getChildren().get(1)).getText();
+            
+            returnBoolean &= (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
+        }
+        
+        return returnBoolean;
+    }
+    
+    public void show()
+    {
+        m_outerVBox.setVisible(true);
+        m_outerVBox.setManaged(true);
     }
 }

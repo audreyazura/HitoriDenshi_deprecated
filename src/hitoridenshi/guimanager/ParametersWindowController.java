@@ -87,6 +87,7 @@ public class ParametersWindowController
     @FXML private VBox samplesVBox;
     @FXML private VBox sampleparameterbox;
     
+    private int visibleSampleBoxes = 0;
     private int visibleTrapBoxes = 0;
     private List<SampleBox> sampleBoxes = new ArrayList<>();
     private List<HBox> trapBoxes = new ArrayList<>();
@@ -592,12 +593,36 @@ public class ParametersWindowController
     
     private void addSample(int newPosition)
     {
-        System.out.println(newPosition);
+        if (visibleSampleBoxes == 0)
+        {
+            SampleBox newSample = new SampleBox(newPosition);
+            sampleBoxes.add(newSample);
+            newSample.attach(samplesVBox);
+        }
+        else if (newPosition >= sampleBoxes.size())
+        {
+            SampleBox newSample = sampleBoxes.get(sampleBoxes.size()-1).copy(newPosition);
+            sampleBoxes.add(newSample);
+            newSample.attach(samplesVBox);
+        }
+        else
+        {
+            sampleBoxes.get(newPosition).show();
+        }
+        visibleSampleBoxes += 1;
+        m_mainApp.getMainStage().sizeToScene();
     }
     
     private void decreaseSamples(int newPosition)
     {
-        System.out.println(newPosition);
+        SampleBox currentBox = sampleBoxes.get(newPosition);
+        currentBox.hide();
+        visibleSampleBoxes -= 1;
+        
+        if (currentBox.isEmpty())
+        {
+            sampleBoxes.remove(currentBox);
+        }
     }
     
     private void addTrapBox(int newPosition)
@@ -705,9 +730,7 @@ public class ParametersWindowController
                 }
             });
         
-        SampleBox test = new SampleBox(0);
-        sampleBoxes.add(test);
-        test.attach(samplesVBox);
+        addSample(0);
         
         loadProperties(p_configProperties);
     }

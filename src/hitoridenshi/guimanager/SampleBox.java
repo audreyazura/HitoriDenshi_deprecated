@@ -167,10 +167,10 @@ public class SampleBox implements Sample
     {
         m_gradingProfile = new HashMap(p_grading);
         
-        m_frontGap.setText(p_grading.get("front"));
-        m_notchGap.setText(p_grading.get("notchgap"));
-        m_backGap.setText(p_grading.get("back"));
-        m_notchPosition.setText(p_grading.get("notchposition"));
+        m_frontGap.setText(p_grading.containsKey("front") ? p_grading.get("front") : "");
+        m_notchGap.setText(p_grading.containsKey("notchgap") ? p_grading.get("notchgap") : "");
+        m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
+        m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
         m_outerVBox.getChildren().add(m_gradingBox);
     }
     
@@ -188,9 +188,9 @@ public class SampleBox implements Sample
             HBox xsectionBox = (HBox) trapParameters.getChildren().get(1);
             HBox energyBox = (HBox) trapParameters.getChildren().get(2);
             
-            ((TextField) densityBox.getChildren().get(1)).setText(currentTrap.get("density"));
-            ((TextField) xsectionBox.getChildren().get(1)).setText(currentTrap.get("cross-section"));
-            ((TextField) energyBox.getChildren().get(1)).setText(currentTrap.get("energy"));
+            ((TextField) densityBox.getChildren().get(1)).setText(currentTrap.containsKey("density") ? currentTrap.get("density") : "");
+            ((TextField) xsectionBox.getChildren().get(1)).setText(currentTrap. containsKey("cross-section") ? currentTrap.get("cross-section") : "");
+            ((TextField) energyBox.getChildren().get(1)).setText(currentTrap.containsKey("energy") ? currentTrap.get("energy") : "");
         }
     }
     
@@ -297,6 +297,21 @@ public class SampleBox implements Sample
     public void attach(Pane p_attachPoint)
     {
         p_attachPoint.getChildren().add(m_outerVBox);
+    }
+    
+    public void changeNotchPositionUnit(String p_newUnit, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)
+    {
+        m_notchPositionLabel.setText("Notch Position (" + p_newUnit + ")");
+        
+        String notchPositionString = m_notchPosition.getText();
+        System.out.println(notchPositionString);
+        
+        if (!notchPositionString.equals(""))
+        {
+            notchPositionString = (new BigDecimal(notchPositionString)).multiply(p_previousMultiplier).divide(p_newMultiplier).stripTrailingZeros().toPlainString();
+        }
+        
+        m_notchPosition.setText(notchPositionString);
     }
     
     @Override

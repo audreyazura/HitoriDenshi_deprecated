@@ -84,9 +84,11 @@ public class ParametersWindowController
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
     @FXML private TextField outputFolder;
+    @FXML private VBox samplesVBox;
     @FXML private VBox sampleparameterbox;
     
     private int visibleTrapBoxes = 0;
+    private List<SampleBox> sampleBoxes = new ArrayList<>();
     private List<HBox> trapBoxes = new ArrayList<>();
     private PhysicsTools.UnitsPrefix previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
@@ -138,16 +140,10 @@ public class ParametersWindowController
             bufferwindowwidth.setText(changeEnteredNumberUnit(bufferwindowwidth.getText(), previousMultiplier, currentMultiplier));
             samplewidth.setText(changeEnteredNumberUnit(samplewidth.getText(), previousMultiplier, currentMultiplier));
 
-            List<String> newNotchPositions = new ArrayList<>();
-            Arrays.asList(notches.getText().strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
+            for (SampleBox sample: sampleBoxes)
             {
-                @Override
-                public void accept(String position)
-                {
-                    newNotchPositions.add(changeEnteredNumberUnit(position, previousMultiplier, currentMultiplier));
-                }
-            });
-            notches.setText(String.join(" ; ", newNotchPositions));
+                sample.changeNotchPositionUnit(selectedUnit, previousMultiplier, currentMultiplier);
+            }
 
             List<String> newGenerationPositions = new ArrayList<>();
             Arrays.asList(generationpositions.getText().strip().split("\\h*;\\h*")).forEach(new Consumer<String>()
@@ -400,7 +396,7 @@ public class ParametersWindowController
      */
     private String changeEnteredNumberUnit (String p_numberEntered, BigDecimal p_previousMultiplier, BigDecimal p_newMultiplier)
     {
-        String correctedNumber = new String(p_numberEntered);
+        String correctedNumber = p_numberEntered;
         
         if (!correctedNumber.equals(""))
         {
@@ -685,6 +681,7 @@ public class ParametersWindowController
         m_mainApp = p_mainApp;
         gradingbox.setVisible(false);
         gradingbox.setManaged(false);
+        
         numberSamples.valueProperty().addListener((obs, oldValue, newValue) -> 
             {
                 if ((int) newValue > (int) oldValue)
@@ -707,6 +704,11 @@ public class ParametersWindowController
                     decreaseTrapBox(((int) oldValue)-1);
                 }
             });
+        
+        SampleBox test = new SampleBox(0);
+        sampleBoxes.add(test);
+        test.attach(samplesVBox);
+        
         loadProperties(p_configProperties);
     }
 }

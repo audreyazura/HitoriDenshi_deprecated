@@ -20,6 +20,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.BorderPane?>
 
 <VBox fx:controller="hitoridenshi.guimanager.ParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="mainvbox" >
@@ -100,7 +101,7 @@
     </HBox>
     
     <HBox styleClass="internalhbox">
-        <VBox styleClass="propertyvbox">
+        <VBox styleClass="propertyvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">
             <Label styleClass="titlelabel" text="Sample particularities"/>
 
             <HBox styleClass="internalhbox">
@@ -150,60 +151,6 @@
                     </HBox>
                 </VBox>
             </HBox>
-
-            <VBox styleClass="propertyvbox" fx:id="Sample1Box">
-                <Label styleClass="titlelabel" text="Sample 1"/>
-
-                <VBox styleClass="internalhbox">
-                    <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS">
-                        <Label styleClass="windowtext" text="SCAPS Energy Band files (*.eb)"/>
-                        <HBox styleClass="internalhbox" HBox.hgrow="ALWAYS">
-                            <TextField styleClass="inputfield" fx:id="outputFolderSample1" HBox.hgrow="ALWAYS"/>
-                            <Button text="Browse" alignment="center" onAction="#browsingInput"/>
-                        </HBox>
-                    </VBox>
-
-                    <VBox styleClass="internalvbox">
-                        <Label styleClass="subtitle" text="Grading"/>
-                        <HBox styleClass="parametershbox">
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Notch position (nm)"/>
-                                <TextField styleClass="inputfield" fx:id="notchPositionSample1" maxWidth="65"/>
-                            </HBox>
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Front gap (eV)"/>
-                                <TextField styleClass="inputfield" fx:id="frontGapSample1" maxWidth="65"/>
-                            </HBox>
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Notch gap (eV)"/>
-                                <TextField styleClass="inputfield" fx:id="notchGapSample1" maxWidth="65"/>
-                            </HBox>
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Back gap (eV)"/>
-                                <TextField styleClass="inputfield" fx:id="backGapSample1" maxWidth="65"/>
-                            </HBox>
-                        </HBox>
-                    </VBox>
-
-                    <VBox styleClass="internalvbox">
-                        <Label styleClass="subtitle" text="Trap #1"/>
-                        <HBox styleClass="parametershbox">
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Trap density (cm-3)"/>
-                                <TextField styleClass="inputfield" fx:id="trap1DensitySample1" maxWidth="65"/>
-                            </HBox>
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Trap cross-section (cm-2)"/>
-                                <TextField styleClass="inputfield" fx:id="trap1CrosssectionSample1" maxWidth="65"/>
-                            </HBox>
-                            <HBox styleClass="internalvbox">
-                                <Label styleClass="windowtext" text="Trap energy (eV)"/>
-                                <TextField styleClass="inputfield" fx:id="trap1EnergySample1" maxWidth="65"/>
-                            </HBox>
-                        </HBox>
-                    </VBox>
-                </VBox>
-            </VBox>
         </VBox>
         
         <VBox styleClass="internalvbox">

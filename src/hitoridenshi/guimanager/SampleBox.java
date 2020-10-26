@@ -25,11 +25,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -41,12 +44,12 @@ import javafx.stage.Stage;
 public class SampleBox implements Sample
 {
     private File m_configFile;
-    private HashMap<String, String> m_gradingProfile;
-    private List<HashMap<String, String>> m_traps;
+    private HashMap<String, String> m_gradingProfile = new HashMap<>();
+    private List<HashMap<String, String>> m_traps = new ArrayList<>();
     
-    private final Label m_title = new Label("Sample #");
+    private final Label m_title = new Label("");
     private final Button m_updateButton = new Button("Update data");
-    private final HBox m_titleBox = new HBox(m_title, m_updateButton);
+    private final BorderPane m_titleRegion = new BorderPane(null, null, m_updateButton, null, m_title);
     
     private final Label m_fileLabel = new Label("SCAPS Energy Band files (*.eb)");
     private final TextField m_fileField = new TextField("");
@@ -55,49 +58,130 @@ public class SampleBox implements Sample
     private final VBox m_fileBox = new VBox(m_fileLabel, m_browseBox);
     
     private final Label m_gradingLabel = new Label("Grading");
-    private final Label m_frontGapLabel = new Label("Front Bandgap (eV)");
-    private final TextField m_frontGap = new TextField("");
-    private final HBox m_frontBox = new HBox(m_frontGapLabel, m_frontGap);
-    private final Label m_notchGapLabel = new Label("Notch Bandgap (eV)");
-    private final TextField m_notchGap = new TextField("");
-    private final HBox m_notchGapBox = new HBox(m_notchGapLabel, m_notchGap);
-    private final Label m_backGapLabel = new Label("Back Bandgap (eV)");
-    private final TextField m_backGap = new TextField("");
-    private final HBox m_backBox = new HBox(m_backGapLabel, m_backGap);
     private final Label m_notchPositionLabel = new Label("Notch Position (nm)");
     private final TextField m_notchPosition = new TextField("");
     private final HBox m_notchPositionBox = new HBox(m_notchPositionLabel, m_notchPosition);
-    private final HBox m_gradingOptionBox = new HBox(m_frontBox, m_notchGapBox, m_backBox, m_notchPositionBox);
+    private final Label m_frontGapLabel = new Label("Front gap (eV)");
+    private final TextField m_frontGap = new TextField("");
+    private final HBox m_frontBox = new HBox(m_frontGapLabel, m_frontGap);
+    private final Label m_notchGapLabel = new Label("Notch gap (eV)");
+    private final TextField m_notchGap = new TextField("");
+    private final HBox m_notchGapBox = new HBox(m_notchGapLabel, m_notchGap);
+    private final Label m_backGapLabel = new Label("Back gap (eV)");
+    private final TextField m_backGap = new TextField("");
+    private final HBox m_backBox = new HBox(m_backGapLabel, m_backGap);
+    private final HBox m_gradingOptionBox = new HBox(m_notchPositionBox, m_frontBox, m_notchGapBox, m_backBox);
     private final VBox m_gradingBox = new VBox(m_gradingLabel, m_gradingOptionBox);
     
     private final VBox m_parametersVBox = new VBox(m_fileBox);
     
-    private final VBox m_outerVBox = new VBox(m_titleBox, m_parametersVBox);
+    private final VBox m_outerVBox = new VBox(m_titleRegion, m_parametersVBox);
     
     private final List<VBox> m_trapBoxes = new ArrayList<>();
     
-    public SampleBox (File p_file)
+    public SampleBox(int p_index)
     {
-        baseInitialization(p_file);
+        baseInitialization(p_index, "");
+        initiateGrading(new HashMap<>());
+        initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (File p_file, HashMap<String, String> p_grading)
+    public SampleBox (int p_index, String p_address)
     {
-        baseInitialization(p_file);
-        initiateGrading(p_grading);
+        baseInitialization(p_index, p_address);
+        initiateGrading(new HashMap<>());
+        initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (File p_file, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    public SampleBox (int p_index, String p_address, HashMap<String, String> p_grading)
     {
-        baseInitialization(p_file);
+        baseInitialization(p_index, p_address);
         initiateGrading(p_grading);
+        initializeTraps(new ArrayList<>());
+    }
+    
+    public SampleBox (int p_index, String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    {
+        baseInitialization(p_index, p_address);
+        initiateGrading(p_grading);
+        initializeTraps(p_traps);
+    }
+    
+    private void baseInitialization (int p_index, String p_fileAddress)
+    {
+        //setting label and text fields content
+        m_configFile = new File(p_fileAddress);
+        m_fileField.setText(p_fileAddress);
+        m_title.setText("Sample " + (p_index + 1));
         
-        m_traps = p_traps;
-        for (int i = 0 ; i < m_traps.size() ; i += 1)
+        //setting button functions
+        m_updateButton.setOnAction((ActionEvent event) ->
         {
-            HashMap<String, String> currentTrap = m_traps.get(i);
-            
+            updateData();
+        });
+        m_browseButton.setOnAction((ActionEvent event) ->
+        {
+            browse();
+        });
+        
+        //setting styles
+        String styleAddress = this.getClass().getResource("WindowsStyle.css").toExternalForm();
+        m_outerVBox.getStylesheets().add(styleAddress);
+        
+        m_outerVBox.getStyleClass().add("propertyvbox");
+        
+        m_title.getStyleClass().add("titlelabel");
+        m_updateButton.getStyleClass().add("leftbutton");
+        
+        m_parametersVBox.getStyleClass().add("internalvbox");
+        
+        m_fileBox.getStyleClass().add("internalvbox");
+        m_fileLabel.getStyleClass().add("windowtext");
+        m_browseBox.getStyleClass().add("internalhbox");
+        m_browseBox.setHgrow(m_fileField, Priority.ALWAYS);
+        m_fileField.getStyleClass().add("inputfield");
+        m_browseButton.getStyleClass().add("button");
+        
+        m_gradingBox.getStyleClass().add("internalvbox");
+        m_gradingLabel.getStyleClass().add("subtitle");
+        m_gradingOptionBox.getStyleClass().add("parametershbox");
+        m_notchPositionBox.getStyleClass().add("internalhbox");
+        m_notchPositionLabel.getStyleClass().add("windowtext");
+        m_notchPosition.getStyleClass().add("inputfield");
+        m_notchPosition.setPrefWidth(65);
+        m_frontBox.getStyleClass().add("internalhbox");
+        m_frontGapLabel.getStyleClass().add("windowtext");
+        m_frontGap.getStyleClass().add("inputfield");
+        m_frontGap.setPrefWidth(65);
+        m_notchGapBox.getStyleClass().add("internalhbox");
+        m_notchGapLabel.getStyleClass().add("windowtext");
+        m_notchGap.getStyleClass().add("inputfield");
+        m_notchGap.setPrefWidth(65);
+        m_backBox.getStyleClass().add("internalhbox");
+        m_backGapLabel.getStyleClass().add("windowtext");
+        m_backGap.getStyleClass().add("inputfield");
+        m_backGap.setPrefWidth(65);
+    }
+    
+    private void initiateGrading (HashMap<String, String> p_grading)
+    {
+        m_gradingProfile = new HashMap(p_grading);
+        
+        m_frontGap.setText(p_grading.get("front"));
+        m_notchGap.setText(p_grading.get("notchgap"));
+        m_backGap.setText(p_grading.get("back"));
+        m_notchPosition.setText(p_grading.get("notchposition"));
+        m_outerVBox.getChildren().add(m_gradingBox);
+    }
+    
+    private void initializeTraps(List<HashMap<String, String>> p_traps)
+    {
+        for (int i = 0 ; i < p_traps.size() ; i += 1)
+        {
             addTrap(i+1);
+            
+            HashMap<String, String> currentTrap = p_traps.get(i);
+            m_traps.add(new HashMap(currentTrap));
             
             HBox trapParameters = (HBox) m_trapBoxes.get(i).getChildren().get(1);
             HBox densityBox = (HBox) trapParameters.getChildren().get(0);
@@ -108,32 +192,6 @@ public class SampleBox implements Sample
             ((TextField) xsectionBox.getChildren().get(1)).setText(currentTrap.get("cross-section"));
             ((TextField) energyBox.getChildren().get(1)).setText(currentTrap.get("energy"));
         }
-    }
-    
-    private void baseInitialization (File p_file)
-    {
-        m_configFile = p_file;
-        m_fileField.setText(p_file.getAbsolutePath());
-        
-        m_updateButton.setOnAction((ActionEvent event) ->
-        {
-            updateData();
-        });
-        m_browseButton.setOnAction((ActionEvent event) ->
-        {
-            browse();
-        });
-    }
-    
-    private void initiateGrading (HashMap<String, String> p_grading)
-    {
-        m_gradingProfile = p_grading;
-        
-        m_frontGap.setText(p_grading.get("front"));
-        m_notchGap.setText(p_grading.get("notchgap"));
-        m_backGap.setText(p_grading.get("back"));
-        m_notchPosition.setText(p_grading.get("notchposition"));
-        m_outerVBox.getChildren().add(m_gradingBox);
     }
     
     private void browse ()
@@ -192,18 +250,45 @@ public class SampleBox implements Sample
     {
         m_traps.add(new HashMap<>());
         
-        Label trapTitle = new Label("Trap #"+p_trapIndex);
+        //creating trap fields and applying the right styles
+        Label trapTitle = new Label("Trap "+p_trapIndex);
+        trapTitle.getStyleClass().add("subtitle");
+        
         Label trapDensityLabel = new Label("Trap density (cm⁻³)");
+        trapDensityLabel.getStyleClass().add("windowtext");
+        
         TextField trapDensity = new TextField("");
+        trapDensity.getStyleClass().add("inputfield");
+        trapDensity.setPrefWidth(65);
+        
         HBox densityBox = new HBox(trapDensityLabel, trapDensity);
+        densityBox.getStyleClass().add("internalhbox");
+        
         Label trapXsectionLabel = new Label("Trap cross-section (cm⁻²)");
+        trapXsectionLabel.getStyleClass().add("windowtext");
+        
         TextField trapXsection = new TextField("");
+        trapXsection.getStyleClass().add("inputfield");
+        trapXsection.setPrefWidth(65);
+        
         HBox xsectionBox = new HBox(trapXsectionLabel, trapXsection);
+        xsectionBox.getStyleClass().add("internalhbox");
+        
         Label trapEnergyLabel = new Label("Trap energy (eV)");
+        trapEnergyLabel.getStyleClass().add("windowtext");
+        
         TextField trapEnergy = new TextField("");
+        trapEnergy.getStyleClass().add("inputfield");
+        trapEnergy.setPrefWidth(65);
+        
         HBox energyBox = new HBox(trapEnergyLabel, trapEnergy);
+        energyBox.getStyleClass().add("internalhbox");
+        
         HBox trapParameters = new HBox(densityBox, xsectionBox, energyBox);
+        trapParameters.getStyleClass().add("parametershbox");
+        
         VBox trapBox = new VBox(trapTitle, trapParameters);
+        trapBox.getStyleClass().add("internalvbox");
         
         m_outerVBox.getChildren().add(trapBox);
         m_trapBoxes.add(trapBox);
@@ -275,5 +360,10 @@ public class SampleBox implements Sample
         }
         
         return returnList;
+    }
+    
+    public SampleBox copy(int p_newIndex)
+    {
+        return new SampleBox(p_newIndex, m_configFile.getAbsolutePath(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
     }
 }

@@ -24,10 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -38,6 +42,10 @@ import javafx.stage.Stage;
  */
 public class SampleBox implements Sample
 {
+    private File m_configFile;
+    private HashMap<String, String> m_gradingProfile;
+    private List<HashMap<String, String>> m_traps;
+    
     private final Label m_title = new Label("Sample #");
     private final Button m_updateButton = new Button("Update data");
     private final HBox m_titleBox = new HBox(m_title, m_updateButton);
@@ -69,10 +77,6 @@ public class SampleBox implements Sample
     private final VBox m_outerVBox = new VBox(m_titleBox, m_parametersVBox);
     
     private final List<VBox> m_trapBoxes = new ArrayList<>();
-    
-    private File m_configFile;
-    private HashMap<String, String> m_gradingProfile;
-    private List<HashMap<String, String>> m_traps;
     
     public SampleBox (File p_file)
     {
@@ -113,11 +117,11 @@ public class SampleBox implements Sample
         m_configFile = p_file;
         m_fileField.setText(p_file.getAbsolutePath());
         
-        m_updateButton.setOnAction(() ->
+        m_updateButton.setOnAction((ActionEvent event) ->
         {
             updateData();
         });
-        m_browseButton.setOnAction(() ->
+        m_browseButton.setOnAction((ActionEvent event) ->
         {
             browse();
         });
@@ -186,9 +190,9 @@ public class SampleBox implements Sample
         }
     }
     
-    public void addTrap(int p_trapIndex)
+    public final void addTrap(int p_trapIndex)
     {
-        m_traps.add(new HashMap<String,String>());
+        m_traps.add(new HashMap<>());
         
         Label trapTitle = new Label("Trap #"+p_trapIndex);
         Label trapDensityLabel = new Label("Trap density (cm⁻³)");
@@ -205,6 +209,11 @@ public class SampleBox implements Sample
         
         m_outerVBox.getChildren().add(trapBox);
         m_trapBoxes.add(trapBox);
+    }
+    
+    public void attach(Pane p_attachPoint)
+    {
+        p_attachPoint.getChildren().add(m_outerVBox);
     }
     
     @Override
@@ -246,7 +255,7 @@ public class SampleBox implements Sample
                 String xsection = trap.get("cross-section");
                 String energy = trap.get("energy");
                 
-                if (!(density == "" || density == null) && !(xsection == "" || xsection == null) && !(energy == "" || energy == null))
+                if (!(density.equals("") || xsection.equals("") || energy.equals("")))
                 {
                     HashMap<String, BigDecimal> currentMap = new HashMap<>();
                     
@@ -259,6 +268,10 @@ public class SampleBox implements Sample
             }
         }
         catch (NumberFormatException ex)
+        {
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
+        }
+        catch (NullPointerException ex)
         {
             Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
         }

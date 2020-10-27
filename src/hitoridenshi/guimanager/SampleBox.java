@@ -47,7 +47,7 @@ public class SampleBox implements Sample
     private List<HashMap<String, String>> m_traps = new ArrayList<>();
     
     private final Label m_title = new Label("");
-    private final Button m_updateButton = new Button("Update data");
+    private final Button m_updateButton = new Button("Save data");
     private final BorderPane m_titleRegion = new BorderPane(null, null, m_updateButton, null, m_title);
     
     private final Label m_fileLabel = new Label("SCAPS Energy Band files (*.eb)");
@@ -116,7 +116,7 @@ public class SampleBox implements Sample
         //setting button functions
         m_updateButton.setOnAction((ActionEvent event) ->
         {
-            updateData();
+            saveData();
         });
         m_browseButton.setOnAction((ActionEvent event) ->
         {
@@ -233,7 +233,7 @@ public class SampleBox implements Sample
         return (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
     }
     
-    private void updateData ()
+    protected void saveData ()
     {
         m_gradingProfile.put("front", m_frontGap.getText());
         m_gradingProfile.put("notchgap", m_notchGap.getText());
@@ -330,6 +330,8 @@ public class SampleBox implements Sample
     
     public SampleBox copy(int p_newIndex)
     {
+        saveData();
+        
         return new SampleBox(p_newIndex, m_fileField.getText(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
     }
     

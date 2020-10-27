@@ -95,21 +95,6 @@ public class ParametersWindowController
     private MainWindowCall m_mainApp;
     
     /**
-     * Save the previously selected unit in the unitselec field to apply changes later
-     */
-    @FXML private void savePreviousSelection ()
-    {
-        try
-        {
-            previouslySelectedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
-        }
-        catch (NullPointerException|StringIndexOutOfBoundsException ex)
-        {
-            previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
-        }
-    }
-    
-    /**
      * convert the distance and position entered in the interface to the newly selected unit
      */
     @FXML private void applyNewUnitSelection ()
@@ -159,105 +144,6 @@ public class ParametersWindowController
         catch (NullPointerException ex)
         {
             System.err.println("Select a proper unit!");
-        }
-    }
-            
-    /**
-     * launch a FileChooser to select a configuration file (properties file) 
-     * load software configuration from the selected properties file
-     */
-    @FXML private void loadconfig ()
-    {
-        FileChooser browser = new FileChooser();
-        browser.setInitialDirectory(new File("ConfigurationFiles"));
-        browser.setTitle("Chose the file to load the configuration from");
-        browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Configuration files (*.conf)", "*.conf"), new FileChooser.ExtensionFilter("Properties files (*.properties)", "*.properties"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
-        
-        File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
-        
-        if (selectedFile != null)
-        {
-            try
-            {
-                Reader inputReader = new FileReader(selectedFile);
-                OrderedProperties selectedProperties = new OrderedProperties();
-                selectedProperties.load(inputReader);
-                loadProperties(selectedProperties);
-            }
-            catch (FileNotFoundException ex)
-            {
-                Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (IOException ex)
-            {
-                Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    
-    
-    /**
-     * launch a FileChooser to select the file in which the configuration will be saved
-     * save the configuration to said file
-     */
-    @FXML private void saveconfig ()
-    {
-        FileChooser browser = new FileChooser();
-	browser.setTitle("Chose the file to write the configuration in");
-        browser.setInitialDirectory(new File("ConfigurationFiles"));
-        browser.setInitialFileName("MyConfig.conf");
-        
-        File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
-        
-        if (toWriteFile != null)
-        {
-            writeConfigToFile(toWriteFile);
-        }
-    }
-    
-    /**
-     * save the current configuration as the default configuration, in the file default.conf
-     */
-    @FXML private void makedefault()
-    {
-        writeConfigToFile(new File("ConfigurationFiles/default.conf"));
-    }
-    
-    @FXML private void showgrading()
-    {
-        if(includegrading.isSelected())
-        {
-            gradingbox.setVisible(true);
-            gradingbox.setManaged(true);
-            m_mainApp.getMainStage().sizeToScene();
-        }
-        else
-        {
-            gradingbox.setVisible(false);
-            gradingbox.setManaged(false);
-            m_mainApp.getMainStage().sizeToScene();
-        }
-    }
-    
-    /**
-     * automatically changes the particle dependent parameters after the particle selection
-     * to be refactored once different material are introduce. Materials will be listed in PhysicalConstant.
-     */
-    @FXML private void changeSelectedParticle()
-    {
-        PhysicsTools.Materials material = PhysicsTools.Materials.getMaterialFromString((String) materialselec.getValue());
-        
-        if (electronselection.isSelected())
-        {
-            effectivemass.setText(material.getElectronEffectiveMass().stripTrailingZeros().toPlainString());
-            lifetime.setText("100");
-            numbersimulated.setText("10000");
-        }
-        else if (holeselection.isSelected())
-        {
-            effectivemass.setText(material.getHoleEffectiveMass().stripTrailingZeros().toPlainString());
-            lifetime.setText("50");
-            numbersimulated.setText("5000");
         }
     }
     
@@ -332,12 +218,121 @@ public class ParametersWindowController
     }
     
     /**
+     * automatically changes the particle dependent parameters after the particle selection
+     * to be refactored once different material are introduce. Materials will be listed in PhysicalConstant.
+     */
+    @FXML private void changeSelectedParticle()
+    {
+        PhysicsTools.Materials material = PhysicsTools.Materials.getMaterialFromString((String) materialselec.getValue());
+        
+        if (electronselection.isSelected())
+        {
+            effectivemass.setText(material.getElectronEffectiveMass().stripTrailingZeros().toPlainString());
+            lifetime.setText("100");
+            numbersimulated.setText("10000");
+        }
+        else if (holeselection.isSelected())
+        {
+            effectivemass.setText(material.getHoleEffectiveMass().stripTrailingZeros().toPlainString());
+            lifetime.setText("50");
+            numbersimulated.setText("5000");
+        }
+    }
+    
+    /**
+     * launch a FileChooser to select a configuration file (properties file) 
+     * load software configuration from the selected properties file
+     */
+    @FXML private void loadconfig ()
+    {
+        FileChooser browser = new FileChooser();
+        browser.setInitialDirectory(new File("ConfigurationFiles"));
+        browser.setTitle("Chose the file to load the configuration from");
+        browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Configuration files (*.conf)", "*.conf"), new FileChooser.ExtensionFilter("Properties files (*.properties)", "*.properties"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
+        
+        File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
+        
+        if (selectedFile != null)
+        {
+            try
+            {
+                Reader inputReader = new FileReader(selectedFile);
+                OrderedProperties selectedProperties = new OrderedProperties();
+                selectedProperties.load(inputReader);
+                loadProperties(selectedProperties);
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    /**
+     * launch a FileChooser to select the file in which the configuration will be saved
+     * save the configuration to said file
+     */
+    @FXML private void saveconfig ()
+    {
+        FileChooser browser = new FileChooser();
+	browser.setTitle("Chose the file to write the configuration in");
+        browser.setInitialDirectory(new File("ConfigurationFiles"));
+        browser.setInitialFileName("MyConfig.conf");
+        
+        File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
+        
+        if (toWriteFile != null)
+        {
+            writeConfigToFile(toWriteFile);
+        }
+    }
+    
+    /**
+     * Save the previously selected unit in the unitselec field to apply changes later
+     */
+    @FXML private void savePreviousSelection ()
+    {
+        try
+        {
+            previouslySelectedUnit = PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue());
+        }
+        catch (NullPointerException|StringIndexOutOfBoundsException ex)
+        {
+            previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
+        }
+    }
+    
+    @FXML private void showgrading()
+    {
+        if(includegrading.isSelected())
+        {
+            gradingbox.setVisible(true);
+            gradingbox.setManaged(true);
+            m_mainApp.getMainStage().sizeToScene();
+        }
+        else
+        {
+            gradingbox.setVisible(false);
+            gradingbox.setManaged(false);
+            m_mainApp.getMainStage().sizeToScene();
+        }
+    }
+    
+    /**
      * save the current configuration to an OrderedProperties for future use (when reloading the paramater windows)
      * create a CalculationCondition object from the parameters of the window and start a simulation with it
      * call the window tracking the ongoing simulation
      */
     @FXML private void startSimulation ()
     {
+        for (SampleBox sample: sampleBoxes)
+        {
+            sample.saveData();
+        }
         //add logic to remove trapBoxes that are not shown
 //        while (trapBoxes.size() > visibleTrapBoxes)
 //        {
@@ -387,6 +382,49 @@ public class ParametersWindowController
         }
     }
     
+    private void addSample(int newPosition)
+    {
+        if (visibleSampleBoxes == 0)
+        {
+            SampleBox newSample = new SampleBox(newPosition);
+            sampleBoxes.add(newSample);
+            newSample.attach(samplesVBox);
+        }
+        else if (newPosition >= sampleBoxes.size())
+        {
+            SampleBox newSample = sampleBoxes.get(sampleBoxes.size()-1).copy(newPosition);
+            sampleBoxes.add(newSample);
+            newSample.attach(samplesVBox);
+        }
+        else
+        {
+            sampleBoxes.get(newPosition).show();
+        }
+        visibleSampleBoxes += 1;
+        m_mainApp.getMainStage().sizeToScene();
+    }
+    
+    private void addTrapBox(int newPosition)
+    {
+        if(newPosition >= sampleBoxes.get(0).numberOfTraps())
+        {
+            for (SampleBox sample: sampleBoxes)
+            {
+                sample.addTrap(newPosition);
+            }
+        }
+        else
+        {
+            for (SampleBox sample: sampleBoxes)
+            {
+                sample.showTrap(newPosition);
+            }
+        }
+        
+        m_mainApp.getMainStage().sizeToScene();
+        visibleTrapBoxes += 1;
+    }
+    
     /**
      * take a number as a string, as well as the multiplier of its previous unit and of its new unit in order to convert it to the new unit
      * @param p_numberEntered the number as string
@@ -406,87 +444,89 @@ public class ParametersWindowController
         return correctedNumber;
     }
     
-    /**
-     * write the current configuration to the file passed
-     * @param p_file the file to write the configuration to
-     */
-    private void writeConfigToFile (File p_file)
+    private void decreaseSamples(int newPosition)
     {
-        if (p_file.isFile())
-        {
-            p_file.delete();
-        }
-        if (p_file.isDirectory())
-        {
-            //throw error
-        }
+        SampleBox currentBox = sampleBoxes.get(newPosition);
+        currentBox.hide();
+        visibleSampleBoxes -= 1;
         
-        try
+        if (currentBox.isEmpty())
         {
-            Writer fileWriter = new FileWriter(p_file);
-            writeConfigToProperties().store(fileWriter, null);
-        }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            sampleBoxes.remove(currentBox);
         }
     }
     
-    /**
-     * create an OrderedProperties from the current configuration
-     * @return an OrderedProperties containing the current configuration
-     */
-    private OrderedProperties writeConfigToProperties()
+    private void decreaseTrapBox(int position)
     {
-        OrderedProperties extractedProperties = new OrderedProperties();
-                
-        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
-        extractedProperties.setProperty("output_folder",  outputFolder.getText());
-        extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
-        extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
-        extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
-        extractedProperties.setProperty("notch_positions",  notches.getText());
-        extractedProperties.setProperty("generation_positions",  generationpositions.getText());
-        extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
-        extractedProperties.setProperty("sample_width",  samplewidth.getText());
-        extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
-        extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
-        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
-        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
-        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
-        extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
-        extractedProperties.setProperty("effective_mass",  effectivemass.getText());
-        extractedProperties.setProperty("lifetime",  lifetime.getText());
-        extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
-        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
-        extractedProperties.setProperty("output_folder",  outputFolder.getText());
+        for (SampleBox sample: sampleBoxes)
+        {
+            sample.hideOrRemoveTrap(position);
+        }
+        m_mainApp.getMainStage().sizeToScene();
+        visibleTrapBoxes -= 1;
+    }
+    
+    /**
+     * Initialize the controller of the configuration window
+     * @param p_mainApp the main application for callback
+     * @param p_configProperties an OrderedProperties with the contents of the different fields
+     */
+    public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
+    {
+        m_mainApp = p_mainApp;
+        gradingbox.setVisible(false);
+        gradingbox.setManaged(false);
         
-        //writing the traps in a legible way
-//        if (trapBoxes.size() > 0)
-//        {
-//            extractedProperties.setProperty("number_of_traps", Integer.toString(trapBoxes.size()));
-//            
-//            for (int boxIndex = 0 ; boxIndex < trapBoxes.size() ; boxIndex += 1)
-//            {
-//                String trapDensity = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(0)).getChildren().get(1)).getText();
-//                String trapCrossSection = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(1)).getChildren().get(1)).getText();
-//                String trapEnergy = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(2)).getChildren().get(1)).getText();
-//                
-//                if (!(trapDensity.equals("") || trapCrossSection.equals("") || trapEnergy.equals("")))
-//                {
-//                    extractedProperties.setProperty("trap"+boxIndex+"_density", trapDensity);
-//                    extractedProperties.setProperty("trap"+boxIndex+"_crosssection", trapCrossSection);
-//                    extractedProperties.setProperty("trap"+boxIndex+"_energy", trapEnergy);
-//                }
-//            }
-//        }
+        numberSamples.valueProperty().addListener((obs, oldValue, newValue) -> 
+            {
+                if ((int) newValue > (int) oldValue)
+                {
+                    addSample(((int) newValue)-1);
+//                    System.out.println(sampleBoxes.size());
+//                    for (SampleBox sample: sampleBoxes)
+//                    {
+//                        System.out.println(sample.numberOfTraps());
+//                    }
+//                    System.out.println("");
+                }
+                else if ((int) newValue < (int) oldValue)
+                {
+                    decreaseSamples(((int) oldValue)-1);
+//                    System.out.println(sampleBoxes.size());
+//                    for (SampleBox sample: sampleBoxes)
+//                    {
+//                        System.out.println(sample.numberOfTraps());
+//                    }
+//                    System.out.println("");
+                }
+            });
+        numbertraps.valueProperty().addListener((obs, oldValue, newValue) -> 
+            {
+                if ((int) newValue > (int) oldValue)
+                {
+                    addTrapBox(((int) newValue)-1);
+//                    System.out.println(sampleBoxes.size());
+//                    for (SampleBox sample: sampleBoxes)
+//                    {
+//                        System.out.println(sample.numberOfTraps());
+//                    }
+//                    System.out.println("");
+                }
+                else if ((int) newValue < (int) oldValue)
+                {
+                    decreaseTrapBox(((int) oldValue)-1);
+//                    System.out.println(sampleBoxes.size());
+//                    for (SampleBox sample: sampleBoxes)
+//                    {
+//                        System.out.println(sample.numberOfTraps());
+//                    }
+//                    System.out.println("");
+                }
+            });
         
+        addSample(0);
         
-        return extractedProperties;
+        loadProperties(p_configProperties);
     }
     
     /**
@@ -590,131 +630,86 @@ public class ParametersWindowController
 //        }
     }
     
-    private void addSample(int newPosition)
+    /**
+     * write the current configuration to the file passed
+     * @param p_file the file to write the configuration to
+     */
+    private void writeConfigToFile (File p_file)
     {
-        if (visibleSampleBoxes == 0)
+        if (p_file.isFile())
         {
-            SampleBox newSample = new SampleBox(newPosition);
-            sampleBoxes.add(newSample);
-            newSample.attach(samplesVBox);
+            p_file.delete();
         }
-        else if (newPosition >= sampleBoxes.size())
+        if (p_file.isDirectory())
         {
-            SampleBox newSample = sampleBoxes.get(sampleBoxes.size()-1).copy(newPosition);
-            sampleBoxes.add(newSample);
-            newSample.attach(samplesVBox);
-        }
-        else
-        {
-            sampleBoxes.get(newPosition).show();
-        }
-        visibleSampleBoxes += 1;
-        m_mainApp.getMainStage().sizeToScene();
-    }
-    
-    private void decreaseSamples(int newPosition)
-    {
-        SampleBox currentBox = sampleBoxes.get(newPosition);
-        currentBox.hide();
-        visibleSampleBoxes -= 1;
-        
-        if (currentBox.isEmpty())
-        {
-            sampleBoxes.remove(currentBox);
-        }
-    }
-    
-    private void addTrapBox(int newPosition)
-    {
-        if(newPosition >= sampleBoxes.get(0).numberOfTraps())
-        {
-            for (SampleBox sample: sampleBoxes)
-            {
-                sample.addTrap(newPosition);
-            }
-        }
-        else
-        {
-            for (SampleBox sample: sampleBoxes)
-            {
-                sample.showTrap(newPosition);
-            }
+            //throw error
         }
         
-        m_mainApp.getMainStage().sizeToScene();
-        visibleTrapBoxes += 1;
-    }
-    
-    private void decreaseTrapBox(int position)
-    {
-        for (SampleBox sample: sampleBoxes)
+        try
         {
-            sample.hideOrRemoveTrap(position);
+            Writer fileWriter = new FileWriter(p_file);
+            writeConfigToProperties().store(fileWriter, null);
         }
-        m_mainApp.getMainStage().sizeToScene();
-        visibleTrapBoxes -= 1;
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
-     * Initialize the controller of the configuration window
-     * @param p_mainApp the main application for callback
-     * @param p_configProperties an OrderedProperties with the contents of the different fields
+     * create an OrderedProperties from the current configuration
+     * @return an OrderedProperties containing the current configuration
      */
-    public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
+    private OrderedProperties writeConfigToProperties()
     {
-        m_mainApp = p_mainApp;
-        gradingbox.setVisible(false);
-        gradingbox.setManaged(false);
+        OrderedProperties extractedProperties = new OrderedProperties();
+                
+        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
+        extractedProperties.setProperty("output_folder",  outputFolder.getText());
+        extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
+        extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
+        extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
+        extractedProperties.setProperty("notch_positions",  notches.getText());
+        extractedProperties.setProperty("generation_positions",  generationpositions.getText());
+        extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
+        extractedProperties.setProperty("sample_width",  samplewidth.getText());
+        extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
+        extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
+        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
+        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
+        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
+        extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
+        extractedProperties.setProperty("effective_mass",  effectivemass.getText());
+        extractedProperties.setProperty("lifetime",  lifetime.getText());
+        extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
+        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
+        extractedProperties.setProperty("output_folder",  outputFolder.getText());
         
-        numberSamples.valueProperty().addListener((obs, oldValue, newValue) -> 
-            {
-                if ((int) newValue > (int) oldValue)
-                {
-                    addSample(((int) newValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
-                }
-                else if ((int) newValue < (int) oldValue)
-                {
-                    decreaseSamples(((int) oldValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
-                }
-            });
-        numbertraps.valueProperty().addListener((obs, oldValue, newValue) -> 
-            {
-                if ((int) newValue > (int) oldValue)
-                {
-                    addTrapBox(((int) newValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
-                }
-                else if ((int) newValue < (int) oldValue)
-                {
-                    decreaseTrapBox(((int) oldValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
-                }
-            });
+        //writing the traps in a legible way
+//        if (trapBoxes.size() > 0)
+//        {
+//            extractedProperties.setProperty("number_of_traps", Integer.toString(trapBoxes.size()));
+//            
+//            for (int boxIndex = 0 ; boxIndex < trapBoxes.size() ; boxIndex += 1)
+//            {
+//                String trapDensity = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(0)).getChildren().get(1)).getText();
+//                String trapCrossSection = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(1)).getChildren().get(1)).getText();
+//                String trapEnergy = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(2)).getChildren().get(1)).getText();
+//                
+//                if (!(trapDensity.equals("") || trapCrossSection.equals("") || trapEnergy.equals("")))
+//                {
+//                    extractedProperties.setProperty("trap"+boxIndex+"_density", trapDensity);
+//                    extractedProperties.setProperty("trap"+boxIndex+"_crosssection", trapCrossSection);
+//                    extractedProperties.setProperty("trap"+boxIndex+"_energy", trapEnergy);
+//                }
+//            }
+//        }
         
-        addSample(0);
         
-        loadProperties(p_configProperties);
+        return extractedProperties;
     }
 }

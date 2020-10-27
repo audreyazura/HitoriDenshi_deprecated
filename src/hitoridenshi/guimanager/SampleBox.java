@@ -452,7 +452,7 @@ public class SampleBox implements Sample
             String notchGap = m_notchGap.getText();
             String backGap = m_backGap.getText();
             
-            returnBoolean &= (notchPos == null || notchPos.equals("")) && (frontGap == null || frontGap.equals("")) && (notchGap == null || notchGap.equals("")) && (backGap == null && backGap.equals(""));
+            returnBoolean &= (notchPos == null || notchPos.equals("")) && (frontGap == null || frontGap.equals("")) && (notchGap == null || notchGap.equals("")) && (backGap == null || backGap.equals(""));
         }
         
         for (int i = 0 ; i < m_trapBoxes.size() ; i += 1)

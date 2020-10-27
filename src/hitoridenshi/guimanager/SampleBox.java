@@ -171,6 +171,8 @@ public class SampleBox implements Sample
         m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
         m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
         m_outerVBox.getChildren().add(m_gradingBox);
+        m_gradingBox.setManaged(false);
+        m_gradingBox.setVisible(false);
     }
     
     private void initializeTraps(List<HashMap<String, String>> p_traps)
@@ -221,6 +223,8 @@ public class SampleBox implements Sample
     
     private boolean isEmptyTrap(int p_position)
     {
+        boolean returnBoolean;
+        
         HBox parametersBox = (HBox) m_trapBoxes.get(p_position).getChildren().get(1);
         HBox densityBox = (HBox) parametersBox.getChildren().get(0);
         HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
@@ -230,7 +234,16 @@ public class SampleBox implements Sample
         String xsection = ((TextField) xsectionBox.getChildren().get(1)).getText();
         String energy = ((TextField) energyBox.getChildren().get(1)).getText();
 
-        return (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
+        try
+        {
+            returnBoolean = (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
+        }
+        catch (NullPointerException ex)
+        {
+            returnBoolean = false;
+        }
+        
+        return returnBoolean;
     }
     
     protected void saveData ()
@@ -444,6 +457,12 @@ public class SampleBox implements Sample
     {
         m_outerVBox.setVisible(true);
         m_outerVBox.setManaged(true);
+    }
+    
+    public void showGrading()
+    {
+        m_gradingBox.setManaged(true);
+        m_gradingBox.setVisible(true);
     }
     
     public void showTrap(int p_position)

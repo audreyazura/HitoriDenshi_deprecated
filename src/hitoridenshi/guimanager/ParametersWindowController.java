@@ -60,8 +60,6 @@ public class ParametersWindowController
     @FXML private CheckBox includegrading;
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
-    @FXML private HBox gradingbox;
-    @FXML private Label notchlabel;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
@@ -71,24 +69,17 @@ public class ParametersWindowController
     @FXML private RadioButton holeselection;
     @FXML private Spinner<Integer> numberSamples;
     @FXML private Spinner<Integer> numbertraps;
-    @FXML private TextArea electricfieldfiles;
     @FXML private TextField biasvoltages;
-    @FXML private TextField notches;
     @FXML private TextField generationpositions;
     @FXML private TextField samplewidth;
     @FXML private TextField bufferwindowwidth;
-    @FXML private TextField frontbangap;
-    @FXML private TextField notchbandgap;
-    @FXML private TextField backbangap;
     @FXML private TextField effectivemass;
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
     @FXML private TextField outputFolder;
     @FXML private VBox samplesVBox;
-    @FXML private VBox sampleparameterbox;
     
     private int visibleSampleBoxes = 0;
-    private int visibleTrapBoxes = 0;
     private List<SampleBox> sampleBoxes = new ArrayList<>();
     private PhysicsTools.UnitsPrefix previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
@@ -114,7 +105,6 @@ public class ParametersWindowController
                 previouslySelectedUnit = currentPrefix;
             }
             
-            notchlabel.setText("Notch positions in the absorber ("+selectedUnit+", separated by ';'):");
             generationlabel.setText("Generation positions ("+selectedUnit+", separated by ';'):");
             samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
@@ -145,50 +135,6 @@ public class ParametersWindowController
         {
             System.err.println("Select a proper unit!");
         }
-    }
-    
-    @FXML private void browsingInput ()
-    {
-        FileChooser browser = new FileChooser();
-        
-        browser.setTitle("Chose the folder containing the input files");
-        browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("SCAPS-1D eb files (*.eb)", "*.eb"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
-	
-	try
-        {
-            String fieldText = electricfieldfiles.getText().split(System.lineSeparator())[0];
-            browser.setInitialDirectory(new File((new File(fieldText)).getParent()));
-        }
-        catch (NullPointerException ex)
-        {
-            browser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-        
-        List<File> selectedFileList = new ArrayList();
-        selectedFileList = browser.showOpenMultipleDialog(new Stage());
-        
-        String fileAddressList = electricfieldfiles.getText();
-        if (selectedFileList != null)
-        {
-            fileAddressList = "";
-            for (File selectedFile: selectedFileList)
-            {
-                if (selectedFile != null)
-                {
-                    fileAddressList += selectedFile.getAbsolutePath() + System.lineSeparator();
-                }
-                else
-                {
-                    if (fileAddressList.equals("") && selectedFileList.size() == 1)
-                    {
-                        fileAddressList = electricfieldfiles.getText();
-                    }
-                }
-            }
-        }
-        
-        fileAddressList = fileAddressList.strip();
-        electricfieldfiles.setText(fileAddressList);
     }
     
     @FXML private void browsingOutput ()
@@ -273,6 +219,14 @@ public class ParametersWindowController
     }
     
     /**
+     * save the current configuration as the default configuration, in the file default.conf
+     */
+    @FXML private void makedefault()
+    {
+        writeConfigToFile(new File("ConfigurationFiles/default.conf"));
+    }
+    
+    /**
      * launch a FileChooser to select the file in which the configuration will be saved
      * save the configuration to said file
      */
@@ -310,14 +264,18 @@ public class ParametersWindowController
     {
         if(includegrading.isSelected())
         {
-            gradingbox.setVisible(true);
-            gradingbox.setManaged(true);
+            for (SampleBox sample: sampleBoxes)
+            {
+                sample.showGrading();
+            }
             m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
-            gradingbox.setVisible(false);
-            gradingbox.setManaged(false);
+            for (SampleBox sample: sampleBoxes)
+            {
+                sample.hideGrading();
+            }
             m_mainApp.getMainStage().sizeToScene();
         }
     }
@@ -358,14 +316,9 @@ public class ParametersWindowController
 //                trapList.add((HashMap) currentTrap);
 //            }
             
-            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), notches.getText(), generationpositions.getText(), electricfieldfiles.getText());
+            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), "", generationpositions.getText(), "");
             
-            if (includegrading.isSelected())
-            {
-                conditions.addGrading(new BigDecimal(frontbangap.getText()), new BigDecimal(notchbandgap.getText()), new BigDecimal(backbangap.getText()));
-            }
-            
-            SimulationManager simulationLauncher = new SimulationManager(electricfieldfiles.getText(), outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
+            SimulationManager simulationLauncher = new SimulationManager("", outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
@@ -400,6 +353,10 @@ public class ParametersWindowController
         {
             sampleBoxes.get(newPosition).show();
         }
+        if (includegrading.isSelected())
+        {
+            sampleBoxes.get(newPosition).showGrading();
+        }
         visibleSampleBoxes += 1;
         m_mainApp.getMainStage().sizeToScene();
     }
@@ -422,7 +379,6 @@ public class ParametersWindowController
         }
         
         m_mainApp.getMainStage().sizeToScene();
-        visibleTrapBoxes += 1;
     }
     
     /**
@@ -463,7 +419,6 @@ public class ParametersWindowController
             sample.hideOrRemoveTrap(position);
         }
         m_mainApp.getMainStage().sizeToScene();
-        visibleTrapBoxes -= 1;
     }
     
     /**
@@ -474,30 +429,16 @@ public class ParametersWindowController
     public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;
-        gradingbox.setVisible(false);
-        gradingbox.setManaged(false);
         
         numberSamples.valueProperty().addListener((obs, oldValue, newValue) -> 
             {
                 if ((int) newValue > (int) oldValue)
                 {
                     addSample(((int) newValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
                 }
                 else if ((int) newValue < (int) oldValue)
                 {
                     decreaseSamples(((int) oldValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
                 }
             });
         numbertraps.valueProperty().addListener((obs, oldValue, newValue) -> 
@@ -505,22 +446,10 @@ public class ParametersWindowController
                 if ((int) newValue > (int) oldValue)
                 {
                     addTrapBox(((int) newValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
                 }
                 else if ((int) newValue < (int) oldValue)
                 {
                     decreaseTrapBox(((int) oldValue)-1);
-//                    System.out.println(sampleBoxes.size());
-//                    for (SampleBox sample: sampleBoxes)
-//                    {
-//                        System.out.println(sample.numberOfTraps());
-//                    }
-//                    System.out.println("");
                 }
             });
         
@@ -542,19 +471,19 @@ public class ParametersWindowController
         materialselec.setValue(p_properties.getProperty("material"));
 
         biasvoltages.setText(p_properties.getProperty("bias_voltages"));
-        notches.setText(p_properties.getProperty("notch_positions"));
+//        notches.setText(p_properties.getProperty("notch_positions"));
         generationpositions.setText(p_properties.getProperty("generation_positions"));
         samplewidth.setText(p_properties.getProperty("sample_width"));
         bufferwindowwidth.setText(p_properties.getProperty("bufferwindow_width"));
-        frontbangap.setText(p_properties.getProperty("front_bandgap"));
-        notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
-        backbangap.setText(p_properties.getProperty("back_bandgap"));
+//        frontbangap.setText(p_properties.getProperty("front_bandgap"));
+//        notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
+//        backbangap.setText(p_properties.getProperty("back_bandgap"));
 //        trapdensity.setText(p_properties.getProperty("trap_density"));
 //        trapcapture.setText(p_properties.getProperty("trap_cross_section"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
-        electricfieldfiles.setText(p_properties.getProperty("input_files"));
+//        electricfieldfiles.setText(p_properties.getProperty("input_files"));
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
         //selecting the right position for the position origin
@@ -668,25 +597,24 @@ public class ParametersWindowController
     {
         OrderedProperties extractedProperties = new OrderedProperties();
                 
-        extractedProperties.setProperty("input_folder",  electricfieldfiles.getText());
         extractedProperties.setProperty("output_folder",  outputFolder.getText());
         extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
         extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
         extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
-        extractedProperties.setProperty("notch_positions",  notches.getText());
+//        extractedProperties.setProperty("notch_positions",  notches.getText());
         extractedProperties.setProperty("generation_positions",  generationpositions.getText());
         extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
         extractedProperties.setProperty("sample_width",  samplewidth.getText());
         extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
         extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
-        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
-        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
-        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
+//        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
+//        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
+//        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
         extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
-        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
+//        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
         extractedProperties.setProperty("output_folder",  outputFolder.getText());
         
         //writing the traps in a legible way

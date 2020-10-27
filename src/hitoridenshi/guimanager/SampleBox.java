@@ -223,8 +223,6 @@ public class SampleBox implements Sample
     
     private boolean isEmptyTrap(int p_position)
     {
-        boolean returnBoolean;
-        
         HBox parametersBox = (HBox) m_trapBoxes.get(p_position).getChildren().get(1);
         HBox densityBox = (HBox) parametersBox.getChildren().get(0);
         HBox xsectionBox = (HBox) parametersBox.getChildren().get(1);
@@ -234,16 +232,7 @@ public class SampleBox implements Sample
         String xsection = ((TextField) xsectionBox.getChildren().get(1)).getText();
         String energy = ((TextField) energyBox.getChildren().get(1)).getText();
 
-        try
-        {
-            returnBoolean = (density.equals("")) && (xsection.equals("")) && (energy.equals(""));
-        }
-        catch (NullPointerException ex)
-        {
-            returnBoolean = false;
-        }
-        
-        return returnBoolean;
+        return (density == null || density.equals("")) && (xsection == null || xsection.equals("")) && (energy == null || energy.equals(""));
     }
     
     protected void saveData ()
@@ -381,21 +370,26 @@ public class SampleBox implements Sample
         
         try
         {
-            for (HashMap<String, String> trap: m_traps)
+            for (int i = 0 ; i < m_traps.size() ; i += 1)
             {
-                String density = trap.get("density");
-                String xsection = trap.get("cross-section");
-                String energy = trap.get("energy");
-                
-                if (!(density.equals("") || xsection.equals("") || energy.equals("")))
+                if (m_trapBoxes.get(i).isVisible())
                 {
-                    HashMap<String, BigDecimal> currentMap = new HashMap<>();
+                    HashMap<String, String> trap = m_traps.get(i);
                     
-                    currentMap.put("density", new BigDecimal(density));
-                    currentMap.put("cross-section", new BigDecimal(xsection));
-                    currentMap.put("energy", new BigDecimal(energy));
-                    
-                    returnList.add(currentMap);
+                    String density = trap.get("density");
+                    String xsection = trap.get("cross-section");
+                    String energy = trap.get("energy");
+
+                    if (!(density.equals("") || xsection.equals("") || energy.equals("")))
+                    {
+                        HashMap<String, BigDecimal> currentMap = new HashMap<>();
+
+                        currentMap.put("density", new BigDecimal(density));
+                        currentMap.put("cross-section", new BigDecimal(xsection));
+                        currentMap.put("energy", new BigDecimal(energy));
+
+                        returnList.add(currentMap);
+                    }
                 }
             }
         }
@@ -406,6 +400,10 @@ public class SampleBox implements Sample
         catch (NullPointerException ex)
         {
             Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the traps values", ex);
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Traps list and trap boxes list of different size", ex);
         }
         
         return returnList;
@@ -420,6 +418,12 @@ public class SampleBox implements Sample
     {
         m_outerVBox.setVisible(false);
         m_outerVBox.setManaged(false);
+    }
+    
+    public void hideGrading()
+    {
+        m_gradingBox.setManaged(false);
+        m_gradingBox.setVisible(false);
     }
     
     public void hideOrRemoveTrap(int p_position)
@@ -442,7 +446,12 @@ public class SampleBox implements Sample
         
         if (m_gradingBox.isVisible())
         {
-            returnBoolean &= (m_notchPosition.getText().equals("")) && (m_frontGap.getText().equals("")) && (m_notchGap.getText().equals("")) && (m_backGap.getText().equals(""));
+            String notchPos = m_notchPosition.getText();
+            String frontGap = m_frontGap.getText();
+            String notchGap = m_notchGap.getText();
+            String backGap = m_backGap.getText();
+            
+            returnBoolean &= (notchPos == null || notchPos.equals("")) && (frontGap == null || frontGap.equals("")) && (notchGap == null || notchGap.equals("")) && (backGap == null && backGap.equals(""));
         }
         
         for (int i = 0 ; i < m_trapBoxes.size() ; i += 1)

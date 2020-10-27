@@ -12,6 +12,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.TableColumn?>
@@ -101,9 +102,11 @@
     </HBox>
     
     <HBox styleClass="internalhbox">
-        <VBox styleClass="propertyvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">
-            <Label styleClass="titlelabel" text="Sample particularities"/>
-        </VBox>
+        <ScrollPane styleClass="scrollpane" fx:id="samplesPane">
+            <VBox styleClass="propertyvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">
+                <Label styleClass="titlelabel" text="Sample particularities"/>
+            </VBox>
+        </ScrollPane>
         
         <VBox styleClass="internalvbox">
             <VBox styleClass="propertyvbox">

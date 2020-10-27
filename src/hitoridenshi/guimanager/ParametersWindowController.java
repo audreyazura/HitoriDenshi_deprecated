@@ -46,6 +46,7 @@ import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
@@ -69,6 +70,7 @@ public class ParametersWindowController
     @FXML private RadioButton holeselection;
     @FXML private Spinner<Integer> numberSamples;
     @FXML private Spinner<Integer> numbertraps;
+    @FXML private ScrollPane samplesPane;
     @FXML private TextField biasvoltages;
     @FXML private TextField generationpositions;
     @FXML private TextField samplewidth;
@@ -358,7 +360,6 @@ public class ParametersWindowController
             sampleBoxes.get(newPosition).showGrading();
         }
         visibleSampleBoxes += 1;
-        m_mainApp.getMainStage().sizeToScene();
     }
     
     private void addTrapBox(int newPosition)
@@ -377,8 +378,6 @@ public class ParametersWindowController
                 sample.showTrap(newPosition);
             }
         }
-        
-        m_mainApp.getMainStage().sizeToScene();
     }
     
     /**
@@ -418,7 +417,6 @@ public class ParametersWindowController
         {
             sample.hideOrRemoveTrap(position);
         }
-        m_mainApp.getMainStage().sizeToScene();
     }
     
     /**

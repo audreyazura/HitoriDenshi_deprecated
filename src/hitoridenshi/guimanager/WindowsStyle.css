@@ -117,6 +117,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-padding: 10px 10px 10px 10px; /*top, right, bottom, left*/
 }
 
+.scrollpane
+{
+    -fx-fit-to-height: true;
+    -fx-hbar-policy: as-needed;
+    -fx-vbar-policy: as-needed;
+}
+
 .subtitle
 {
     -fx-font-family: SourceSansPro;

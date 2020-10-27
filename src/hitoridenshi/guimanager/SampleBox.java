@@ -138,6 +138,7 @@ public class SampleBox implements Sample
         m_fileLabel.getStyleClass().add("windowtext");
         m_browseBox.getStyleClass().add("internalhbox");
         m_browseBox.setHgrow(m_fileField, Priority.ALWAYS);
+        m_browseBox.setPrefWidth(600);
         m_fileField.getStyleClass().add("inputfield");
         m_browseButton.getStyleClass().add("button");
         

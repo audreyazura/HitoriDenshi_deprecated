@@ -118,7 +118,7 @@
                         </columnConstraints>
                         
                         <Label styleClass="windowtext" text="Output folder: " GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField styleClass="inputfield" fx:id="outputFolder" HBox.hgrow="ALWAYS" prefWidth="500" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                         <Button text="Browse" alignment="center" onAction="#browsingOutput" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                     </GridPane>
                 </VBox>

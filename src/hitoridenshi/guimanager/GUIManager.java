@@ -31,6 +31,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.executionmanager.OutputInterface;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 
 /**
  *
@@ -71,9 +73,9 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
     }
     
     @Override
-    public Stage getMainStage()
+    public void resizeStage()
     {
-        return m_mainStage;
+        m_mainStage.sizeToScene();
     }
     
     @Override
@@ -84,10 +86,13 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         try
         {
             Parent windowFxml = parameterWindowLoader.load();
-	    ((ParametersWindowController) parameterWindowLoader.getController()).initialize(this, p_configurationProperties);
+            ParametersWindowController controller = parameterWindowLoader.getController();
             m_mainStage.setScene(new Scene(windowFxml));
+	    controller.initialize(this, p_configurationProperties);
+            m_mainStage.setTitle("Hitori Denshi");
             m_mainStage.sizeToScene();
 	    m_mainStage.show();
+            controller.boundSamplePaneSize();
         }
         catch (IOException ex)
         {

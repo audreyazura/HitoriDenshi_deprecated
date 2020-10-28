@@ -44,6 +44,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
+import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.control.ScrollPane;
@@ -61,9 +62,12 @@ public class ParametersWindowController
     @FXML private CheckBox includegrading;
     @FXML private ChoiceBox unitselec;
     @FXML private ChoiceBox materialselec;
+    @FXML private HBox header;
+    @FXML private HBox titlebox;
     @FXML private Label generationlabel;
     @FXML private Label samplewidthlabel;
     @FXML private Label bufferwindowlabel;
+    @FXML private Label particularityLabel;
     @FXML private RadioButton originatfront;
     @FXML private RadioButton originatback;
     @FXML private RadioButton electronselection;
@@ -154,7 +158,7 @@ public class ParametersWindowController
             browser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         
-        File selectedFolder = browser.showDialog(m_mainApp.getMainStage());
+        File selectedFolder = browser.showDialog(new Stage());
         if (selectedFolder != null)
         {
             outputFolder.setText(selectedFolder.getAbsolutePath());
@@ -198,7 +202,7 @@ public class ParametersWindowController
         browser.setTitle("Chose the file to load the configuration from");
         browser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Configuration files (*.conf)", "*.conf"), new FileChooser.ExtensionFilter("Properties files (*.properties)", "*.properties"), new FileChooser.ExtensionFilter("All files (*.*)", "*.*"));
         
-        File selectedFile = browser.showOpenDialog(m_mainApp.getMainStage());
+        File selectedFile = browser.showOpenDialog(new Stage());
         
         if (selectedFile != null)
         {
@@ -239,7 +243,7 @@ public class ParametersWindowController
         browser.setInitialDirectory(new File("ConfigurationFiles"));
         browser.setInitialFileName("MyConfig.conf");
         
-        File toWriteFile = browser.showSaveDialog(m_mainApp.getMainStage());
+        File toWriteFile = browser.showSaveDialog(new Stage());
         
         if (toWriteFile != null)
         {
@@ -270,7 +274,6 @@ public class ParametersWindowController
             {
                 sample.showGrading();
             }
-            m_mainApp.getMainStage().sizeToScene();
         }
         else
         {
@@ -278,8 +281,9 @@ public class ParametersWindowController
             {
                 sample.hideGrading();
             }
-            m_mainApp.getMainStage().sizeToScene();
         }
+        
+        m_mainApp.resizeStage();
     }
     
     /**
@@ -359,6 +363,9 @@ public class ParametersWindowController
         {
             sampleBoxes.get(newPosition).showGrading();
         }
+        
+        m_mainApp.resizeStage();
+        
         visibleSampleBoxes += 1;
     }
     
@@ -378,6 +385,7 @@ public class ParametersWindowController
                 sample.showTrap(newPosition);
             }
         }
+        m_mainApp.resizeStage();
     }
     
     /**
@@ -409,6 +417,8 @@ public class ParametersWindowController
         {
             sampleBoxes.remove(currentBox);
         }
+        
+        m_mainApp.resizeStage();
     }
     
     private void decreaseTrapBox(int position)
@@ -417,6 +427,14 @@ public class ParametersWindowController
         {
             sample.hideOrRemoveTrap(position);
         }
+        
+        m_mainApp.resizeStage();
+    }
+    
+    public void boundSamplePaneSize()
+    {
+        //setting the sample ScrollPane maxHeight to the available space on screen minus the size of other elements minus their margin minus 55 pixels for security
+        samplesPane.setMaxHeight(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height - titlebox.getHeight() - header.getHeight() - particularityLabel.getHeight() -125);
     }
     
     /**

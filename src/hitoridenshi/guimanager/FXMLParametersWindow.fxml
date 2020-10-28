@@ -39,7 +39,7 @@
         <Label styleClass="windowtext" fx:id="title" text="Simulation configuration"/>
     </HBox>
     
-    <HBox styleClass="hbox">        
+    <HBox styleClass="hbox" fx:id="header">        
         <VBox styleClass="headervbox" HBox.hgrow="ALWAYS">
             <HBox styleClass="hbox" fx:id="firsthbox" VBox.vgrow="ALWAYS">
                 <VBox styleClass="internalvbox">
@@ -103,7 +103,7 @@
     
     <HBox styleClass="internalhbox">
         <VBox styleClass="propertyvbox" HBox.hgrow="ALWAYS">
-            <Label styleClass="titlelabel" text="Sample particularities"/>
+            <Label styleClass="titlelabel" text="Sample particularities" fx:id="particularityLabel"/>
             
             <ScrollPane styleClass="scrollpane" fx:id="samplesPane">
                 <VBox styleClass="internalvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">

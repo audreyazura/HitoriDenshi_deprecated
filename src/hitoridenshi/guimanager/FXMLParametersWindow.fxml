@@ -102,11 +102,14 @@
     </HBox>
     
     <HBox styleClass="internalhbox">
-        <ScrollPane styleClass="scrollpane" fx:id="samplesPane">
-            <VBox styleClass="propertyvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">
-                <Label styleClass="titlelabel" text="Sample particularities"/>
-            </VBox>
-        </ScrollPane>
+        <VBox styleClass="propertyvbox" HBox.hgrow="ALWAYS">
+            <Label styleClass="titlelabel" text="Sample particularities"/>
+            
+            <ScrollPane styleClass="scrollpane" fx:id="samplesPane">
+                <VBox styleClass="internalvbox" fx:id="samplesVBox" HBox.hgrow="ALWAYS">
+                </VBox>
+            </ScrollPane>
+        </VBox>
         
         <VBox styleClass="internalvbox">
             <VBox styleClass="propertyvbox">

@@ -25,7 +25,7 @@ import nu.studer.java.util.OrderedProperties;
  */
 public interface MainWindowCall
 {
-    Stage getMainStage();
+    void resizeStage();
     
     /**
      * put the configuration window of the simulation on the stage

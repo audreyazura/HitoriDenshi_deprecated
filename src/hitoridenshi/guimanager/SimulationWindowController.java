@@ -39,7 +39,7 @@ public class SimulationWindowController
     @FXML private VBox workerpbarsright;
     
     private OrderedProperties m_tempConfigProp;
-    private MainWindowCall m_mainWindow;
+    private GUIManager m_mainWindow;
     private ProgressBar[] m_workerPBarArray;
     
     /**
@@ -49,7 +49,7 @@ public class SimulationWindowController
      * @param p_mainWindowCall the main stage, for callback
      * @param p_workerAmount the number of core used
      */
-    void initialize(OrderedProperties p_tempConfigProperties, MainWindowCall p_mainWindowCall, int p_workerAmount)
+    void initialize(OrderedProperties p_tempConfigProperties, GUIManager p_mainWindowCall, int p_workerAmount)
     {
         m_tempConfigProp = p_tempConfigProperties;
         m_mainWindow = p_mainWindowCall;

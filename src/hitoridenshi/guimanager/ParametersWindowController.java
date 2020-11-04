@@ -89,7 +89,7 @@ public class ParametersWindowController
     private List<SampleBox> sampleBoxes = new ArrayList<>();
     private PhysicsTools.UnitsPrefix previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
-    private MainWindowCall m_mainApp;
+    private GUIManager m_mainApp;
     
     /**
      * convert the distance and position entered in the interface to the newly selected unit
@@ -442,7 +442,7 @@ public class ParametersWindowController
      * @param p_mainApp the main application for callback
      * @param p_configProperties an OrderedProperties with the contents of the different fields
      */
-    public void initialize (MainWindowCall p_mainApp, OrderedProperties p_configProperties)
+    public void initialize (GUIManager p_mainApp, OrderedProperties p_configProperties)
     {
         m_mainApp = p_mainApp;
         

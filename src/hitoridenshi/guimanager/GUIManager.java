@@ -94,6 +94,7 @@ public class GUIManager extends Application implements OutputInterface
     public void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties)
     {
         FXMLLoader simulationTrackerWindowLoader = new FXMLLoader(GUIManager.class.getResource("FXMLOnGoingSimulationWindow.fxml"));
+        Stage simulationStage = new Stage();
         
         try
         {
@@ -101,8 +102,8 @@ public class GUIManager extends Application implements OutputInterface
             m_simulationWindowController = simulationTrackerWindowLoader.getController();
             m_simulationWindowController.initialize(p_tempConfigProperties, this, p_workerAmount);
             int longestColumn = p_workerAmount - p_workerAmount / 2;
-            m_mainStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
-	    m_mainStage.show();
+            simulationStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
+	    simulationStage.show();
         }
         catch (IOException ex)
         {

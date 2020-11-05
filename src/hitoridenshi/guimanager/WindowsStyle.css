@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .scrollpane
 {
     -fx-fit-to-height: false;
-    -fx-fit-to-width: false;
+    -fx-fit-to-width: true;
     -fx-hbar-policy: as-needed;
     -fx-vbar-policy: always;
 }

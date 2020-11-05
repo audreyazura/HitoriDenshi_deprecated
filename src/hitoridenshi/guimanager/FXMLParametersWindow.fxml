@@ -23,7 +23,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.BorderPane?>
 
-<VBox fx:controller="hitoridenshi.guimanager.ParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
+<VBox fx:id="mainVbox" fx:controller="hitoridenshi.guimanager.ParametersWindowController" xmlns:fx="http://javafx.com/fxml/1"
       styleClass="mainvbox" >
     
     <stylesheets>

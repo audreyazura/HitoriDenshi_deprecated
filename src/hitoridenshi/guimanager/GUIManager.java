@@ -31,14 +31,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.executionmanager.OutputInterface;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 
 /**
  *
  * @author Alban Lafuente
  */
-public class GUIManager extends Application implements MainWindowCall, OutputInterface
+public class GUIManager extends Application implements OutputInterface
 {
     private SimulationWindowController m_simulationWindowController;
     private Stage m_mainStage;
@@ -72,13 +70,6 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         }
     }
     
-    @Override
-    public void resizeStage()
-    {
-        m_mainStage.sizeToScene();
-    }
-    
-    @Override
     public void launchParametersWindow(OrderedProperties p_configurationProperties)
     {
         FXMLLoader parameterWindowLoader = new FXMLLoader(GUIManager.class.getResource("FXMLParametersWindow.fxml"));
@@ -92,7 +83,7 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
             m_mainStage.setTitle("Hitori Denshi");
             m_mainStage.sizeToScene();
 	    m_mainStage.show();
-            controller.boundSamplePaneSize();
+            m_mainStage.setMaxHeight(m_mainStage.getHeight());
         }
         catch (IOException ex)
         {
@@ -100,7 +91,6 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         }
     }
     
-    @Override
     public void launchOnGoingSimulationWindow(int p_workerAmount, OrderedProperties p_tempConfigProperties)
     {
         FXMLLoader simulationTrackerWindowLoader = new FXMLLoader(GUIManager.class.getResource("FXMLOnGoingSimulationWindow.fxml"));
@@ -117,6 +107,14 @@ public class GUIManager extends Application implements MainWindowCall, OutputInt
         catch (IOException ex)
         {
             Logger.getLogger(GUIManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void resizeStage()
+    {
+        if (!m_mainStage.isMaximized())
+        {
+            m_mainStage.sizeToScene();
         }
     }
     

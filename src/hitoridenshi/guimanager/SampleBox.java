@@ -185,7 +185,6 @@ public class SampleBox implements Sample
             HashMap<String, String> currentTrap = p_traps.get(i);
             m_traps.set(i, new HashMap(currentTrap));
             
-            System.out.println(m_traps.size());
             HBox trapParameters = (HBox) m_trapBoxes.get(i).getChildren().get(1);
             HBox densityBox = (HBox) trapParameters.getChildren().get(0);
             HBox xsectionBox = (HBox) trapParameters.getChildren().get(1);
@@ -321,7 +320,6 @@ public class SampleBox implements Sample
         m_notchPositionLabel.setText("Notch Position (" + p_newUnit + ")");
         
         String notchPositionString = m_notchPosition.getText();
-        System.out.println(notchPositionString);
         
         if (!notchPositionString.equals(""))
         {

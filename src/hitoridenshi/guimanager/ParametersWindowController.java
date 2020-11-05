@@ -83,6 +83,7 @@ public class ParametersWindowController
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
     @FXML private TextField outputFolder;
+    @FXML private VBox mainVbox;
     @FXML private VBox samplesVBox;
     
     private int visibleSampleBoxes = 0;
@@ -364,8 +365,6 @@ public class ParametersWindowController
             sampleBoxes.get(newPosition).showGrading();
         }
         
-        m_mainApp.resizeStage();
-        
         visibleSampleBoxes += 1;
     }
     
@@ -385,6 +384,7 @@ public class ParametersWindowController
                 sample.showTrap(newPosition);
             }
         }
+        
         m_mainApp.resizeStage();
     }
     
@@ -417,8 +417,6 @@ public class ParametersWindowController
         {
             sampleBoxes.remove(currentBox);
         }
-        
-        m_mainApp.resizeStage();
     }
     
     private void decreaseTrapBox(int position)
@@ -470,6 +468,8 @@ public class ParametersWindowController
             });
         
         addSample(0);
+        
+        m_mainApp.resizeStage();
         
         loadProperties(p_configProperties);
     }

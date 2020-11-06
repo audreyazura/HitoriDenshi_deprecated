@@ -101,7 +101,7 @@
         </HBox>
     </HBox>
     
-    <HBox styleClass="internalhbox">
+    <HBox styleClass="internalhbox" VBox.vgrow="ALWAYS">
         <VBox styleClass="propertyvbox" HBox.hgrow="ALWAYS">
             <Label styleClass="titlelabel" text="Sample particularities" fx:id="particularityLabel"/>
             
@@ -111,7 +111,7 @@
             </ScrollPane>
         </VBox>
         
-        <VBox styleClass="internalvbox">
+        <VBox styleClass="internalvbox" HBox.hgrow="ALWAYS">
             <VBox styleClass="propertyvbox">
                 <VBox styleClass="propertyvbox">
                     <Label styleClass="titlelabel" text="Files configuration"/>
@@ -201,7 +201,7 @@
                 </VBox>
             </VBox>
             
-            <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox">
+            <HBox styleClass="hbox" prefWidth="500" fx:id="startsimubox" VBox.vgrow="ALWAYS">
                 <Button text="Start simulation" alignment="center" defaultButton="true" onAction="#startSimulation"/>
             </HBox>
         </VBox>

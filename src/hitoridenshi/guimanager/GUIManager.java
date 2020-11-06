@@ -81,6 +81,11 @@ public class GUIManager extends Application implements OutputInterface
             m_mainStage.setScene(new Scene(windowFxml));
 	    controller.initialize(this, p_configurationProperties);
             m_mainStage.setTitle("Hitori Denshi");
+            
+            //quick fix for the case Nsample > 2, where the ScrollPane doesn't activate scroll
+            m_mainStage.setMaximized(true);
+            m_mainStage.setResizable(false);
+            
             m_mainStage.sizeToScene();
 	    m_mainStage.show();
             m_mainStage.setMaxHeight(m_mainStage.getHeight());

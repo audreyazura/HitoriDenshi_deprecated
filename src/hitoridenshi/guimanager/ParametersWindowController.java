@@ -596,8 +596,6 @@ public class ParametersWindowController
 //                {
 //                    sampleBoxes.get(i).showTrap(j);
 //                }
-            
-            System.out.println("");
         }
     }
     

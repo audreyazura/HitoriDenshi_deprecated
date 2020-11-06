@@ -46,10 +46,8 @@ import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
-import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -83,11 +81,9 @@ public class ParametersWindowController
     @FXML private TextField lifetime;
     @FXML private TextField numbersimulated;
     @FXML private TextField outputFolder;
-    @FXML private VBox mainVbox;
     @FXML private VBox samplesVBox;
     
-    private int visibleSampleBoxes = 0;
-    private List<SampleBox> sampleBoxes = new ArrayList<>();
+    private ArrayList<SampleBox> sampleBoxes = new ArrayList<>();
     private PhysicsTools.UnitsPrefix previouslySelectedUnit = PhysicsTools.UnitsPrefix.UNITY;
     
     private GUIManager m_mainApp;
@@ -294,7 +290,8 @@ public class ParametersWindowController
      */
     @FXML private void startSimulation ()
     {
-        for (SampleBox sample: sampleBoxes)
+        ArrayList<SampleBox> computedBoxes = new ArrayList(sampleBoxes.subList(0, numberSamples.getValue()));
+        for (SampleBox sample: computedBoxes)
         {
             sample.saveData();
         }
@@ -344,28 +341,28 @@ public class ParametersWindowController
     
     private void addSample(int newPosition)
     {
-        if (visibleSampleBoxes == 0)
+        if (sampleBoxes.size() == 0)
         {
-            SampleBox newSample = new SampleBox(newPosition);
+            SampleBox newSample = new SampleBox();
             sampleBoxes.add(newSample);
             newSample.attach(samplesVBox);
+            newSample.show(1);
         }
         else if (newPosition >= sampleBoxes.size())
         {
-            SampleBox newSample = sampleBoxes.get(sampleBoxes.size()-1).copy(newPosition);
+            SampleBox newSample = sampleBoxes.get(sampleBoxes.size()-1).copy();
             sampleBoxes.add(newSample);
             newSample.attach(samplesVBox);
+            newSample.show(newPosition+1);
         }
         else
         {
-            sampleBoxes.get(newPosition).show(newPosition);
+            sampleBoxes.get(newPosition).show(newPosition+1);
         }
         if (includegrading.isSelected())
         {
             sampleBoxes.get(newPosition).showGrading();
         }
-        
-        visibleSampleBoxes += 1;
     }
     
     private void addTrapBox(int newPosition)
@@ -411,7 +408,6 @@ public class ParametersWindowController
     {
         SampleBox currentBox = sampleBoxes.get(newPosition);
         currentBox.hide();
-        visibleSampleBoxes -= 1;
         
         if (currentBox.isEmpty())
         {
@@ -612,47 +608,81 @@ public class ParametersWindowController
     private OrderedProperties writeConfigToProperties()
     {
         OrderedProperties extractedProperties = new OrderedProperties();
+        int nsample = numberSamples.getValue();
+        int ntraps = numbertraps.getValue();
+        Boolean hasGrading = includegrading.isSelected();
                 
-        extractedProperties.setProperty("output_folder",  outputFolder.getText());
         extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
         extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
+        extractedProperties.setProperty("number_sample", String.valueOf(nsample));
+        extractedProperties.setProperty("has_grading", hasGrading.toString());
+        extractedProperties.setProperty("number_traps", String.valueOf(ntraps));
+        
+        for (int i = 0 ; i < nsample ; i += 1)
+        {
+            SampleBox sample = new SampleBox();
+            
+            try
+            {
+                sample = sampleBoxes.get(i);
+            }
+            catch (IndexOutOfBoundsException ex)
+            {
+                Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, "Number of sample bigger than sample table", ex);
+            }
+            
+            sample.saveData();
+            
+            String sampleTag = "sample" + i + "_";
+            
+            extractedProperties.setProperty(sampleTag + "file", sample.getConfigFile().getAbsolutePath());
+            
+            if (hasGrading)
+            {
+                HashMap<String, String> grading = sample.getStringGrading();
+                
+                extractedProperties.setProperty(sampleTag + "notch_position", grading.get("notchposition"));
+                extractedProperties.setProperty(sampleTag + "front_gap", grading.get("front"));
+                extractedProperties.setProperty(sampleTag + "notch_gap", grading.get("notchgap"));
+                extractedProperties.setProperty(sampleTag + "back_gap", grading.get("back"));
+            }
+            
+            
+            ArrayList<HashMap<String, String>> trapArray = sample.getStringTraps();
+            for (int j = 0 ; j < ntraps ; j += 1)
+            {
+                HashMap<String, String> currentTrap = new HashMap<>();
+                
+                try
+                {
+                    currentTrap = trapArray.get(j);
+                }
+                catch (IndexOutOfBoundsException ex)
+                {
+                    Logger.getLogger(ParametersWindowController.class.getName()).log(Level.SEVERE, "Number of traps bigger than the trap table", ex);
+                }
+                
+                String trapTag = sampleTag + "trap" + j + "_";
+                
+                extractedProperties.setProperty(trapTag + "density", currentTrap.get("density"));
+                extractedProperties.setProperty(trapTag + "cross-section", currentTrap.get("cross-section"));
+                extractedProperties.setProperty(trapTag + "energy", currentTrap.get("energy"));
+                
+            }
+        }
+        
+        extractedProperties.setProperty("output_folder",  outputFolder.getText());
         extractedProperties.setProperty("bias_voltages",  biasvoltages.getText());
-//        extractedProperties.setProperty("notch_positions",  notches.getText());
         extractedProperties.setProperty("generation_positions",  generationpositions.getText());
+        
         extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
         extractedProperties.setProperty("sample_width",  samplewidth.getText());
         extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
-        extractedProperties.setProperty("has_grading", includegrading.isSelected() ? "true":"false");
-//        extractedProperties.setProperty("front_bandgap",  frontbangap.getText());
-//        extractedProperties.setProperty("minimum_bandgap",  notchbandgap.getText());
-//        extractedProperties.setProperty("back_bandgap",  backbangap.getText());
+        
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));
         extractedProperties.setProperty("effective_mass",  effectivemass.getText());
         extractedProperties.setProperty("lifetime",  lifetime.getText());
         extractedProperties.setProperty("number_of_simulated_particles",  numbersimulated.getText());
-//        extractedProperties.setProperty("input_files",  electricfieldfiles.getText());
-        extractedProperties.setProperty("output_folder",  outputFolder.getText());
-        
-        //writing the traps in a legible way
-//        if (trapBoxes.size() > 0)
-//        {
-//            extractedProperties.setProperty("number_of_traps", Integer.toString(trapBoxes.size()));
-//            
-//            for (int boxIndex = 0 ; boxIndex < trapBoxes.size() ; boxIndex += 1)
-//            {
-//                String trapDensity = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(0)).getChildren().get(1)).getText();
-//                String trapCrossSection = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(1)).getChildren().get(1)).getText();
-//                String trapEnergy = ((TextField) ((HBox) trapBoxes.get(boxIndex).getChildren().get(2)).getChildren().get(1)).getText();
-//                
-//                if (!(trapDensity.equals("") || trapCrossSection.equals("") || trapEnergy.equals("")))
-//                {
-//                    extractedProperties.setProperty("trap"+boxIndex+"_density", trapDensity);
-//                    extractedProperties.setProperty("trap"+boxIndex+"_crosssection", trapCrossSection);
-//                    extractedProperties.setProperty("trap"+boxIndex+"_energy", trapEnergy);
-//                }
-//            }
-//        }
-        
         
         return extractedProperties;
     }

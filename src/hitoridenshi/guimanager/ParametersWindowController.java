@@ -358,7 +358,7 @@ public class ParametersWindowController
         }
         else
         {
-            sampleBoxes.get(newPosition).show();
+            sampleBoxes.get(newPosition).show(newPosition);
         }
         if (includegrading.isSelected())
         {

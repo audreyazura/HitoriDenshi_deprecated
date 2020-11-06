@@ -461,8 +461,10 @@ public class SampleBox implements Sample
         return returnBoolean;
     }
     
-    public void show()
+    public void show(int sampleNumber)
     {
+        m_title.setText("Sample " + (sampleNumber+1));
+        
         m_outerVBox.setVisible(true);
         m_outerVBox.setManaged(true);
     }

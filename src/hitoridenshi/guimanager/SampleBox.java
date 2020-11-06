@@ -366,7 +366,7 @@ public class SampleBox implements Sample
         return new HashMap<>(m_gradingProfile);
     }
     
-    public ArrayList<HashMap<String, BigDecimal>> getStringTraps()
+    public ArrayList<HashMap<String, String>> getStringTraps()
     {
         return new ArrayList(m_traps);
     }
@@ -472,7 +472,7 @@ public class SampleBox implements Sample
     
     public void show(int sampleNumber)
     {
-        m_title.setText("Sample " + (sampleNumber+1));
+        m_title.setText("Sample " + sampleNumber);
         
         m_outerVBox.setVisible(true);
         m_outerVBox.setManaged(true);

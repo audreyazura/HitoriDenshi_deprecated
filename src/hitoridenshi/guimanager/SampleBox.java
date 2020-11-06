@@ -78,40 +78,39 @@ public class SampleBox implements Sample
     
     private final List<VBox> m_trapBoxes = new ArrayList<>();
     
-    public SampleBox(int p_index)
+    public SampleBox()
     {
-        baseInitialization(p_index, "");
+        baseInitialization("");
         initiateGrading(new HashMap<>());
         initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (int p_index, String p_address)
+    public SampleBox (String p_address)
     {
-        baseInitialization(p_index, p_address);
+        baseInitialization(p_address);
         initiateGrading(new HashMap<>());
         initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (int p_index, String p_address, HashMap<String, String> p_grading)
+    public SampleBox (String p_address, HashMap<String, String> p_grading)
     {
-        baseInitialization(p_index, p_address);
+        baseInitialization(p_address);
         initiateGrading(p_grading);
         initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (int p_index, String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    public SampleBox (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
     {
-        baseInitialization(p_index, p_address);
+        baseInitialization(p_address);
         initiateGrading(p_grading);
         initializeTraps(p_traps);
     }
     
-    private void baseInitialization (int p_index, String p_fileAddress)
+    private void baseInitialization (String p_fileAddress)
     {
         //setting label and text fields content
         m_configFile = new File(p_fileAddress);
         m_fileField.setText(p_fileAddress);
-        m_title.setText("Sample " + (p_index + 1));
         
         //setting button functions
         m_updateButton.setOnAction((ActionEvent event) ->
@@ -329,11 +328,11 @@ public class SampleBox implements Sample
         m_notchPosition.setText(notchPositionString);
     }
     
-    public SampleBox copy(int p_newIndex)
+    public SampleBox copy()
     {
         saveData();
         
-        return new SampleBox(p_newIndex, m_fileField.getText(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
+        return new SampleBox(m_fileField.getText(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
     }
     
     @Override
@@ -360,6 +359,16 @@ public class SampleBox implements Sample
         }
         
         return returnMap;
+    }
+    
+    public HashMap<String, String> getStringGrading()
+    {
+        return new HashMap<>(m_gradingProfile);
+    }
+    
+    public ArrayList<HashMap<String, BigDecimal>> getStringTraps()
+    {
+        return new ArrayList(m_traps);
     }
     
     @Override

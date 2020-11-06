@@ -483,19 +483,12 @@ public class ParametersWindowController
         materialselec.setValue(p_properties.getProperty("material"));
 
         biasvoltages.setText(p_properties.getProperty("bias_voltages"));
-//        notches.setText(p_properties.getProperty("notch_positions"));
         generationpositions.setText(p_properties.getProperty("generation_positions"));
         samplewidth.setText(p_properties.getProperty("sample_width"));
         bufferwindowwidth.setText(p_properties.getProperty("bufferwindow_width"));
-//        frontbangap.setText(p_properties.getProperty("front_bandgap"));
-//        notchbandgap.setText(p_properties.getProperty("minimum_bandgap"));
-//        backbangap.setText(p_properties.getProperty("back_bandgap"));
-//        trapdensity.setText(p_properties.getProperty("trap_density"));
-//        trapcapture.setText(p_properties.getProperty("trap_cross_section"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
         numbersimulated.setText(p_properties.getProperty("number_of_simulated_particles"));
-//        electricfieldfiles.setText(p_properties.getProperty("input_files"));
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
         //selecting the right position for the position origin
@@ -529,46 +522,83 @@ public class ParametersWindowController
         }
         
         //select grading and add or hide the box when necessary
-        switch (p_properties.getProperty("has_grading"))
+        boolean hasGrading = Boolean.parseBoolean(p_properties.getProperty("has_grading"));
+        if (hasGrading)
         {
-            case "true":
-                if (!includegrading.isSelected())
-                {
-                    includegrading.fire();
-                }
-                break;
-            case "false":
-                if (includegrading.isSelected())
-                {
-                    includegrading.fire();
-                }
-                break;
-            default:
-                throw new RuntimeException("Invalid grading property: "+p_properties.getProperty("has_grading")+". Should be either true or false.");
+            if (!includegrading.isSelected())
+            {
+                includegrading.fire();
+            }
+        }
+        else
+        {
+            if (includegrading.isSelected())
+            {
+                includegrading.fire();
+            }
         }
         
-        //erasing the previously entered traps
+        //erasing the previously entered samples and traps
+        while (numberSamples.getValue() > 1)
+        {
+            numberSamples.decrement();
+        }
         while (numbertraps.getValue() > 0)
         {
             numbertraps.decrement();
         }
-//        trapBoxes = new ArrayList<>();
-//
-//        //loading traps and writting the correct informations to it
-//        String numberTrapsString = p_properties.getProperty("number_of_traps");
-//        if (!(numberTrapsString == null))
-//        {
-//            int nTraps = Integer.parseInt(numberTrapsString);
-//            
-//            for(int i = 0 ; i < nTraps ; i += 1)
-//            {
-//                numbertraps.increment();
-//                
-//                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(0)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_density"));
-//                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(1)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_crosssection"));
-//                ((TextField) ((HBox) trapBoxes.get(i).getChildren().get(2)).getChildren().get(1)).setText(p_properties.getProperty("trap"+i+"_energy"));
-//            }
-//        }
+        
+        //making samples
+        int nsamples = Integer.parseInt(p_properties.getProperty("number_samples"));
+        int ntraps = Integer.parseInt(p_properties.getProperty("number_traps"));
+        
+        for (int i = 0 ; i < nsamples ; i += 1)
+        {
+            String sampleTag = "sample" + i + "_";
+            
+            String sampleFileAddress = p_properties.getProperty(sampleTag + "file");
+            
+            HashMap<String, String> grading = new HashMap<>();
+            if (hasGrading)
+            {
+                grading.put("front", p_properties.getProperty(sampleTag + "front_gap"));
+                grading.put("back", p_properties.getProperty(sampleTag + "back_gap"));
+                grading.put("notchgap", p_properties.getProperty(sampleTag + "notch_gap"));
+                grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+            }
+            
+            ArrayList<HashMap<String, String>> trapList = new ArrayList<>();
+            for (int j = 0 ; j < ntraps ; j += 1)
+            {
+                if (i == 0)
+                {
+                    numbertraps.increment();
+                }
+                
+                String trapTag = sampleTag + "trap" + j + "_";
+                HashMap<String, String> trap = new HashMap<>();
+                
+                trap.put("density", trapTag + "density");
+                trap.put("cross-section", trapTag + "cross-section");
+                trap.put("energy", trapTag + "energy");
+            }
+            
+           
+            if (i > 0)
+            {
+                numberSamples.increment();
+            }
+            sampleBoxes.remove(i);
+            sampleBoxes.add(new SampleBox(sampleFileAddress, grading, trapList));
+            sampleBoxes.get(i).attach(samplesVBox);
+            sampleBoxes.get(i).show(i+1);
+//                for (int j = 0 ; j < ntraps ; j += 1)
+//                {
+//                    sampleBoxes.get(i).showTrap(j);
+//                }
+            
+            System.out.println("");
+        }
     }
     
     /**
@@ -614,7 +644,7 @@ public class ParametersWindowController
                 
         extractedProperties.setProperty("abscissa_unit", ((String) unitselec.getValue()));
         extractedProperties.setProperty("material",  ((String) materialselec.getValue()));
-        extractedProperties.setProperty("number_sample", String.valueOf(nsample));
+        extractedProperties.setProperty("number_samples", String.valueOf(nsample));
         extractedProperties.setProperty("has_grading", hasGrading.toString());
         extractedProperties.setProperty("number_traps", String.valueOf(ntraps));
         

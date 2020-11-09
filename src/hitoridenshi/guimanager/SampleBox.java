@@ -76,7 +76,7 @@ public class SampleBox implements Sample
     
     private final VBox m_outerVBox = new VBox(m_titleRegion, m_parametersVBox);
     
-    private final List<VBox> m_trapBoxes = new ArrayList<>();
+    private List<VBox> m_trapBoxes = new ArrayList<>();
     
     public SampleBox()
     {
@@ -468,6 +468,33 @@ public class SampleBox implements Sample
         }
         
         return returnBoolean;
+    }
+    
+    public void set (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    {
+        m_configFile = new File(p_address);
+        m_fileField.setText(p_address);
+        
+        m_gradingProfile = new HashMap(p_grading);
+        m_frontGap.setText(p_grading.containsKey("front") ? p_grading.get("front") : "");
+        m_notchGap.setText(p_grading.containsKey("notchgap") ? p_grading.get("notchgap") : "");
+        m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
+        m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
+        
+        for (int i = 0 ; i < p_traps.size() ; i += 1)
+        {
+            HashMap<String, String> currentTrap = p_traps.get(i);
+            m_traps.set(i, new HashMap(currentTrap));
+            
+            HBox trapParameters = (HBox) m_trapBoxes.get(i).getChildren().get(1);
+            HBox densityBox = (HBox) trapParameters.getChildren().get(0);
+            HBox xsectionBox = (HBox) trapParameters.getChildren().get(1);
+            HBox energyBox = (HBox) trapParameters.getChildren().get(2);
+            
+            ((TextField) densityBox.getChildren().get(1)).setText(currentTrap.containsKey("density") ? currentTrap.get("density") : "");
+            ((TextField) xsectionBox.getChildren().get(1)).setText(currentTrap. containsKey("cross-section") ? currentTrap.get("cross-section") : "");
+            ((TextField) energyBox.getChildren().get(1)).setText(currentTrap.containsKey("energy") ? currentTrap.get("energy") : "");
+        }
     }
     
     public void show(int sampleNumber)

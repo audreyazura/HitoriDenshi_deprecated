@@ -492,37 +492,60 @@ public class ParametersWindowController
         outputFolder.setText(p_properties.getProperty("output_folder"));
 
         //selecting the right position for the position origin
-        switch (p_properties.getProperty("origin_position"))
+        try
         {
-            case "front":
-                originatfront.setSelected(true);
-                break;
-            case "back":
-                originatback.setSelected(true);
-                break;
-            case "":
-                break;
-            default:
-                throw new RuntimeException("Invalid origin position: "+p_properties.getProperty("zero_position")+". Should be front, back or nothing.");
+            switch (p_properties.getProperty("origin_position"))
+            {
+                case "front":
+                    originatfront.setSelected(true);
+                    break;
+                case "back":
+                    originatback.setSelected(true);
+                    break;
+                case "":
+                    break;
+                default:
+                    throw new RuntimeException("Invalid origin position: "+p_properties.getProperty("zero_position")+". Should be front, back or nothing.");
+            } 
+        }
+        catch (NullPointerException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.WARNING, null, ex);
         }
 
         //selecting the right particles
-        switch (p_properties.getProperty("simulated_particle"))
+        try
         {
-            case "electron":
-                electronselection.setSelected(true);
-                break;
-            case "hole":
-                holeselection.setSelected(true);
-                break;
-            case "":
-                break;
-            default:
-                throw new RuntimeException("Invalid particle: "+p_properties.getProperty("simulated_particle")+". Should be electron, hole or nothing.");
+            switch (p_properties.getProperty("simulated_particle"))
+            {
+                case "electron":
+                    electronselection.setSelected(true);
+                    break;
+                case "hole":
+                    holeselection.setSelected(true);
+                    break;
+                case "":
+                    break;
+                default:
+                    throw new RuntimeException("Invalid particle: "+p_properties.getProperty("simulated_particle")+". Should be electron, hole or nothing.");
+            }
+        }
+        catch (NullPointerException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.WARNING, null, ex);
         }
         
         //select grading and add or hide the box when necessary
-        boolean hasGrading = Boolean.parseBoolean(p_properties.getProperty("has_grading"));
+        boolean hasGrading = false;
+        try
+        {
+            hasGrading = Boolean.parseBoolean(p_properties.getProperty("has_grading"));
+        }
+        catch (NullPointerException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
         if (hasGrading)
         {
             if (!includegrading.isSelected())
@@ -548,54 +571,62 @@ public class ParametersWindowController
             numbertraps.decrement();
         }
         
-        //making samples
-        int nsamples = Integer.parseInt(p_properties.getProperty("number_samples"));
-        int ntraps = Integer.parseInt(p_properties.getProperty("number_traps"));
-        
-        for (int i = 0 ; i < nsamples ; i += 1)
+        try
         {
-            String sampleTag = "sample" + i + "_";
-            
-            String sampleFileAddress = p_properties.getProperty(sampleTag + "file");
-            
-            HashMap<String, String> grading = new HashMap<>();
-            if (hasGrading)
-            {
-                grading.put("front", p_properties.getProperty(sampleTag + "front_gap"));
-                grading.put("back", p_properties.getProperty(sampleTag + "back_gap"));
-                grading.put("notchgap", p_properties.getProperty(sampleTag + "notch_gap"));
-                grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
-            }
-            
-            ArrayList<HashMap<String, String>> trapList = new ArrayList<>();
-            for (int j = 0 ; j < ntraps ; j += 1)
-            {
-                if (i == 0)
-                {
-                    numbertraps.increment();
-                }
-                
-                String trapTag = sampleTag + "trap" + j + "_";
-                HashMap<String, String> trap = new HashMap<>();
-                
-                trap.put("density", trapTag + "density");
-                trap.put("cross-section", trapTag + "cross-section");
-                trap.put("energy", trapTag + "energy");
-            }
-            
-           
-            if (i > 0)
+            //creating samples
+            int nsamples = Integer.parseInt(p_properties.getProperty("number_samples"));
+            int ntraps = Integer.parseInt(p_properties.getProperty("number_traps"));
+
+            while (numberSamples.getValue() < nsamples)
             {
                 numberSamples.increment();
             }
-            sampleBoxes.remove(i);
-            sampleBoxes.add(new SampleBox(sampleFileAddress, grading, trapList));
-            sampleBoxes.get(i).attach(samplesVBox);
-            sampleBoxes.get(i).show(i+1);
-//                for (int j = 0 ; j < ntraps ; j += 1)
-//                {
-//                    sampleBoxes.get(i).showTrap(j);
-//                }
+            while (numbertraps.getValue() < ntraps)
+            {
+                numbertraps.increment();
+            }
+
+            //filling samples
+            for (int i = 0 ; i < nsamples ; i += 1)
+            {
+                String sampleTag = "sample" + i + "_";
+
+                String sampleFileAddress = p_properties.getProperty(sampleTag + "file");
+
+                HashMap<String, String> grading = new HashMap<>();
+                if (hasGrading)
+                {
+                    grading.put("front", p_properties.getProperty(sampleTag + "front_gap"));
+                    grading.put("back", p_properties.getProperty(sampleTag + "back_gap"));
+                    grading.put("notchgap", p_properties.getProperty(sampleTag + "notch_gap"));
+                    grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+                }
+
+                ArrayList<HashMap<String, String>> trapList = new ArrayList<>();
+                for (int j = 0 ; j < ntraps ; j += 1)
+                {
+                    String trapTag = sampleTag + "trap" + j + "_";
+                    HashMap<String, String> trap = new HashMap<>();
+
+                    trap.put("density", p_properties.getProperty(trapTag + "density"));
+                    trap.put("cross-section", p_properties.getProperty(trapTag + "cross-section"));
+                    trap.put("energy", p_properties.getProperty(trapTag + "energy"));
+
+                    trapList.add(trap);
+                }
+
+
+                sampleBoxes.get(i).set(sampleFileAddress, grading, trapList);
+                sampleBoxes.get(i).show(i+1);
+                for (int j = 0 ; j < ntraps ; j += 1)
+                {
+                    sampleBoxes.get(i).showTrap(j);
+                }
+            }
+        }
+        catch (NumberFormatException ex)
+        {
+            Logger.getLogger(ParametersWindowController.class.getName()).log(Level.WARNING, null, ex);
         }
     }
     

@@ -19,6 +19,7 @@ package hitoridenshi.simulationmanager;
 import com.github.kilianB.pcg.fast.PcgRSFast;
 import com.github.audreyazura.commonutils.PhysicsTools;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
 /**
  * Represents the necessary parameters of the calculation, correctly converted and formatted
@@ -43,26 +45,20 @@ public class CalculationConditions
     static final BigDecimal DT = CalculationConditions.formatBigDecimal(PhysicsTools.UnitsPrefix.FEMTO.getMultiplier());
 
     private final boolean m_isZeroAtFront;
-    private boolean m_hasGrading = false;
-    private boolean m_hasQDs = false;
-    private boolean m_hasTraps = false;
     private final int m_maxSteps;
+    
+    private final List<Absorber> m_absorbers = new ArrayList<>();
     
     //All the following numbers have to be stocked with SI units
     private final BigDecimal m_bufferWindowSize;
     private final BigDecimal m_sampleSize;
     private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
-    private final List<File> m_fileList = new ArrayList<>();
     private final List<BigDecimal> m_startingPositons;
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
-    private final Map<File, BigDecimal> m_notchPositions = new HashMap<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
-    private final Map<String, BigDecimal> m_bandgaps = new HashMap<>();
-    private final Map<String, BigDecimal> m_qds = new HashMap<>();
-    private final Map<String, BigDecimal> m_traps = new HashMap<>();
     
-    public CalculationConditions (boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions, String p_electricFieldFiles)
+    public CalculationConditions (List<Sample> sampleList, boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_notchPositions, String p_startingPositions, String p_electricFieldFiles)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
@@ -89,37 +85,17 @@ public class CalculationConditions
             m_particleParameters.put("charge", formatBigDecimal(PhysicsTools.Q));
         }
         
-        List<String> notchList = Arrays.asList(p_notchPositions.strip().split("\\h*;\\h*"));
-        List<String> electricFieldFileList = Arrays.asList(p_electricFieldFiles.strip().split("\\h*"+System.lineSeparator()+"\\h*"));
-        Iterator<String> electricFieldIterator = electricFieldFileList.iterator();
-        while (electricFieldIterator.hasNext())
+        for (Sample sample: sampleList)
         {
-            Iterator<String> notchIterator = notchList.iterator();
-            
-            while (notchIterator.hasNext())
+            try
             {
-                if (electricFieldIterator.hasNext())
-                {
-                    File currentFile = new File(electricFieldIterator.next());
-                    
-                    m_fileList.add(currentFile);
-                    
-                    try
-                    {
-                        m_notchPositions.put(currentFile, formatBigDecimal((new BigDecimal(notchIterator.next())).multiply(m_abscissaUnit.getMultiplier())));
-                    }
-                    catch (NumberFormatException ex)
-                    {
-                        Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                m_absorbers.add(new Absorber(sample, m_isZeroAtFront, p_isElectron, m_sampleSize.subtract(m_bufferWindowSize), m_abscissaUnit.getMultiplier()));
+            }
+            catch(DataFormatException | IOException ex)
+            {
+                Logger.getLogger(CalculationConditions.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
         
         /**
          * filling velocityList with as many velocities as they are particles from a Boltzman distribution
@@ -166,29 +142,6 @@ public class CalculationConditions
         return (ArrayList<BigDecimal>) returnList;
     }
     
-    public void addGrading (BigDecimal p_frontBandgap, BigDecimal p_notchBandgap, BigDecimal p_backBandgap)
-    {
-        m_bandgaps.put("front", formatBigDecimal(p_frontBandgap.multiply(PhysicsTools.EV)));
-        m_bandgaps.put("notch", formatBigDecimal(p_notchBandgap.multiply(PhysicsTools.EV)));
-        m_bandgaps.put("back", formatBigDecimal(p_backBandgap.multiply(PhysicsTools.EV)));
-        m_hasGrading = true;
-    }
-    
-    public void addQDs (BigDecimal p_depth, BigDecimal p_density, BigDecimal p_crossSection)
-    {
-        m_qds.put("depth", formatBigDecimal(p_depth.multiply(PhysicsTools.EV)));
-        m_qds.put("density", formatBigDecimal(p_density.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-3, MathContext.DECIMAL128))));
-        m_qds.put("crosssection", formatBigDecimal(p_crossSection.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-1, MathContext.DECIMAL128))));
-        m_hasQDs = true;
-    }
-    
-    public void addTraps(BigDecimal p_density, BigDecimal p_crossSection)
-    {
-        m_traps.put("density", formatBigDecimal(p_density.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-3, MathContext.DECIMAL128))));
-        m_traps.put("crosssection", formatBigDecimal(p_crossSection.multiply(PhysicsTools.UnitsPrefix.CENTI.getMultiplier().pow(-1, MathContext.DECIMAL128))));
-        m_hasTraps = true;
-    }
-    
     public boolean isElectron()
     {
         return m_particleParameters.get("charge").compareTo(BigDecimal.ZERO) < 0;
@@ -197,21 +150,6 @@ public class CalculationConditions
     public boolean isZeroAtFront()
     {
         return m_isZeroAtFront;
-    }
-    
-    public boolean includesGrading()
-    {
-        return m_hasGrading;
-    }
-    
-    public boolean includesQDs()
-    {
-        return m_hasQDs;
-    }
-    
-    public boolean includesTraps()
-    {
-        return m_hasTraps;
     }
     
     public synchronized int getMaxSteps()
@@ -245,34 +183,9 @@ public class CalculationConditions
         return new HashMap(m_particleParameters);
     }
     
-    public HashMap<String, BigDecimal> getBandgaps()
-    {
-        return new HashMap(m_bandgaps);
-    }
-    
-    public HashMap<String, BigDecimal> getQDsParameters()
-    {
-        return new HashMap(m_qds);
-    }
-    
-    public HashMap<String, BigDecimal> getTrapsParameters()
-    {
-        return new HashMap(m_traps);
-    }
-    
     public String[] getBiasVoltageArray()
     {
         return m_biasVoltages.clone();
-    }
-    
-    public ArrayList<File> getFileList()
-    {
-        return new ArrayList(m_fileList);
-    }
-    
-    public HashMap<File, BigDecimal> getNotchPositions()
-    {
-        return new HashMap(m_notchPositions);
     }
     
     public synchronized ArrayList<BigDecimal> getStartingPositionList()
@@ -283,6 +196,11 @@ public class CalculationConditions
     public synchronized ArrayList<BigDecimal> getVelocityList()
     {
         return new ArrayList(m_velocityList);
+    }
+    
+    public ArrayList<Absorber> getAbsorbers()
+    {
+        return new ArrayList(m_absorbers);
     }
     
 }

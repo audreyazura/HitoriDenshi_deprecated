@@ -348,17 +348,27 @@ public class SampleBox implements Sample
     {
         HashMap<String, BigDecimal> returnMap = new HashMap<>();
         
-        try
-        {
+        
             for (String key: m_gradingProfile.keySet())
             {
-                returnMap.put(key, new BigDecimal(m_gradingProfile.get(key)));
+                try
+                {
+                    String enteredValue = m_gradingProfile.get(key);
+                    if (enteredValue.equals(""))
+                    {
+                        returnMap.put(key, BigDecimal.ZERO);
+                    }
+                    else
+                    {
+                        returnMap.put(key, new BigDecimal(enteredValue));
+                    }
+                }
+                catch(NumberFormatException ex)
+                {
+                    
+                    Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
+                }
             }
-        }
-        catch(NumberFormatException ex)
-        {
-            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
-        }
         
         return returnMap;
     }
@@ -385,21 +395,17 @@ public class SampleBox implements Sample
                 if (m_trapBoxes.get(i).isVisible())
                 {
                     HashMap<String, String> trap = m_traps.get(i);
+                    HashMap<String, BigDecimal> currentMap = new HashMap<>();
                     
                     String density = trap.get("density");
                     String xsection = trap.get("cross-section");
                     String energy = trap.get("energy");
 
-                    if (!(density.equals("") || xsection.equals("") || energy.equals("")))
-                    {
-                        HashMap<String, BigDecimal> currentMap = new HashMap<>();
-
-                        currentMap.put("density", new BigDecimal(density));
-                        currentMap.put("cross-section", new BigDecimal(xsection));
-                        currentMap.put("energy", new BigDecimal(energy));
-
-                        returnList.add(currentMap);
-                    }
+                    currentMap.put("density", density.equals("") ? BigDecimal.ZERO : new BigDecimal(density));
+                    currentMap.put("cross-section", xsection.equals("") ? BigDecimal.ZERO : new BigDecimal(xsection));
+                    currentMap.put("energy", energy.equals("") ? BigDecimal.ZERO : new BigDecimal(energy));
+                    
+                    returnList.add(currentMap);
                 }
             }
         }
@@ -470,6 +476,17 @@ public class SampleBox implements Sample
         }
         
         return returnBoolean;
+    }
+    
+    public int numberOfSavedTrap()
+    {
+        return m_traps.size();
+    }
+    
+    public void removeTrap(int trapIndex)
+    {
+        m_traps.remove(trapIndex);
+        m_trapBoxes.remove(trapIndex);
     }
     
     public void set (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)

@@ -44,6 +44,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nu.studer.java.util.OrderedProperties;
 import hitoridenshi.simulationmanager.ProgressNotifierInterface;
+import hitoridenshi.simulationmanager.Sample;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import javafx.scene.control.ScrollPane;
@@ -290,16 +291,18 @@ public class ParametersWindowController
      */
     @FXML private void startSimulation ()
     {
+        //selecting samples to work with, removing traps to keep and saving everything
         ArrayList<SampleBox> computedBoxes = new ArrayList(sampleBoxes.subList(0, numberSamples.getValue()));
         for (SampleBox sample: computedBoxes)
         {
+            //removing traps that are not shown
+            for (int i = sample.numberOfSavedTrap() - 1 ; i >= numbertraps.getValue()  ; i -= 1)
+            {
+                sample.removeTrap(i);
+            }
+            
             sample.saveData();
         }
-        //add logic to remove trapBoxes that are not shown
-//        while (trapBoxes.size() > visibleTrapBoxes)
-//        {
-//            trapBoxes.remove(trapBoxes.size()-1);
-//        }
 
         //temporarily saving current configuration in Properties
         OrderedProperties tempProp = writeConfigToProperties();
@@ -307,22 +310,9 @@ public class ParametersWindowController
         //configuring the simulation and launching it
         try
         {
-            List<HashMap<String, BigDecimal>> trapList = new ArrayList<>();
+            CalculationConditions conditions = new CalculationConditions(new ArrayList<Sample>(computedBoxes), electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), generationpositions.getText(), "", "");
             
-//            for (int i = 0 ; i < trapBoxes.size() ; i++)
-//            {
-//                Map<String, BigDecimal> currentTrap = new HashMap<>();
-//                        
-//                currentTrap.put("density", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(0)).getChildren().get(1)).getText()));
-//                currentTrap.put("crosssection", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(1)).getChildren().get(1)).getText()));
-//                currentTrap.put("energy", new BigDecimal(((TextField) ((HBox) trapBoxes.get(i).getChildren().get(2)).getChildren().get(1)).getText()));
-//                
-//                trapList.add((HashMap) currentTrap);
-//            }
-            
-            CalculationConditions conditions = new CalculationConditions(electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), "", generationpositions.getText(), "");
-            
-            SimulationManager simulationLauncher = new SimulationManager("", outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
+            SimulationManager simulationLauncher = new SimulationManager(outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();

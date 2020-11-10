@@ -17,7 +17,6 @@
 package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
-import com.github.audreyazura.commonutils.PhysicsTools;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -40,23 +39,21 @@ public class SimulationManager implements Runnable
     private final CalculationConditions m_conditions;
     private final ProgressNotifierInterface m_guiApp;
     private final int m_numberOfWorker;
-    private final String m_inputFolder;
     private final String m_outputFolder;
     
     private double m_progress = 0;
     private int m_totalCalculations = 0;
     
     
-    public SimulationManager (String p_folderElectricFields, String p_outputFolder, CalculationConditions p_conditions, ProgressNotifierInterface p_guiApp)
+    public SimulationManager (String p_outputFolder, CalculationConditions p_conditions, ProgressNotifierInterface p_guiApp)
     {
         m_conditions = p_conditions;
-        m_inputFolder = p_folderElectricFields;
         m_outputFolder = p_outputFolder;
         m_guiApp = p_guiApp;
         
         //calculating the number of worker used to run the simulation
         int nAvailableCore = Runtime.getRuntime().availableProcessors();
-        int nIndependantCalculation = p_conditions.getFileList().size();
+        int nIndependantCalculation = p_conditions.getAbsorbers().size();
         m_numberOfWorker = Integer.min(nAvailableCore, nIndependantCalculation);
     }
     
@@ -88,16 +85,7 @@ public class SimulationManager implements Runnable
         sendMessage("Launching simulation...\n");
         try
         {
-            HashMap<File, BigDecimal> notchReference = m_conditions.getNotchPositions();
-
-            //preparing the absorbers on which the simulation will be run
-            Set<Absorber> absorberList = new HashSet<>();
-            //all the values in m_conditions are in SI units
-            for (File sampleFile: m_conditions.getFileList())
-            {
-                BigDecimal notch = CalculationConditions.formatBigDecimal(notchReference.get(sampleFile).multiply(m_conditions.getAbscissaMultiplier()));
-                absorberList.add(new Absorber(sampleFile, m_conditions));
-            }
+            List<Absorber> absorberList = m_conditions.getAbsorbers();
             
             //int division casting to an int truncate it
             int nAbsorbers = absorberList.size();
@@ -138,18 +126,6 @@ public class SimulationManager implements Runnable
             
             sendMessage("\nEnd of simulation!");
         }
-        catch (DataFormatException ex)
-        {
-            Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (FileSystemException ex)
-        {
-            System.err.println("Erreur with the file "+ex.getFile()+": "+ex.getReason());
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);
-        } 
         catch (InterruptedException ex)
         {
             Logger.getLogger(SimulationManager.class.getName()).log(Level.SEVERE, null, ex);

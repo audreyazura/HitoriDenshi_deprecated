@@ -111,8 +111,8 @@ public class SimulationWorker implements Runnable
                         m_manager.sendUpdate(m_id, workerProgress);
                     }
 
-                    currentTracker.saveToFile(m_outputFolder + "/" + currentAbsorber.getEnergyBandFile(), initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
-                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for " + currentAbsorber.getEnergyBandFile() + " and x_init = "+String.valueOf((initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
+                    currentTracker.saveToFile(m_outputFolder + "/" + currentAbsorber.getFileName(), initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128), m_abscissaUnit);
+                    m_manager.sendMessage("SimulationWorker-"+String.valueOf(m_id)+": Calculation ended for " + currentAbsorber.getFileName() + " and x_init = "+String.valueOf((initialPosition.divide(PhysicsTools.UnitsPrefix.NANO.getMultiplier(), MathContext.DECIMAL128)).intValue())+"nm.");
                 }
             }
             catch (FileSystemException ex)

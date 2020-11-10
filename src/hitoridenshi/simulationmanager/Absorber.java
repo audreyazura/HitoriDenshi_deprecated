@@ -27,7 +27,6 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.DataFormatException;
 import org.nevec.rjm.BigDecimalMath;
 
@@ -43,35 +42,8 @@ public class Absorber
     private final BigDecimal m_notchPosition;
     private final boolean m_zeroAtFront;
     private final SCAPSFunction m_electricField;
-    private final String m_energyBandFile;
+    private final String m_absorberFileName;
     private final List<HashMap<String, BigDecimal>> m_traps;
-    
-    /**
-     * Constructor for an absorber without special feature (such as a notch)
-     * @param p_electricField the *.eb file given from SCAPS
-     * @param p_bias the bias voltage applied on the absorber
-     * @param p_condition the condition of calculation
-     * @throws DataFormatException
-     * @throws IOException 
-     */
-//    public Absorber(File p_electricField, CalculationConditions p_condition) throws DataFormatException, IOException
-//    {
-//        m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_electricField, p_condition.getAbscissaMultiplier());
-//        m_energyBandFile = p_electricField;
-//        m_notchPosition = null;
-//        m_traps = new ArrayList<>();
-//        m_zeroAtFront = p_condition.isZeroAtFront();
-//        if(m_zeroAtFront)
-//        {
-//            m_frontPosition = BigDecimal.ZERO;
-//            m_backPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
-//        }
-//        else
-//        {
-//            m_frontPosition = p_condition.getSolarCellSize().subtract(p_condition.getBufferAndWindowSize());
-//            m_backPosition = BigDecimal.ZERO;
-//        }
-//    }
     
     /**
      * Constructor for an absorber with a notch
@@ -83,69 +55,69 @@ public class Absorber
      * @throws DataFormatException
      * @throws IOException 
      */
-    public Absorber(File p_SCAPSFile, CalculationConditions p_conditions) throws DataFormatException, IOException
+    public Absorber(Sample p_sample, boolean p_isZeroAtFront, boolean p_isElectron, BigDecimal p_absorberSize, BigDecimal p_abscissaMultiplier) throws DataFormatException, IOException
     {
-        m_energyBandFile = p_SCAPSFile.getName();
-        m_notchPosition = p_conditions.getNotchPositions().get(p_SCAPSFile);
+        m_absorberFileName = p_sample.getConfigFile().getName();
+        HashMap<String, BigDecimal> grading = p_sample.getGrading();
+        m_notchPosition = grading.get("notchposition");
         m_traps = new ArrayList<>();
         
-        Map<String, BigDecimal> bandgaps = p_conditions.getBandgaps();
         BigDecimal absorberEnd;
         BigDecimal field0toNotch;
         BigDecimal fieldNotchtoEnd;
         
-        m_zeroAtFront = p_conditions.isZeroAtFront();
+        m_zeroAtFront = p_isZeroAtFront;
         if(m_zeroAtFront)
         {
             m_frontPosition = CalculationConditions.formatBigDecimal(BigDecimal.ZERO);
-            m_backPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
+            m_backPosition = CalculationConditions.formatBigDecimal(p_absorberSize);
             absorberEnd = m_backPosition;
         }
         else
         {
-            m_frontPosition = CalculationConditions.formatBigDecimal(p_conditions.getSolarCellSize().subtract(p_conditions.getBufferAndWindowSize()));
+            m_frontPosition = CalculationConditions.formatBigDecimal(p_absorberSize);
             m_backPosition = CalculationConditions.formatBigDecimal(BigDecimal.ZERO);
             absorberEnd = m_frontPosition;
         }
         
-        if (p_conditions.isElectron() && p_conditions.includesGrading())
+        if (p_isElectron)
         {
-            SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(p_SCAPSFile, p_conditions.getAbscissaMultiplier());
+            SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(p_sample.getConfigFile(), p_abscissaMultiplier);
             //À refactoriser ?
             if(m_zeroAtFront)
             {
                 if (m_notchPosition.compareTo(m_frontPosition) == 0)
                 {
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((grading.get("notch").subtract(grading.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     field0toNotch = fieldNotchtoEnd;
                 }
                 else if (m_notchPosition.compareTo(m_backPosition) == 0)
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((grading.get("front").subtract(grading.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     fieldNotchtoEnd = field0toNotch;
                 }
                 else
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("front").subtract(bandgaps.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((grading.get("front").subtract(grading.get("notch")).divide(m_frontPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((grading.get("notch").subtract(grading.get("back")).divide(m_notchPosition.subtract(m_backPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                 }
             }
             else
             {
                 if (m_notchPosition.compareTo(m_frontPosition) == 0)
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((grading.get("back").subtract(grading.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     fieldNotchtoEnd = field0toNotch;
                 }
                 else if (m_notchPosition.compareTo(m_backPosition) == 0)
                 {   
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((grading.get("notch").subtract(grading.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                     field0toNotch = fieldNotchtoEnd;
                 }
                 else
                 {
-                    field0toNotch = CalculationConditions.formatBigDecimal((bandgaps.get("back").subtract(bandgaps.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
-                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((bandgaps.get("notch").subtract(bandgaps.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    field0toNotch = CalculationConditions.formatBigDecimal((grading.get("back").subtract(grading.get("notch")).divide(m_backPosition.subtract(m_notchPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+                    fieldNotchtoEnd = CalculationConditions.formatBigDecimal((grading.get("notch").subtract(grading.get("front")).divide(m_notchPosition.subtract(m_frontPosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
                 }
             }
 
@@ -154,7 +126,7 @@ public class Absorber
         }
         else
         {
-            m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_SCAPSFile, p_conditions.getAbscissaMultiplier());
+            m_electricField = SCAPSFunction.createElectricFieldFromSCAPS(p_sample.getConfigFile(), p_abscissaMultiplier);
         }
     }
     
@@ -230,9 +202,9 @@ public class Absorber
         return m_notchPosition;
     }
     
-    public String getEnergyBandFile()
+    public String getFileName()
     {
-        return m_energyBandFile;
+        return m_absorberFileName;
     }
     
     public BigDecimal getFrontPosition()

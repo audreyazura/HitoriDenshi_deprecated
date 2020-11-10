@@ -359,9 +359,14 @@ public class ParametersWindowController
         {
             sampleBoxes.get(newPosition).show(newPosition+1);
         }
+        
         if (includegrading.isSelected())
         {
             sampleBoxes.get(newPosition).showGrading();
+        }
+        for (int i = 0 ; i < numbertraps.getValue() ; i += 1)
+        {
+            sampleBoxes.get(newPosition).showTrap(i);
         }
     }
     

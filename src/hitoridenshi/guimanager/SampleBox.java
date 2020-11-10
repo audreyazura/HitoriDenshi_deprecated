@@ -192,6 +192,8 @@ public class SampleBox implements Sample
             ((TextField) densityBox.getChildren().get(1)).setText(currentTrap.containsKey("density") ? currentTrap.get("density") : "");
             ((TextField) xsectionBox.getChildren().get(1)).setText(currentTrap. containsKey("cross-section") ? currentTrap.get("cross-section") : "");
             ((TextField) energyBox.getChildren().get(1)).setText(currentTrap.containsKey("energy") ? currentTrap.get("energy") : "");
+            
+            hideOrRemoveTrap(i);
         }
     }
     

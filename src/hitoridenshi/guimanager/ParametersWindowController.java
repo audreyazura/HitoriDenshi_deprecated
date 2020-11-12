@@ -310,7 +310,7 @@ public class ParametersWindowController
         //configuring the simulation and launching it
         try
         {
-            CalculationConditions conditions = new CalculationConditions(new ArrayList<Sample>(computedBoxes), electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), generationpositions.getText(), "", "");
+            CalculationConditions conditions = new CalculationConditions(new ArrayList<Sample>(computedBoxes), electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), generationpositions.getText());
             
             SimulationManager simulationLauncher = new SimulationManager(outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);

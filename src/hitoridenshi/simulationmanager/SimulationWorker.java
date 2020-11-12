@@ -94,15 +94,12 @@ public class SimulationWorker implements Runnable
 
                     for (BigDecimal velocity: m_velocities)
                     {
-                        Particle currentIndividual = new Particle(m_particleParameters, initialPosition, velocity);
+                        Particle currentIndividual = new Particle(m_particleParameters, initialPosition, velocity, currentAbsorber);
 
                         int numberOfSteps = 0;
                         while (!currentIndividual.isCollected() && numberOfSteps < m_maxSteps)
                         {
-                            if (!currentIndividual.isCaptured())
-                            {
-                                currentIndividual.applyExteriorFields(currentAbsorber, m_RNG);
-                            }
+                            currentIndividual.stepInTime(m_RNG);
                             numberOfSteps += 1;
                         }
 

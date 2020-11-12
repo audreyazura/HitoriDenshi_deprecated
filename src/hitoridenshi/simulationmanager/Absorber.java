@@ -60,7 +60,7 @@ public class Absorber
         m_absorberFileName = p_sample.getConfigFile().getName();
         HashMap<String, BigDecimal> grading = p_sample.getGrading();
         m_notchPosition = grading.get("notchposition");
-        m_traps = new ArrayList<>();
+        m_traps = p_sample.getTraps();
         
         BigDecimal absorberEnd;
         BigDecimal field0toNotch;
@@ -130,6 +130,20 @@ public class Absorber
         }
     }
     
+    public Absorber (Absorber p_absorber)
+    {
+        m_backPosition = p_absorber.getBackPosition();
+        m_notchPosition = p_absorber.getNotchPosition();
+        m_frontPosition = p_absorber.getNotchPosition();
+        
+        m_zeroAtFront = p_absorber.isZeroAtFront();
+        
+        m_electricField = p_absorber.getElectricField();
+        m_absorberFileName = p_absorber.getFileName();
+        
+        m_traps = p_absorber.getTraps();
+    }
+    
     public SCAPSFunction getElectricField()
     {
         return new SCAPSFunction(m_electricField);
@@ -170,11 +184,9 @@ public class Absorber
         return collection;
     }
     
-    public CapturedState giveCapture(Particle p_particle, PcgRSFast p_RNG)
+    public CapturedState giveCapture(BigDecimal p_particleVelocity, PcgRSFast p_RNG)
     {
         CapturedState captured = CapturedState.FREE;
-        
-        BigDecimal preciseVelocity = p_particle.getCurrentVelocity().setScale(128);
         
         for (HashMap<String, BigDecimal> trap: m_traps)
         {
@@ -186,11 +198,11 @@ public class Absorber
              * and thus the probability for it to be captured is
              * 1-exp(-t/tau)
              */
-            BigDecimal captureProba = BigDecimal.ONE.subtract(BigDecimalMath.exp(CalculationConditions.DT.negate().setScale(128).multiply(trap.get("density").setScale(128)).multiply(trap.get("crosssection").setScale(128)).multiply(preciseVelocity)));
+            BigDecimal captureProba = BigDecimal.ONE.subtract(BigDecimalMath.exp(CalculationConditions.DT.negate().setScale(128).multiply(trap.get("density").setScale(128)).multiply(trap.get("crosssection").setScale(128)).multiply(p_particleVelocity.setScale(128))));
             
             if (new BigDecimal(p_RNG.nextDouble()).compareTo(captureProba) < 0)
             {
-                captured = CapturedState.TRAPCAPTURED;
+                captured = CapturedState.CAPTURED;
             }
         }
         
@@ -215,5 +227,15 @@ public class Absorber
     public BigDecimal getBackPosition()
     {
         return m_backPosition;
+    }
+    
+    public boolean isZeroAtFront()
+    {
+        return m_zeroAtFront;
+    }
+    
+    public ArrayList<HashMap<String, BigDecimal>> getTraps()
+    {
+        return new ArrayList(m_traps);
     }
 }

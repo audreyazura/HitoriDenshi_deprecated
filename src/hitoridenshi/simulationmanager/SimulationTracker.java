@@ -38,6 +38,7 @@ public class SimulationTracker
     private int m_numberFrontExit;
     private int m_numberBackExit;
     private int m_numberNotExited;
+    private int m_captured;
     
     //save for the overall mean trajectory, velocity and acceleration
     private List<BigDecimal> m_meanTrajectory = new ArrayList<>();
@@ -82,6 +83,7 @@ public class SimulationTracker
         m_numberBackExit = 0;
         m_numberFrontExit = 0;
         m_numberNotExited = 0;
+        m_captured = 0;
     }
     
     /**
@@ -273,7 +275,10 @@ public class SimulationTracker
         ArrayList<BigDecimal> particleVelocities = p_particle.getVelocityList();
         ArrayList<BigDecimal> particleAccelerations = p_particle.getAccelerationList();
         
-        this.addMean(MeanType.GENERAL, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
+        if (!p_particle.isCaptured())
+        {
+            addMean(MeanType.GENERAL, p_absorber, particleTrajectory, particleVelocities, particleAccelerations);
+        }
         
         switch (p_particle.getCollection())
         {
@@ -338,7 +343,11 @@ public class SimulationTracker
                 }
                 break;
             case NOTCOLLECTED:
-                m_numberNotExited += 1; 
+                m_numberNotExited += 1;
+                if (p_particle.isCaptured())
+                {
+                    m_captured += 1;
+                }
                 break;
         }
     }

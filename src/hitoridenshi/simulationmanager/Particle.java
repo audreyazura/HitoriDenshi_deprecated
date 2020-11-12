@@ -40,8 +40,12 @@ public class Particle
     private CollectionState m_collectionState = CollectionState.NOTCOLLECTED;
     private CapturedState m_captured = CapturedState.FREE;
     
-    public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity)
+    private final Absorber m_attachedAbsorber;
+    
+    public Particle(BigDecimal p_charge, BigDecimal p_masse, BigDecimal p_position, BigDecimal p_velocity, Absorber p_absorber)
     {
+        m_attachedAbsorber = new Absorber(p_absorber);
+        
         m_charge = CalculationConditions.formatBigDecimal(p_charge);
         m_masse = CalculationConditions.formatBigDecimal(p_masse);
         m_position = CalculationConditions.formatBigDecimal(p_position);
@@ -57,7 +61,7 @@ public class Particle
      * @param p_position
      * @param p_velocity 
      */
-    public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity)
+    public Particle(HashMap<String, BigDecimal> p_parameters, BigDecimal p_position, BigDecimal p_velocity, Absorber p_absorber)
     {
         m_charge = CalculationConditions.formatBigDecimal(p_parameters.get("charge"));
         m_masse = CalculationConditions.formatBigDecimal(p_parameters.get("mass"));
@@ -66,6 +70,20 @@ public class Particle
         
         m_trajectory.add(m_position);
         m_velocityList.add(m_velocity);
+        
+        m_attachedAbsorber = p_absorber;
+    }
+    
+    public void stepInTime(PcgRSFast p_RNG)
+    {
+        if (m_captured != CapturedState.CAPTURED)
+        {
+            applyExteriorFields(p_RNG);
+        }
+        else
+        {
+            tryToEscape(p_RNG);
+        }
     }
     
     /**
@@ -73,26 +91,31 @@ public class Particle
      * @param p_absorber the absorber the particle is in
      * @param p_RNG a random number generator
      */
-    public void applyExteriorFields(Absorber p_absorber, PcgRSFast p_RNG)
+    private void applyExteriorFields(PcgRSFast p_RNG)
     {
-        BigDecimal electricFieldValueAtPosition = CalculationConditions.formatBigDecimal(p_absorber.getElectricField().getValueAtPosition(m_position));
-        
+        BigDecimal electricFieldValueAtPosition = CalculationConditions.formatBigDecimal(m_attachedAbsorber.getElectricField().getValueAtPosition(m_position));
+
         //calculating acceleration
         BigDecimal currentAcceleration = CalculationConditions.formatBigDecimal(m_charge.multiply(electricFieldValueAtPosition).divide(m_masse, MathContext.DECIMAL128));
         m_accelerationList.add(currentAcceleration);
-        
+
         //calculating new velocity and a mean velocity that will be used to update the position
         BigDecimal newVelocity = CalculationConditions.formatBigDecimal(m_velocity.add(currentAcceleration.multiply(CalculationConditions.DT)));
         BigDecimal meanVelocity = CalculationConditions.formatBigDecimal((m_velocity.add(newVelocity)).divide(new BigDecimal("2", MathContext.DECIMAL128)));
         m_velocity = newVelocity;
         m_velocityList.add(m_velocity);
-        
+
         //calculating new position
         m_position = CalculationConditions.formatBigDecimal(m_position.add(meanVelocity.multiply(CalculationConditions.DT)));
         m_trajectory.add(m_position);
+
+        m_collectionState = m_attachedAbsorber.giveCollection(m_position);
+        m_captured = m_attachedAbsorber.giveCapture(newVelocity, p_RNG);
+    }
+    
+    private void tryToEscape (PcgRSFast p_RNG)
+    {
         
-        m_collectionState = p_absorber.giveCollection(m_position);
-        m_captured = p_absorber.giveCapture(this, p_RNG);
     }
     
     public boolean isCollected()
@@ -108,11 +131,6 @@ public class Particle
     public BigDecimal getCurrentPosition()
     {
         return CalculationConditions.formatBigDecimal(m_position);
-    }
-    
-    public BigDecimal getCurrentVelocity()
-    {
-        return CalculationConditions.formatBigDecimal(m_velocity);
     }
     
     public ArrayList<BigDecimal> getTrajectory()
@@ -148,6 +166,6 @@ public class Particle
     
     public enum CapturedState
     {
-        TRAPCAPTURED, QDCAPTURED, FREE
+        CAPTURED, FREE
     }
 }

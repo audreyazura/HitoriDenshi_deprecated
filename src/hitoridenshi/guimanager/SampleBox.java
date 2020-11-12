@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -311,6 +312,27 @@ public class SampleBox implements Sample
         m_trapBoxes.add(trapBox);
     }
     
+    private HashMap<String, BigDecimal> convertMap (Map<String, String> p_mapToCopy, String p_mapTag)
+    {
+        HashMap<String, BigDecimal> returnMap = new HashMap<>();
+        
+        for (String key: p_mapToCopy.keySet())
+        {
+            try
+            {
+                String enteredValue = p_mapToCopy.get(key);
+                returnMap.put(key, enteredValue.equals("") ? BigDecimal.ZERO : new BigDecimal(enteredValue));
+            }
+            catch(NumberFormatException ex)
+            {
+
+                Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the value of " + key + " in " + p_mapTag, ex);
+            }
+        }
+        
+        return returnMap;
+    }
+    
     public void attach(Pane p_attachPoint)
     {
         p_attachPoint.getChildren().add(m_outerVBox);
@@ -346,31 +368,7 @@ public class SampleBox implements Sample
     @Override
     public HashMap<String, BigDecimal> getGrading()
     {
-        HashMap<String, BigDecimal> returnMap = new HashMap<>();
-        
-        
-            for (String key: m_gradingProfile.keySet())
-            {
-                try
-                {
-                    String enteredValue = m_gradingProfile.get(key);
-                    if (enteredValue.equals(""))
-                    {
-                        returnMap.put(key, BigDecimal.ZERO);
-                    }
-                    else
-                    {
-                        returnMap.put(key, new BigDecimal(enteredValue));
-                    }
-                }
-                catch(NumberFormatException ex)
-                {
-                    
-                    Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the grading numbers", ex);
-                }
-            }
-        
-        return returnMap;
+        return convertMap(m_gradingProfile, "Grading");
     }
     
     public HashMap<String, String> getStringGrading()
@@ -395,23 +393,9 @@ public class SampleBox implements Sample
                 if (m_trapBoxes.get(i).isVisible())
                 {
                     HashMap<String, String> trap = m_traps.get(i);
-                    HashMap<String, BigDecimal> currentMap = new HashMap<>();
-                    
-                    String density = trap.get("density");
-                    String xsection = trap.get("cross-section");
-                    String energy = trap.get("energy");
-
-                    currentMap.put("density", density.equals("") ? BigDecimal.ZERO : new BigDecimal(density));
-                    currentMap.put("cross-section", xsection.equals("") ? BigDecimal.ZERO : new BigDecimal(xsection));
-                    currentMap.put("energy", energy.equals("") ? BigDecimal.ZERO : new BigDecimal(energy));
-                    
-                    returnList.add(currentMap);
+                    returnList.add(convertMap(trap, "trap" + i));
                 }
             }
-        }
-        catch (NumberFormatException ex)
-        {
-            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Problem with the traps values", ex);
         }
         catch (NullPointerException ex)
         {

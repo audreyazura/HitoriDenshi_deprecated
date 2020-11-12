@@ -20,6 +20,7 @@ import com.github.audreyazura.commonutils.PhysicsTools;
 import hitoridenshi.executionmanager.OutputInterface;
 import hitoridenshi.guimanager.GUIManager;
 import hitoridenshi.simulationmanager.CalculationConditions;
+import hitoridenshi.simulationmanager.Sample;
 import hitoridenshi.simulationmanager.SimulationManager;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +28,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.studer.java.util.OrderedProperties;
@@ -50,9 +54,7 @@ public class ConsoleManager implements OutputInterface
         boolean zeroAtFront = (p_properties.getProperty("zero_position").equals("front"));
         
         String biasVoltagesList = p_properties.getProperty("bias_voltages");
-        String notchesList = p_properties.getProperty("notch_positions");
         String initialPositionsList = p_properties.getProperty("generation_positions");
-        String fileString = p_properties.getProperty("input_files");
         
         PhysicsTools.UnitsPrefix unitPrefix = PhysicsTools.UnitsPrefix.selectPrefix(p_properties.getProperty("abscissa_unit"));
             
@@ -62,18 +64,35 @@ public class ConsoleManager implements OutputInterface
         BigDecimal lifetimeNumber = new BigDecimal(p_properties.getProperty("lifetime"));
         
         int numberSimulatedParticle = Integer.parseInt(p_properties.getProperty("number_of_simulated_particles"));
-
-        CalculationConditions conditions = new CalculationConditions(isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, notchesList, initialPositionsList, fileString);
         
-        if (p_properties.getProperty("has_grading").equals("true"))
+        int numberOfSamples = Integer.parseInt(p_properties.getProperty("number_samples"));
+        int numberOfTraps = Integer.parseInt(p_properties.getProperty("number_traps"));
+        
+        List<SampleLoader> samples = new ArrayList<>();
+        for (int i = 0 ; i < numberOfSamples ; i += 1)
         {
-            BigDecimal frontBangapNumber = new BigDecimal(p_properties.getProperty("front_bandgap"));
-            BigDecimal minimumBandgapNumber = new BigDecimal(p_properties.getProperty("minimum_bandgap"));
-            BigDecimal backBangapNumber = new BigDecimal(p_properties.getProperty("back_bandgap"));
-            conditions.addGrading(frontBangapNumber, minimumBandgapNumber, backBangapNumber);
+            String sampleTag = "sample" + i + "_"; 
+            
+            HashMap<String, String> grading = new HashMap<>();
+            grading.put("front", p_properties.getProperty(sampleTag + "front_bandgap"));
+            grading.put("notch", p_properties.getProperty(sampleTag + "minimum_bandgap"));
+            grading.put("back", p_properties.getProperty(sampleTag + "back_bandgap"));
+            grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+            
+            List<HashMap<String, String>> traps = new ArrayList<>();
+            for (int j = 0 ; j < numberOfTraps ; j += 1)
+            {
+                String trapTag = sampleTag + "trap" + j + "_";
+                HashMap<String, String> trap = new HashMap<>();
+                trap.put("density", p_properties.getProperty(trapTag + "density"));
+                trap.put("cross-section", p_properties.getProperty(trapTag + "cross-section"));
+                trap.put("energy", p_properties.getProperty(trapTag + "energy"));
+            }
+            
+            samples.add(new SampleLoader(p_properties.getProperty(sampleTag + "file"), grading, traps));
         }
         
-        return conditions;
+        return new CalculationConditions(new ArrayList<Sample>(samples), isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, initialPositionsList);
     }
     
     @Override
@@ -87,10 +106,9 @@ public class ConsoleManager implements OutputInterface
             properties.load(fileReader);
             
             CalculationConditions conditions = getCalculationConditions(properties);
-            String inputFolderAddress = properties.getProperty("input_folder");
             String outputFolderAddress = properties.getProperty("output_folder");
             
-            SimulationManager simulationLauncher = new SimulationManager(inputFolderAddress, outputFolderAddress, conditions, this);
+            SimulationManager simulationLauncher = new SimulationManager(outputFolderAddress, conditions, this);
             Thread simulationThread = new Thread(simulationLauncher);
             simulationThread.start();
         }

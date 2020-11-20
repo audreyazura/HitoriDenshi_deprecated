@@ -18,6 +18,7 @@ package hitoridenshi.guimanager;
 
 import hitoridenshi.simulationmanager.Sample;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -396,7 +397,7 @@ public class SampleBox implements Sample
     }
     
     @Override
-    public HashMap<String, BigDecimal> getGrading()
+    public HashMap<String, BigDecimal> getGradingValue()
     {
         return convertMap(m_gradingProfile, "Grading");
     }
@@ -437,6 +438,30 @@ public class SampleBox implements Sample
         }
         
         return returnList;
+    }
+    
+    @Override
+    public boolean isFrontGradingInCB()
+    {
+        if (!(m_frontGradingCB.isSelected() || m_frontGradingVB.isSelected()))
+        {
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Select a position for the front grading.", new IOException());
+            System.exit(0);
+        }
+        
+        return m_frontGradingCB.isSelected();
+    }
+    
+    @Override
+    public boolean isBackGradingInCB()
+    {
+        if (!(m_backGradingCB.isSelected() || m_backGradingVB.isSelected()))
+        {
+            Logger.getLogger(SampleBox.class.getName()).log(Level.SEVERE, "Select a position for the back grading.", new IOException());
+            System.exit(0);
+        }
+        
+        return m_backGradingCB.isSelected();
     }
     
     public int numberOfTraps()
@@ -503,7 +528,7 @@ public class SampleBox implements Sample
         m_trapBoxes.remove(trapIndex);
     }
     
-    public void set (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    public void set (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps, boolean p_frontGradingCB, boolean p_backGradingCB)
     {
         m_configFile = new File(p_address);
         m_fileField.setText(p_address);
@@ -513,6 +538,24 @@ public class SampleBox implements Sample
         m_notchGap.setText(p_grading.containsKey("notchgap") ? p_grading.get("notchgap") : "");
         m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
         m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
+        
+        if (p_frontGradingCB)
+        {
+            m_frontGradingCB.setSelected(true);
+        }
+        else
+        {
+            m_frontGradingVB.setSelected(true);
+        }
+        
+        if (p_backGradingCB)
+        {
+            m_backGradingCB.setSelected(true);
+        }
+        else
+        {
+            m_backGradingVB.setSelected(true);
+        }
         
         for (int i = 0 ; i < p_traps.size() ; i += 1)
         {

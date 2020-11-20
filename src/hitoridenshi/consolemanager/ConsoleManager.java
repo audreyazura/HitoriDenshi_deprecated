@@ -68,16 +68,35 @@ public class ConsoleManager implements OutputInterface
         int numberOfSamples = Integer.parseInt(p_properties.getProperty("number_samples"));
         int numberOfTraps = Integer.parseInt(p_properties.getProperty("number_traps"));
         
+        boolean hasGrading = false;
+        try
+        {
+            hasGrading = Boolean.parseBoolean(p_properties.getProperty("has_grading"));
+        }
+        catch (NullPointerException ex)
+        {
+            Logger.getLogger(ConsoleManager.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
         List<SampleLoader> samples = new ArrayList<>();
         for (int i = 0 ; i < numberOfSamples ; i += 1)
         {
             String sampleTag = "sample" + i + "_"; 
             
             HashMap<String, String> grading = new HashMap<>();
-            grading.put("front", p_properties.getProperty(sampleTag + "front_bandgap"));
-            grading.put("notch", p_properties.getProperty(sampleTag + "minimum_bandgap"));
-            grading.put("back", p_properties.getProperty(sampleTag + "back_bandgap"));
-            grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+            boolean frontGradingInCB = true;
+            boolean backGradingInCB = true;
+            
+            if (hasGrading)
+            {
+                grading.put("front", p_properties.getProperty(sampleTag + "front_bandgap"));
+                grading.put("notch", p_properties.getProperty(sampleTag + "minimum_bandgap"));
+                grading.put("back", p_properties.getProperty(sampleTag + "back_bandgap"));
+                grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+
+                frontGradingInCB = p_properties.getProperty(sampleTag + "front_in_CB").equals("true");
+                backGradingInCB = p_properties.getProperty(sampleTag + "back_in_CB").equals("true");
+            }
             
             List<HashMap<String, String>> traps = new ArrayList<>();
             for (int j = 0 ; j < numberOfTraps ; j += 1)
@@ -89,7 +108,7 @@ public class ConsoleManager implements OutputInterface
                 trap.put("energy", p_properties.getProperty(trapTag + "energy"));
             }
             
-            samples.add(new SampleLoader(p_properties.getProperty(sampleTag + "file"), grading, traps));
+            samples.add(new SampleLoader(p_properties.getProperty(sampleTag + "file"), grading, traps, frontGradingInCB, backGradingInCB));
         }
         
         return new CalculationConditions(new ArrayList<Sample>(samples), isElectron, zeroAtFront, unitPrefix, numberSimulatedParticle, effectiveMassDouble, lifetimeNumber, bufferWindowSize, totalSampleWidth, biasVoltagesList, initialPositionsList);

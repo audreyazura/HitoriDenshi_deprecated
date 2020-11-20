@@ -29,7 +29,11 @@ public interface Sample
 {
     public File getConfigFile();
     
-    public HashMap<String, BigDecimal> getGrading();
+    public HashMap<String, BigDecimal> getGradingValue();
     
     public List<HashMap<String, BigDecimal>> getTraps();
+    
+    public boolean isFrontGradingInCB();
+    
+    public boolean isBackGradingInCB();
 }

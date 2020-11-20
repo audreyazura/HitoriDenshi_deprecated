@@ -472,8 +472,6 @@ public class ParametersWindowController
      */
     private void loadProperties (OrderedProperties p_properties)
     {
-        //ADD LOGIC FOR TRAPBOXES
-        
         unitselec.setValue(p_properties.getProperty("abscissa_unit"));
         materialselec.setValue(p_properties.getProperty("material"));
 
@@ -587,6 +585,9 @@ public class ParametersWindowController
                 String sampleTag = "sample" + i + "_";
 
                 String sampleFileAddress = p_properties.getProperty(sampleTag + "file");
+                
+                boolean frontGradingCB = true;
+                boolean backGradingCB = true;
 
                 HashMap<String, String> grading = new HashMap<>();
                 if (hasGrading)
@@ -595,6 +596,9 @@ public class ParametersWindowController
                     grading.put("back", p_properties.getProperty(sampleTag + "back_gap"));
                     grading.put("notchgap", p_properties.getProperty(sampleTag + "notch_gap"));
                     grading.put("notchposition", p_properties.getProperty(sampleTag + "notch_position"));
+                    
+                    frontGradingCB = p_properties.getProperty(sampleTag + "front_in_CB").equals("true");
+                    backGradingCB = p_properties.getProperty(sampleTag + "back_in_CB").equals("true");
                 }
 
                 ArrayList<HashMap<String, String>> trapList = new ArrayList<>();
@@ -609,9 +613,8 @@ public class ParametersWindowController
 
                     trapList.add(trap);
                 }
-
-
-                sampleBoxes.get(i).set(sampleFileAddress, grading, trapList);
+                
+                sampleBoxes.get(i).set(sampleFileAddress, grading, trapList, frontGradingCB, backGradingCB);
                 sampleBoxes.get(i).show(i+1);
                 for (int j = 0 ; j < ntraps ; j += 1)
                 {
@@ -699,6 +702,9 @@ public class ParametersWindowController
                 extractedProperties.setProperty(sampleTag + "front_gap", grading.get("front"));
                 extractedProperties.setProperty(sampleTag + "notch_gap", grading.get("notchgap"));
                 extractedProperties.setProperty(sampleTag + "back_gap", grading.get("back"));
+                
+                extractedProperties.setProperty(sampleTag + "front_in_CB", String.valueOf(sample.isFrontGradingInCB()));
+                extractedProperties.setProperty(sampleTag + "back_in_CB", String.valueOf(sample.isBackGradingInCB()));
             }
             
             

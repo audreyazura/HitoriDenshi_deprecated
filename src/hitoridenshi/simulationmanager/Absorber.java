@@ -58,7 +58,7 @@ public class Absorber
     public Absorber(Sample p_sample, boolean p_isZeroAtFront, boolean p_isElectron, BigDecimal p_absorberSize, BigDecimal p_abscissaMultiplier) throws DataFormatException, IOException
     {
         m_absorberFileName = p_sample.getConfigFile().getName();
-        HashMap<String, BigDecimal> grading = p_sample.getGrading();
+        HashMap<String, BigDecimal> grading = p_sample.getGradingValue();
         m_notchPosition = grading.get("notchposition");
         m_traps = p_sample.getTraps();
         

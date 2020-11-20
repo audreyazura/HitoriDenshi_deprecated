@@ -32,12 +32,17 @@ import java.util.logging.Logger;
  */
 public class SampleLoader implements Sample
 {
+    private final boolean m_isFrontGradingInCB;
+    private final boolean m_isBackGradingInCB;
     private final File m_sampleFile;
     private final Map<String, BigDecimal> m_grading;
     private final List<HashMap<String, BigDecimal>> m_trapList = new ArrayList<>();
     
-    public SampleLoader (String p_fileAddress, HashMap<String, String> p_gradingString, List<HashMap<String, String>> p_trapsString)
+    public SampleLoader (String p_fileAddress, HashMap<String, String> p_gradingString, List<HashMap<String, String>> p_trapsString, boolean p_frontGradingCB, boolean p_backGradingCB)
     {
+        m_isFrontGradingInCB = p_frontGradingCB;
+        m_isBackGradingInCB = p_backGradingCB;
+        
         m_sampleFile = new File(p_fileAddress);
         
         m_grading = convertMap(p_gradingString, "Grading");
@@ -78,7 +83,7 @@ public class SampleLoader implements Sample
     }
     
     @Override
-    public HashMap<String, BigDecimal> getGrading()
+    public HashMap<String, BigDecimal> getGradingValue()
     {
         return new HashMap(m_grading);
     }
@@ -87,5 +92,17 @@ public class SampleLoader implements Sample
     public List<HashMap<String, BigDecimal>> getTraps()
     {
         return new ArrayList(m_trapList);
+    }
+    
+    @Override
+    public boolean isFrontGradingInCB()
+    {
+        return m_isFrontGradingInCB;
+    }
+    
+    @Override
+    public boolean isBackGradingInCB()
+    {
+        return m_isBackGradingInCB;
     }
 }

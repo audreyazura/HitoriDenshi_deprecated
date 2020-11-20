@@ -33,39 +33,42 @@ import java.util.logging.Logger;
 public class SampleLoader implements Sample
 {
     private final File m_sampleFile;
-    private final Map<String, BigDecimal> m_grading = new HashMap<>();
+    private final Map<String, BigDecimal> m_grading;
     private final List<HashMap<String, BigDecimal>> m_trapList = new ArrayList<>();
     
     public SampleLoader (String p_fileAddress, HashMap<String, String> p_gradingString, List<HashMap<String, String>> p_trapsString)
     {
         m_sampleFile = new File(p_fileAddress);
         
-        convertMap(p_gradingString, m_grading, "Grading");
+        m_grading = convertMap(p_gradingString, "Grading");
         
         for (int i = 0 ; i < p_trapsString.size() ; i += 1)
         {
             HashMap<String, String> trap = p_trapsString.get(i);
-            HashMap<String, BigDecimal> newTrap = new HashMap<>();
             
-            convertMap(trap, newTrap, "Trap" + i);
+            m_trapList.add(convertMap(trap, "Trap" + i));
         }
     }
     
-    private void convertMap (Map<String, String> p_mapToCopy, Map<String, BigDecimal> p_destinationMap, String p_mapTag)
+    private HashMap<String, BigDecimal> convertMap (Map<String, String> p_mapToCopy, String p_mapTag)
     {
+        HashMap<String, BigDecimal> convertedMap = new HashMap<>();
+        
         for (String key: p_mapToCopy.keySet())
         {
             String value = p_mapToCopy.get(key);
             
             try
             {
-                p_destinationMap.put(key, value.equals("") ? BigDecimal.ZERO : new BigDecimal(value));
+                convertedMap.put(key, value.equals("") ? BigDecimal.ZERO : new BigDecimal(value));
             }
             catch (NumberFormatException ex)
             {
                 Logger.getLogger(SampleLoader.class.getName()).log(Level.SEVERE, "Problem with key " + key + " in Map " + p_mapTag, ex);
             }
         }
+        
+        return convertedMap;
     }
     
     @Override

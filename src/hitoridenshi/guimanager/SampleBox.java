@@ -28,7 +28,9 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -46,6 +48,9 @@ public class SampleBox implements Sample
     private File m_configFile;
     private HashMap<String, String> m_gradingProfile = new HashMap<>();
     private List<HashMap<String, String>> m_traps = new ArrayList<>();
+    
+    private final ToggleGroup m_frontGradingBand = new ToggleGroup();
+    private final ToggleGroup m_backGradingBand = new ToggleGroup();
     
     private final Label m_title = new Label("");
     private final Button m_updateButton = new Button("Save data");
@@ -71,7 +76,15 @@ public class SampleBox implements Sample
     private final TextField m_backGap = new TextField("");
     private final HBox m_backBox = new HBox(m_backGapLabel, m_backGap);
     private final HBox m_gradingOptionBox = new HBox(m_notchPositionBox, m_frontBox, m_notchGapBox, m_backBox);
-    private final VBox m_gradingBox = new VBox(m_gradingLabel, m_gradingOptionBox);
+    private final Label m_frontGradingLabel = new Label("Front grading band");
+    private final RadioButton m_frontGradingVB = new RadioButton("Valence band");
+    private final RadioButton m_frontGradingCB = new RadioButton("Conduction band");
+    private final HBox m_frontGradingBandBox = new HBox(m_frontGradingLabel, m_frontGradingVB, m_frontGradingCB);
+    private final Label m_backGradingLabel = new Label("Back grading band");
+    private final RadioButton m_backGradingVB = new RadioButton("Valence band");
+    private final RadioButton m_backGradingCB = new RadioButton("Conduction band");
+    private final HBox m_backGradingBandBox = new HBox(m_backGradingLabel, m_backGradingVB, m_backGradingCB);
+    private final VBox m_gradingBox = new VBox(m_gradingLabel, m_gradingOptionBox, m_frontGradingBandBox, m_backGradingBandBox);
     
     private final VBox m_parametersVBox = new VBox(m_fileBox);
     
@@ -161,6 +174,22 @@ public class SampleBox implements Sample
         m_backGapLabel.getStyleClass().add("windowtext");
         m_backGap.getStyleClass().add("inputfield");
         m_backGap.setPrefWidth(65);
+        
+        m_frontGradingBandBox.getStyleClass().add("radiohbox");
+        m_frontGradingLabel.getStyleClass().add("windowtext");
+        m_frontGradingVB.getStyleClass().add("windowtext");
+        m_frontGradingCB.getStyleClass().add("windowtext");
+        
+        m_backGradingBandBox.getStyleClass().add("radiohbox");
+        m_backGradingLabel.getStyleClass().add("windowtext");
+        m_backGradingVB.getStyleClass().add("windowtext");
+        m_backGradingCB.getStyleClass().add("windowtext");
+        
+        //setting ToggleGroups
+        m_frontGradingVB.setToggleGroup(m_frontGradingBand);
+        m_frontGradingCB.setToggleGroup(m_frontGradingBand);
+        m_backGradingVB.setToggleGroup(m_backGradingBand);
+        m_backGradingCB.setToggleGroup(m_backGradingBand);
     }
     
     private void initiateGrading (HashMap<String, String> p_grading)
@@ -172,6 +201,7 @@ public class SampleBox implements Sample
         m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
         m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
         m_outerVBox.getChildren().add(m_gradingBox);
+        
         m_gradingBox.setManaged(false);
         m_gradingBox.setVisible(false);
     }

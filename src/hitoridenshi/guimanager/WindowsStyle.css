@@ -74,6 +74,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-alignment: center-left;
 }
 
+.radiohbox
+{
+    -fx-spacing: 5px;
+    -fx-fill-height: true;
+    -fx-alignment: center-left;
+    -fx-padding: 5px 0px 0px 0px; /*top, right, bottom, left*/
+}
+
 .internalvbox
 {
     -fx-alignment: top-left;

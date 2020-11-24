@@ -152,8 +152,8 @@
                     <VBox HBox.hgrow="ALWAYS" styleClass="internalvbox" >
                         <Label styleClass="windowtext" HBox.hgrow="ALWAYS" text="Position of origin (x = 0):"/>
                         <HBox styleClass="hbox" HBox.hgrow="ALWAYS">
-                            <RadioButton toggleGroup="$originselection" text="Front" fx:id="originatfront" />
-                            <RadioButton toggleGroup="$originselection" text="Back" fx:id="originatback" />
+                            <RadioButton toggleGroup="$originselection" text="Sample front" fx:id="originatfront" />
+                            <RadioButton toggleGroup="$originselection" text="Sample back" fx:id="originatback" />
                         </HBox>
                     </VBox> 
 

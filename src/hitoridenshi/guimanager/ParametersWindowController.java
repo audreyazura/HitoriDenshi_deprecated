@@ -76,7 +76,7 @@ public class ParametersWindowController
     @FXML private ScrollPane samplesPane;
     @FXML private TextField biasvoltages;
     @FXML private TextField generationpositions;
-    @FXML private TextField samplewidth;
+    @FXML private TextField absorberwidth;
     @FXML private TextField bufferwindowwidth;
     @FXML private TextField effectivemass;
     @FXML private TextField lifetime;
@@ -117,7 +117,7 @@ public class ParametersWindowController
             BigDecimal currentMultiplier = currentPrefix.getMultiplier();
 
             bufferwindowwidth.setText(changeEnteredNumberUnit(bufferwindowwidth.getText(), previousMultiplier, currentMultiplier));
-            samplewidth.setText(changeEnteredNumberUnit(samplewidth.getText(), previousMultiplier, currentMultiplier));
+            absorberwidth.setText(changeEnteredNumberUnit(absorberwidth.getText(), previousMultiplier, currentMultiplier));
 
             for (SampleBox sample: sampleBoxes)
             {
@@ -310,7 +310,7 @@ public class ParametersWindowController
         //configuring the simulation and launching it
         try
         {
-            CalculationConditions conditions = new CalculationConditions(new ArrayList<Sample>(computedBoxes), electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(samplewidth.getText()), biasvoltages.getText(), generationpositions.getText());
+            CalculationConditions conditions = new CalculationConditions(new ArrayList<Sample>(computedBoxes), electronselection.isSelected(), originatfront.isSelected(), PhysicsTools.UnitsPrefix.selectPrefix((String) unitselec.getValue()), Integer.parseInt(numbersimulated.getText()), new BigDecimal(effectivemass.getText()), new BigDecimal(lifetime.getText()), new BigDecimal(bufferwindowwidth.getText()), new BigDecimal(absorberwidth.getText()), biasvoltages.getText(), generationpositions.getText());
             
             SimulationManager simulationLauncher = new SimulationManager(outputFolder.getText(), conditions, (ProgressNotifierInterface) m_mainApp);
             m_mainApp.launchOnGoingSimulationWindow(simulationLauncher.getNumberOfWorker(), tempProp);
@@ -420,12 +420,6 @@ public class ParametersWindowController
         m_mainApp.resizeStage();
     }
     
-    public void boundSamplePaneSize()
-    {
-        //setting the sample ScrollPane maxHeight to the available space on screen minus the size of other elements minus their margin minus 55 pixels for security
-        samplesPane.setMaxHeight(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height - titlebox.getHeight() - header.getHeight() - particularityLabel.getHeight() -125);
-    }
-    
     /**
      * Initialize the controller of the configuration window
      * @param p_mainApp the main application for callback
@@ -477,7 +471,7 @@ public class ParametersWindowController
 
         biasvoltages.setText(p_properties.getProperty("bias_voltages"));
         generationpositions.setText(p_properties.getProperty("generation_positions"));
-        samplewidth.setText(p_properties.getProperty("sample_width"));
+        absorberwidth.setText(p_properties.getProperty("absorber_width"));
         bufferwindowwidth.setText(p_properties.getProperty("bufferwindow_width"));
         effectivemass.setText(p_properties.getProperty("effective_mass"));
         lifetime.setText(p_properties.getProperty("lifetime"));
@@ -736,7 +730,7 @@ public class ParametersWindowController
         extractedProperties.setProperty("generation_positions",  generationpositions.getText());
         
         extractedProperties.setProperty("origin_position",  (originatfront.isSelected() ? "front" : "back"));
-        extractedProperties.setProperty("sample_width",  samplewidth.getText());
+        extractedProperties.setProperty("absorber_width",  absorberwidth.getText());
         extractedProperties.setProperty("bufferwindow_width",  bufferwindowwidth.getText());
         
         extractedProperties.setProperty("simulated_particle",  (electronselection.isSelected() ? "electron" : "hole"));

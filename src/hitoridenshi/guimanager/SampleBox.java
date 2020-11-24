@@ -77,11 +77,11 @@ public class SampleBox implements Sample
     private final TextField m_backGap = new TextField("");
     private final HBox m_backBox = new HBox(m_backGapLabel, m_backGap);
     private final HBox m_gradingOptionBox = new HBox(m_notchPositionBox, m_frontBox, m_notchGapBox, m_backBox);
-    private final Label m_frontGradingLabel = new Label("Front grading band");
+    private final Label m_frontGradingLabel = new Label("Front grading band:");
     private final RadioButton m_frontGradingVB = new RadioButton("Valence band");
     private final RadioButton m_frontGradingCB = new RadioButton("Conduction band");
     private final HBox m_frontGradingBandBox = new HBox(m_frontGradingLabel, m_frontGradingVB, m_frontGradingCB);
-    private final Label m_backGradingLabel = new Label("Back grading band");
+    private final Label m_backGradingLabel = new Label("Back grading band:");
     private final RadioButton m_backGradingVB = new RadioButton("Valence band");
     private final RadioButton m_backGradingCB = new RadioButton("Conduction band");
     private final HBox m_backGradingBandBox = new HBox(m_backGradingLabel, m_backGradingVB, m_backGradingCB);

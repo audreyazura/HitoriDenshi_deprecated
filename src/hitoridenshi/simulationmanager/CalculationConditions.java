@@ -18,14 +18,12 @@ package hitoridenshi.simulationmanager;
 
 import com.github.kilianB.pcg.fast.PcgRSFast;
 import com.github.audreyazura.commonutils.PhysicsTools;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -50,22 +48,18 @@ public class CalculationConditions
     private final List<Absorber> m_absorbers = new ArrayList<>();
     
     //All the following numbers have to be stocked with SI units
-    private final BigDecimal m_bufferWindowSize;
-    private final BigDecimal m_sampleSize;
     private final PhysicsTools.UnitsPrefix m_abscissaUnit;
     private final String[] m_biasVoltages;
     private final List<BigDecimal> m_startingPositons;
     private final List<BigDecimal> m_velocityList = new ArrayList<>();
     private final Map<String, BigDecimal> m_particleParameters = new HashMap<>();
     
-    public CalculationConditions (List<Sample> sampleList, boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_sampleSize, String p_biasVoltages, String p_startingPositions)
+    public CalculationConditions (List<Sample> sampleList, boolean p_isElectron, boolean p_isZeroAtFront, PhysicsTools.UnitsPrefix p_prefix, int p_numberSimulatedParticules, BigDecimal p_effectiveMass, BigDecimal p_lifeTime, BigDecimal p_bufferWindowSize, BigDecimal p_absorberSize, String p_biasVoltages, String p_startingPositions)
     {
         //to convert the abscissa from the unit given by SCAPS (micrometer or nanometer) into meter
         m_abscissaUnit = p_prefix;
         
         m_isZeroAtFront = p_isZeroAtFront;
-        m_bufferWindowSize = formatBigDecimal(p_bufferWindowSize.multiply(m_abscissaUnit.getMultiplier()));
-        m_sampleSize = formatBigDecimal(p_sampleSize.multiply(m_abscissaUnit.getMultiplier()));
         
         BigDecimal particleEffectiveMass = formatBigDecimal(p_effectiveMass.multiply(PhysicsTools.ME));
         m_particleParameters.put("mass", particleEffectiveMass);
@@ -89,7 +83,7 @@ public class CalculationConditions
         {
             try
             {
-                m_absorbers.add(new Absorber(sample, m_isZeroAtFront, p_isElectron, m_sampleSize.subtract(m_bufferWindowSize), m_abscissaUnit.getMultiplier()));
+                m_absorbers.add(new Absorber(sample, m_isZeroAtFront, p_isElectron, p_absorberSize, p_bufferWindowSize, m_abscissaUnit.getMultiplier()));
             }
             catch(DataFormatException | IOException ex)
             {
@@ -160,17 +154,6 @@ public class CalculationConditions
     public synchronized PhysicsTools.UnitsPrefix getAbscissaScale()
     {
         return m_abscissaUnit;
-    }
-    
-    //no need to return copy of BigDecimal because it is immutable
-    public BigDecimal getBufferAndWindowSize()
-    {
-        return m_bufferWindowSize;
-    }
-    
-    public BigDecimal getSolarCellSize()
-    {
-        return m_sampleSize;
     }
     
     public BigDecimal getAbscissaMultiplier()

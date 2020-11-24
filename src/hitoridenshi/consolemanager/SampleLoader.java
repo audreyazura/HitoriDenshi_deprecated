@@ -95,6 +95,12 @@ public class SampleLoader implements Sample
     }
     
     @Override
+    public boolean hasGrading()
+    {
+        return m_grading.size() > 0;
+    }
+    
+    @Override
     public boolean isFrontGradingInCB()
     {
         return m_isFrontGradingInCB;

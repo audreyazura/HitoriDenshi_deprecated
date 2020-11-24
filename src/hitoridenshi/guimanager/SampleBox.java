@@ -254,6 +254,16 @@ public class SampleBox implements Sample
         }
     }
     
+    private boolean isEmptyGrading()
+    {
+        String notchPos = m_notchPosition.getText();
+        String frontGap = m_frontGap.getText();
+        String notchGap = m_notchGap.getText();
+        String backGap = m_backGap.getText();
+
+        return (notchPos == null || notchPos.equals("")) && (frontGap == null || frontGap.equals("")) && (notchGap == null || notchGap.equals("")) && (backGap == null || backGap.equals(""));
+    }
+    
     private boolean isEmptyTrap(int p_position)
     {
         HBox parametersBox = (HBox) m_trapBoxes.get(p_position).getChildren().get(1);
@@ -441,6 +451,12 @@ public class SampleBox implements Sample
     }
     
     @Override
+    public boolean hasGrading()
+    {
+        return !isEmptyGrading();
+    }
+    
+    @Override
     public boolean isFrontGradingInCB()
     {
         if (!(m_frontGradingCB.isSelected() || m_frontGradingVB.isSelected()))
@@ -501,12 +517,7 @@ public class SampleBox implements Sample
         
         if (m_gradingBox.isVisible())
         {
-            String notchPos = m_notchPosition.getText();
-            String frontGap = m_frontGap.getText();
-            String notchGap = m_notchGap.getText();
-            String backGap = m_backGap.getText();
-            
-            returnBoolean &= (notchPos == null || notchPos.equals("")) && (frontGap == null || frontGap.equals("")) && (notchGap == null || notchGap.equals("")) && (backGap == null || backGap.equals(""));
+            returnBoolean &= isEmptyGrading();
         }
         
         for (int i = 0 ; i < m_trapBoxes.size() ; i += 1)

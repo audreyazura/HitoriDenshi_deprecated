@@ -36,4 +36,6 @@ public interface Sample
     public boolean isFrontGradingInCB();
     
     public boolean isBackGradingInCB();
+    
+    public boolean hasGrading();
 }

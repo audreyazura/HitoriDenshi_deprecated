@@ -21,7 +21,6 @@ import com.github.kilianB.pcg.fast.PcgRSFast;
 import com.github.audreyazura.commonutils.PhysicsTools;
 import hitoridenshi.simulationmanager.Particle.CapturedState;
 import hitoridenshi.simulationmanager.Particle.CollectionState;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -69,24 +68,24 @@ public class Absorber
         m_zeroAtFront = p_isZeroAtFront;
         if(m_zeroAtFront)
         {
-            m_frontPosition = CalculationConditions.formatBigDecimal(p_bufferwindowsize);
-            m_backPosition = CalculationConditions.formatBigDecimal(p_absorberSize);
-            m_notchPosition = grading.get("notchposition").add(m_frontPosition);
+            m_frontPosition = CalculationConditions.formatBigDecimal(p_bufferwindowsize.multiply(p_abscissaMultiplier));
+            m_backPosition = CalculationConditions.formatBigDecimal(p_absorberSize.multiply(p_abscissaMultiplier));
+            m_notchPosition = (grading.get("notchposition").multiply(p_abscissaMultiplier)).add(m_frontPosition);
             absorberEnd = m_backPosition;
         }
         else
         {
-            m_frontPosition = CalculationConditions.formatBigDecimal(p_absorberSize);
+            m_frontPosition = CalculationConditions.formatBigDecimal(p_absorberSize.multiply(p_abscissaMultiplier));
             m_backPosition = CalculationConditions.formatBigDecimal(BigDecimal.ZERO);
-            m_notchPosition = grading.get("notchposition").add(m_backPosition);
+            m_notchPosition = (grading.get("notchposition").multiply(p_abscissaMultiplier)).add(m_backPosition);
             absorberEnd = m_frontPosition;
         }
         
         SCAPSFunction internalElectricField = SCAPSFunction.createElectricFieldFromSCAPS(p_sample.getConfigFile(), p_abscissaMultiplier);
         HashMap<BigDecimal, BigDecimal> gradingValues = new HashMap<>();
-        gradingValues.put(m_frontPosition, grading.get("front"));
-        gradingValues.put(m_notchPosition, grading.get("notch"));
-        gradingValues.put(m_backPosition, grading.get("back"));
+        gradingValues.put(m_frontPosition, CalculationConditions.formatBigDecimal(grading.get("front").multiply(PhysicsTools.EV)));
+        gradingValues.put(m_notchPosition, CalculationConditions.formatBigDecimal(grading.get("notchgap").multiply(PhysicsTools.EV)));
+        gradingValues.put(m_backPosition, CalculationConditions.formatBigDecimal(grading.get("back").multiply(PhysicsTools.EV)));
         ContinuousFunction gradingFunction = new ContinuousFunction(gradingValues);
         
         if (p_sample.hasGrading())
@@ -100,8 +99,8 @@ public class Absorber
                 }
                 else
                 {
-                    field0toNotch = p_sample.isBackGradingInCB() ? getGradingCreatedField(gradingFunction, m_frontPosition) : BigDecimal.ZERO;
-                    fieldNotchtoEnd = p_sample.isFrontGradingInCB() ? getGradingCreatedField(gradingFunction, m_backPosition) : BigDecimal.ZERO;
+                    field0toNotch = p_sample.isBackGradingInCB() ? getGradingCreatedField(gradingFunction, m_backPosition) : BigDecimal.ZERO;
+                    fieldNotchtoEnd = p_sample.isFrontGradingInCB() ? getGradingCreatedField(gradingFunction, m_frontPosition) : BigDecimal.ZERO;
                 }
             }
             else
@@ -113,8 +112,8 @@ public class Absorber
                 }
                 else
                 {
-                    field0toNotch = p_sample.isBackGradingInCB() ? BigDecimal.ZERO : getGradingCreatedField(gradingFunction, m_frontPosition);
-                    fieldNotchtoEnd = p_sample.isFrontGradingInCB() ? BigDecimal.ZERO : getGradingCreatedField(gradingFunction, m_backPosition);
+                    field0toNotch = p_sample.isBackGradingInCB() ? BigDecimal.ZERO : getGradingCreatedField(gradingFunction, m_backPosition);
+                    fieldNotchtoEnd = p_sample.isFrontGradingInCB() ? BigDecimal.ZERO : getGradingCreatedField(gradingFunction, m_frontPosition);
                 }
             }
 
@@ -152,7 +151,13 @@ public class Absorber
             interfacePosition = m_frontPosition;
         }
         
-        return CalculationConditions.formatBigDecimal((p_gradingProfile.getValueAtPosition(m_notchPosition).subtract(p_gradingProfile.getValueAtPosition(interfacePosition)).divide(m_notchPosition.subtract(interfacePosition), MathContext.DECIMAL128)).divide(PhysicsTools.Q, MathContext.DECIMAL128));
+//        System.out.println("Notch: " + m_notchPosition);
+//        System.out.println(p_gradingProfile.getValueAtPosition(m_notchPosition).subtract(p_gradingProfile.getValueAtPosition(interfacePosition)));
+//        System.out.println(m_notchPosition.subtract(interfacePosition));
+//        System.out.println((p_gradingProfile.getValueAtPosition(m_notchPosition).subtract(p_gradingProfile.getValueAtPosition(interfacePosition))).divide(PhysicsTools.Q.multiply(m_notchPosition.subtract(interfacePosition)), MathContext.DECIMAL128));
+//        System.out.println("");
+        
+        return CalculationConditions.formatBigDecimal((p_gradingProfile.getValueAtPosition(m_notchPosition).subtract(p_gradingProfile.getValueAtPosition(interfacePosition))).divide(PhysicsTools.Q.multiply(m_notchPosition.subtract(interfacePosition)), MathContext.DECIMAL128));
     }
     
     public SCAPSFunction getElectricField()

@@ -64,7 +64,7 @@ public class ParametersWindowController
     @FXML private HBox header;
     @FXML private HBox titlebox;
     @FXML private Label generationlabel;
-    @FXML private Label samplewidthlabel;
+    @FXML private Label absorberwidthlabel;
     @FXML private Label bufferwindowlabel;
     @FXML private Label particularityLabel;
     @FXML private RadioButton originatfront;
@@ -110,7 +110,7 @@ public class ParametersWindowController
             }
             
             generationlabel.setText("Generation positions ("+selectedUnit+", separated by ';'):");
-            samplewidthlabel.setText("Sample width ("+selectedUnit+"):");
+            absorberwidthlabel.setText("Absorber width ("+selectedUnit+"):");
             bufferwindowlabel.setText("Buffer+window width ("+selectedUnit+"):");
             
             BigDecimal previousMultiplier = previouslySelectedUnit.getMultiplier();
@@ -325,7 +325,7 @@ public class ParametersWindowController
         catch (NullPointerException ex)
         {
             System.err.println("Verify that each field is properly filled.");
-//            ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
     

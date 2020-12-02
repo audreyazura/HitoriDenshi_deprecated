@@ -74,6 +74,8 @@ class SCAPSFunction extends ContinuousFunction
     {
         for (BigDecimal position: p_abscissa)
         {
+            m_abscissa.add(position);
+            
             if (position.compareTo(p_end) <= 0)
             {
                 if (position.compareTo(p_notchPosition) < 0)
@@ -83,6 +85,10 @@ class SCAPSFunction extends ContinuousFunction
                 else if (position.compareTo(p_notchPosition) > 0)
                 {
                     m_values.put(formatBigDecimal(position), formatBigDecimal(p_effectiveFieldNotchtoEnd));
+                }
+                else
+                {
+                    m_values.put(formatBigDecimal(position), formatBigDecimal((p_effectiveField0toNotch.add(p_effectiveFieldNotchtoEnd)).divide(new BigDecimal("2"))));
                 }
             }
             else

@@ -159,7 +159,7 @@
 
                     <HBox styleClass="hbox">
                         <HBox styleClass="internalhbox" >
-                            <Label styleClass="windowtext" text="Absorber width: " fx:id="samplewidthlabel"/>
+                            <Label styleClass="windowtext" text="Absorber width: " fx:id="absorberwidthlabel"/>
                             <TextField styleClass="inputfield" fx:id="absorberwidth" prefWidth="65" />
                         </HBox>
 

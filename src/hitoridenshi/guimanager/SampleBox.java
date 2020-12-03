@@ -96,28 +96,28 @@ public class SampleBox implements Sample
     public SampleBox()
     {
         baseInitialization("");
-        initiateGrading(new HashMap<>());
+        initiateGrading(new HashMap<>(), "", "");
         initializeTraps(new ArrayList<>());
     }
     
     public SampleBox (String p_address)
     {
         baseInitialization(p_address);
-        initiateGrading(new HashMap<>());
+        initiateGrading(new HashMap<>(), "", "");
         initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (String p_address, HashMap<String, String> p_grading)
+    public SampleBox (String p_address, HashMap<String, String> p_grading, String p_frontGradingBand, String p_backGradingBand)
     {
         baseInitialization(p_address);
-        initiateGrading(p_grading);
+        initiateGrading(p_grading, p_frontGradingBand, p_backGradingBand);
         initializeTraps(new ArrayList<>());
     }
     
-    public SampleBox (String p_address, HashMap<String, String> p_grading, List<HashMap<String, String>> p_traps)
+    public SampleBox (String p_address, HashMap<String, String> p_grading, String p_frontGradingBand, String p_backGradingBand, List<HashMap<String, String>> p_traps)
     {
         baseInitialization(p_address);
-        initiateGrading(p_grading);
+        initiateGrading(p_grading, p_frontGradingBand, p_backGradingBand);
         initializeTraps(p_traps);
     }
     
@@ -191,9 +191,15 @@ public class SampleBox implements Sample
         m_frontGradingCB.setToggleGroup(m_frontGradingBand);
         m_backGradingVB.setToggleGroup(m_backGradingBand);
         m_backGradingCB.setToggleGroup(m_backGradingBand);
+        
+        //no selection of the band the grading is in
+        m_frontGradingCB.setSelected(false);
+        m_frontGradingVB.setSelected(false);
+        m_backGradingCB.setSelected(false);
+        m_backGradingVB.setSelected(false);
     }
     
-    private void initiateGrading (HashMap<String, String> p_grading)
+    private void initiateGrading (HashMap<String, String> p_grading, String p_frontGradingBand, String p_backGradingBand)
     {
         m_gradingProfile = new HashMap(p_grading);
         
@@ -202,6 +208,26 @@ public class SampleBox implements Sample
         m_backGap.setText(p_grading.containsKey("back") ? p_grading.get("back") : "");
         m_notchPosition.setText(p_grading.containsKey("notchposition") ? p_grading.get("notchposition") : "");
         m_outerVBox.getChildren().add(m_gradingBox);
+        
+        switch (p_frontGradingBand)
+        {
+            case "CB":
+                m_frontGradingCB.fire();
+                break;
+            case "VB":
+                m_frontGradingVB.fire();
+                break;
+        }
+        
+        switch (p_backGradingBand)
+        {
+            case "CB":
+                m_backGradingCB.fire();
+                break;
+            case "VB":
+                m_backGradingVB.fire();
+                break;
+        }
         
         m_gradingBox.setManaged(false);
         m_gradingBox.setVisible(false);
@@ -397,7 +423,28 @@ public class SampleBox implements Sample
     {
         saveData();
         
-        return new SampleBox(m_fileField.getText(), new HashMap(m_gradingProfile), new ArrayList(m_traps));
+        String frontGradingBand = "";
+        String backGradingBand = "";
+        
+        if (m_frontGradingCB.isSelected())
+        {
+            frontGradingBand = "CB";
+        }
+        if (m_frontGradingVB.isSelected())
+        {
+            frontGradingBand = "VB";
+        }
+        
+        if (m_backGradingCB.isSelected())
+        {
+            backGradingBand = "CB";
+        }
+        if (m_backGradingVB.isSelected())
+        {
+            backGradingBand = "VB";
+        }
+        
+        return new SampleBox(m_fileField.getText(), new HashMap(m_gradingProfile), frontGradingBand, backGradingBand, new ArrayList(m_traps));
     }
     
     @Override

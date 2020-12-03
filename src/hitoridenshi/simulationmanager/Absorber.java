@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.DataFormatException;
+import org.apache.commons.io.FilenameUtils;
 import org.nevec.rjm.BigDecimalMath;
 
 /**
@@ -57,7 +58,7 @@ public class Absorber
      */
     public Absorber(Sample p_sample, boolean p_isZeroAtFront, boolean p_isElectron, BigDecimal p_absorberSize, BigDecimal p_bufferwindowsize, BigDecimal p_abscissaMultiplier) throws DataFormatException, IOException
     {
-        m_absorberFileName = p_sample.getConfigFile().getName();
+        m_absorberFileName = FilenameUtils.getBaseName(p_sample.getConfigFile().getName());
         HashMap<String, BigDecimal> grading = p_sample.getGradingValue();
         m_traps = p_sample.getTraps();
         

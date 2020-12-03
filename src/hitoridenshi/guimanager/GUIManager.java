@@ -107,6 +107,7 @@ public class GUIManager extends Application implements OutputInterface
             m_simulationWindowController = simulationTrackerWindowLoader.getController();
             m_simulationWindowController.initialize(p_tempConfigProperties, this, p_workerAmount);
             int longestColumn = p_workerAmount - p_workerAmount / 2;
+            simulationStage.setTitle("Hitori Denshi - Simulation on-going");
             simulationStage.setScene(new Scene(simulationWindowFxml, 800, 525+longestColumn*50));
 	    simulationStage.show();
         }

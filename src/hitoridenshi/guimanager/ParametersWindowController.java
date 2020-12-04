@@ -362,16 +362,13 @@ public class ParametersWindowController
     
     private void addTrapBox(int newPosition)
     {
-        if(newPosition >= sampleBoxes.get(0).numberOfTraps())
+        for (SampleBox sample: sampleBoxes)
         {
-            for (SampleBox sample: sampleBoxes)
+            if(newPosition >= sample.numberOfTraps())
             {
                 sample.addTrap(newPosition);
             }
-        }
-        else
-        {
-            for (SampleBox sample: sampleBoxes)
+            else
             {
                 sample.showTrap(newPosition);
             }

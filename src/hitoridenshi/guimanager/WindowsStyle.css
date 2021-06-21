@@ -159,6 +159,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-alignment: top-right;
 }
 
+#consolewindow
+{
+    -fx-font: IBMPlexMono-Regular;
+    -fx-text-fill: whitesmoke;
+}
+
+#consolewindow .content
+{
+    -fx-background-color: black;
+}
+
 #firsthbox
 {
     -fx-spacing: 20px;

@@ -122,10 +122,15 @@ public class SimulationTracker
                 break;
         }
         
+        if (p_type.equals(MeanType.GENERAL) && trackerTrajectoryArray.size() > 0)
+        {
+            toAddIfLongerList = trackerTrajectoryArray.get(trackerTrajectoryArray.size()-1);
+        }
+        
         int trackerArraySize = trackerTrajectoryArray.size(); 
         int particleArraySize = p_particleTrajectoryArray.size();
         int shortestAcceleration = Math.min(trackerAccelerationArray.size(), p_particleAccelerationArray.size());
-        int index;
+        int index = 0;
         
         for(index = 0 ; index < particleArraySize ; index += 1)
         {
@@ -140,11 +145,7 @@ public class SimulationTracker
             }
             else
             {
-                if (p_type.equals(MeanType.GENERAL) && m_numberBackExit + m_numberFrontExit + m_numberNotExited > 1)
-                {
-                    toAddIfLongerList = trackerTrajectoryArray.get(index-1);
-                }
-                trackerTrajectoryArray.add((p_particleTrajectoryArray.get(index).add(toAddIfLongerList)).divide(m_numberParticle, MathContext.DECIMAL128));
+                trackerTrajectoryArray.add((p_particleTrajectoryArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128)).add(toAddIfLongerList));
                 trackerVelocityArray.add(p_particleVelocityArray.get(index).divide(m_numberParticle, MathContext.DECIMAL128));
                 if (index < particleArraySize -1)
                 {
